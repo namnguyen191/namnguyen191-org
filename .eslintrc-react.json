@@ -1,0 +1,10 @@
+{
+  "extends": [".eslintrc.json", "plugin:@nx/react"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "extends": ["airbnb-typescript"]
+    }
+  ]
+}

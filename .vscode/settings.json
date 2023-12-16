@@ -1,0 +1,10 @@
+{
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 10000,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
+  "angular.enable-strict-mode-prompt": false
+}

@@ -1,18 +1,18 @@
 {
-  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "extends": ["../../.eslintrc-react.json"],
+  "ignorePatterns": ["vite.config.ts"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "parserOptions": {
+        "project": "./apps/eat-and-split/tsconfig.app.json"
+      }
     },
     {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "parserOptions": {
+        "project": "./apps/eat-and-split/tsconfig.spec.json"
+      }
     }
   ]
 }
