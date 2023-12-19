@@ -4,7 +4,10 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "extends": ["airbnb-typescript"]
+      "extends": ["airbnb-typescript"],
+      "rules": {
+        "@typescript-eslint/indent": "off"
+      }
     }
   ]
 }
