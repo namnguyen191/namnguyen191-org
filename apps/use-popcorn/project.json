@@ -1,0 +1,61 @@
+{
+  "name": "use-popcorn",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/use-popcorn/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/use-popcorn"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "use-popcorn:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "use-popcorn:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "use-popcorn:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "use-popcorn:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "use-popcorn:build:development"
+        },
+        "production": {
+          "buildTarget": "use-popcorn:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}
