@@ -12,6 +12,7 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@nx/cypress": "^17.2.8",
     "@nx/eslint": "v17.2.5",
     "@nx/eslint-plugin": "v17.2.5",
     "@nx/js": "v17.2.5",
@@ -31,9 +32,11 @@
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/coverage-v8": "^1.0.4",
     "@vitest/ui": "^1.0.4",
+    "cypress": "^13.6.2",
     "eslint": "~8.48.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-cypress": "^2.13.4",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsx-a11y": "6.7.1",
     "eslint-plugin-prettier": "^5.0.1",
