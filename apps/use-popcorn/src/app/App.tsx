@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 
 import { CollapsibleBox } from './CollapsibleBox';
 import { ErrorMessage } from './ErrorMessage';
@@ -16,9 +16,9 @@ import { debounced } from './utils';
 import { WatchedMoviesList } from './WatchedMoviesList';
 import { WatchSummary } from './WatchSummary';
 
-const Logo: FC = () => {
+const Logo: FC<{ onclick: () => void }> = ({ onclick }) => {
   return (
-    <div className="logo">
+    <div onClick={onclick} className="logo">
       <span role="img" aria-label="icon">
         🍿
       </span>
@@ -42,6 +42,7 @@ export const App: FC = () => {
   const [query, setQuery] = useState<string>('');
   const [watched, setWatched] = useLocalStorage<UserWatchData[]>('watched', []);
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
+  const secretModalRef = useRef<HTMLDialogElement | null>(null);
   const { movies, isLoading, error } = useMovies(query);
 
   const onAddToWatched = (newWatched: UserWatchData) => {
@@ -68,8 +69,30 @@ export const App: FC = () => {
 
   return (
     <>
+      <dialog
+        onClick={() => secretModalRef.current?.close()}
+        style={{ inset: 0, margin: 'auto' }}
+        ref={secretModalRef}
+      >
+        <div
+          style={{
+            height: '30vh',
+            padding: '2rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          className="container"
+        >
+          <h4>You've found the secret modal!</h4>
+        </div>
+      </dialog>
       <Navbar>
-        <Logo />
+        <Logo
+          onclick={() => {
+            secretModalRef.current?.showModal();
+          }}
+        />
         <SearchBar onSearch={debounced(setQuery)} />
         <NumResult count={movies.length} />
       </Navbar>
