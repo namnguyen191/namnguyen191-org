@@ -1,0 +1,30 @@
+{
+  "name": "fast-react-pizza-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/fast-react-pizza-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/fast-react-pizza-e2e/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "fast-react-pizza:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "fast-react-pizza:serve:production"
+        },
+        "ci": {
+          "devServerTarget": "fast-react-pizza:serve-static"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "implicitDependencies": ["fast-react-pizza"],
+  "tags": []
+}

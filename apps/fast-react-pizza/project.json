@@ -1,0 +1,74 @@
+{
+  "name": "fast-react-pizza",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/fast-react-pizza/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/fast-react-pizza"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "fast-react-pizza:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fast-react-pizza:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "fast-react-pizza:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "fast-react-pizza:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "fast-react-pizza:build:development"
+        },
+        "production": {
+          "buildTarget": "fast-react-pizza:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/apps/fast-react-pizza"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "fast-react-pizza:build"
+      }
+    }
+  },
+  "tags": []
+}
