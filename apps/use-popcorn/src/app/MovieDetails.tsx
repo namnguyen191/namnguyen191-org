@@ -27,7 +27,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({
   const isWatched = watched.map((m) => m.imdbID).includes(selectedId);
   const watchedUserRating = watched.find((m) => m.imdbID === selectedId)?.userRating;
 
-  const handleAdd = () => {
+  const handleAdd = (): void => {
     if (!movie || !userRating) return;
 
     const newWatchedMovie: UserWatchData = {
@@ -40,7 +40,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({
   };
 
   useEffect(() => {
-    const escapeKeyCb = (e: globalThis.KeyboardEvent) => {
+    const escapeKeyCb = (e: globalThis.KeyboardEvent): void => {
       if (e.code === 'Escape') {
         onCloseMovie();
       }
@@ -54,7 +54,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({
   }, [onCloseMovie]);
 
   useEffect(() => {
-    const getMovieDetails = async () => {
+    const getMovieDetails = async (): Promise<void> => {
       try {
         setIsLoading(true);
         const res = await getMovieById(selectedId);

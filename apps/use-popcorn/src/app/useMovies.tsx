@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import { findMovieByName } from './api';
 import { MovieData } from './interfaces';
 
-export function useMovies(query: string) {
+export function useMovies(query: string): {
+  movies: MovieData[];
+  isLoading: boolean;
+  error: string | null;
+} {
   const [movies, setMovies] = useState<MovieData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +15,7 @@ export function useMovies(query: string) {
   useEffect(() => {
     const controller = new AbortController();
 
-    const fetchMovies = async () => {
+    const fetchMovies = async (): Promise<void> => {
       try {
         setIsLoading(true);
         setError(null);

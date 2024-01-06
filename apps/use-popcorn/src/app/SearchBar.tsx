@@ -5,7 +5,7 @@ import { useKeyWatch } from './useKeyWatch';
 export type SearchBarProps = {
   onSearch?: (searchValue: string) => void;
 };
-export const SearchBar: FC<SearchBarProps> = ({ onSearch = () => {} }) => {
+export const SearchBar: FC<SearchBarProps> = ({ onSearch = (): void => {} }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useKeyWatch('enter', () => {

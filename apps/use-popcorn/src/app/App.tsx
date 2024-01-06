@@ -45,7 +45,7 @@ export const App: FC = () => {
   const secretModalRef = useRef<HTMLDialogElement | null>(null);
   const { movies, isLoading, error } = useMovies(query);
 
-  const onAddToWatched = (newWatched: UserWatchData) => {
+  const onAddToWatched = (newWatched: UserWatchData): void => {
     const foundWatched = watched.find((wMovie) => wMovie.imdbID === newWatched.imdbID);
     if (!foundWatched) {
       setWatched((oldWatched) => [...oldWatched, newWatched]);
@@ -59,11 +59,11 @@ export const App: FC = () => {
     );
   };
 
-  const onDeleteWatched = (deletedId: string) => {
+  const onDeleteWatched = (deletedId: string): void => {
     setWatched((oldWatched) => oldWatched.filter((old) => old.imdbID !== deletedId));
   };
 
-  const handleCloseMovie = () => setSelectedMovieId(null);
+  const handleCloseMovie = (): void => setSelectedMovieId(null);
 
   useKeyWatch('esc', handleCloseMovie);
 

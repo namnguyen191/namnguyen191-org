@@ -45,7 +45,7 @@ type FriendElementProps = {
   onFriendSelect?: (friend: Friend | null) => void;
 };
 const FriendElement: FC<FriendElementProps> = ({ friend, isSelected = false, onFriendSelect }) => {
-  const handleOnClick = () => {
+  const handleOnClick = (): void => {
     if (onFriendSelect) {
       onFriendSelect(isSelected ? null : friend);
     }
@@ -98,7 +98,7 @@ const FormAddFriend: FC<FormAddFriendProps> = ({ onAddFriend }) => {
   const [name, setName] = useState<string>('');
   const [imgUrl, setImgUrl] = useState<string>('');
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (!name || !imgUrl) return;
 
@@ -138,7 +138,7 @@ const FormSplitBill: FC<FormSplitBillProps> = ({ selectedFriend, onSplitBill }) 
   const [paidBy, setPaidBy] = useState<'user' | 'friend'>('user');
   const friendExpense = bill - yourExpense;
 
-  const onSplitBillSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSplitBillSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     onSplitBill({
       ...selectedFriend,
@@ -184,21 +184,21 @@ export const App: FC = () => {
   const [friendsList, setFriendsList] = useState<Friend[]>(initialFriends);
   const [selectedFriend, setSelectedFriend] = useState<null | Friend>(null);
 
-  const handleShowAddFriend = () => {
+  const handleShowAddFriend = (): void => {
     setShowAddFriend(!showAddFriend);
   };
 
-  const onAddFriend = (friend: Friend) => {
+  const onAddFriend = (friend: Friend): void => {
     setFriendsList((old) => [...old, friend]);
     setShowAddFriend(false);
   };
 
-  const onFriendSelect = (friend: Friend | null) => {
+  const onFriendSelect = (friend: Friend | null): void => {
     setSelectedFriend(friend);
     setShowAddFriend(false);
   };
 
-  const onSplitBill = (updatedFriend: Friend) => {
+  const onSplitBill = (updatedFriend: Friend): void => {
     setFriendsList((old) =>
       old.map((friend) => (friend.id === updatedFriend.id ? updatedFriend : friend)),
     );

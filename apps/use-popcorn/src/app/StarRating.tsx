@@ -74,7 +74,7 @@ export const StarRating: FC<StarRatingProps> = ({
   const [rating, setRating] = useState<number>(defaultRating);
   const [tempRating, setTempRating] = useState<number>(0);
 
-  const handleRating = (newRating: number) => {
+  const handleRating = (newRating: number): void => {
     setRating(newRating);
     if (onSetRating) {
       onSetRating(newRating);

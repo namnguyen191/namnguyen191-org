@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-export const useKeyWatch = (key: globalThis.KeyboardEvent['key'], cb: () => void) => {
+export const useKeyWatch = (key: globalThis.KeyboardEvent['key'], cb: () => void): void => {
   useEffect(() => {
-    const listener = (e: globalThis.KeyboardEvent) => {
+    const listener = (e: globalThis.KeyboardEvent): void => {
       if (e.key.toLocaleLowerCase() === key.toLowerCase()) {
         cb();
       }

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint type-check"
   },
   "private": true,
   "dependencies": {
