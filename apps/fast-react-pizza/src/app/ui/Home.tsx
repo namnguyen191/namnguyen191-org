@@ -1,10 +1,13 @@
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
 
 export const Home: FC = () => {
   return (
     <div>
-      <Link to="/menu">To Menu</Link>
+      <h1 className="text-center text-xl font-semibold text-yellow-500">
+        The best pizza.
+        <br />
+        Straigth out of the oven, straigth to you.
+      </h1>
     </div>
   );
 };
