@@ -12,6 +12,14 @@ export type MenuItem = {
   soldOut: boolean;
 };
 
+export type CartItem = {
+  pizzaId: number;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+};
+
 export type Order = {
   id: string;
   customer: string;
@@ -19,17 +27,13 @@ export type Order = {
   address: string;
   priority: boolean;
   estimatedDelivery: string;
-  cart: {
-    pizzaId: number;
-    name: string;
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-  }[];
+  cart: CartItem[];
   position: string;
   orderPrice: number;
   priorityPrice: number;
 };
+
+export type CreateOrderBody = Pick<Order, 'address' | 'customer' | 'phone' | 'priority' | 'cart'>;
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
@@ -51,7 +55,7 @@ export async function getOrder(id: string): Promise<Order> {
   return data;
 }
 
-export async function createOrder(newOrder: unknown): Promise<void> {
+export async function createOrder(newOrder: CreateOrderBody): Promise<Order> {
   try {
     const res = await fetch(`${API_URL}/order`, {
       method: 'POST',
