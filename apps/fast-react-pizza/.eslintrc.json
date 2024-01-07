@@ -1,6 +1,5 @@
 {
   "extends": ["plugin:cypress/recommended", "../../.eslintrc-react.json"],
-  "ignorePatterns": ["vite.config.ts", "cypress.config.ts"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
