@@ -1,10 +1,10 @@
 import { FC } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { LoaderFunction, useLoaderData } from 'react-router-dom';
 
 import { getMenu, MenuItem as MenuItemType } from '../../services/apiRestaurant';
 import { MenuItem } from './MenuItem';
 
-export const loader = async (): Promise<MenuItemType[]> => {
+export const loader: LoaderFunction = async (): Promise<MenuItemType[]> => {
   const menu = await getMenu();
   return menu;
 };

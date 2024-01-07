@@ -12,6 +12,25 @@ export type MenuItem = {
   soldOut: boolean;
 };
 
+export type Order = {
+  id: string;
+  customer: string;
+  phone: string;
+  address: string;
+  priority: boolean;
+  estimatedDelivery: string;
+  cart: {
+    pizzaId: number;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+  }[];
+  position: string;
+  orderPrice: number;
+  priorityPrice: number;
+};
+
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
 export async function getMenu(): Promise<MenuItem[]> {
@@ -24,7 +43,7 @@ export async function getMenu(): Promise<MenuItem[]> {
   return data;
 }
 
-export async function getOrder(id: string): Promise<unknown> {
+export async function getOrder(id: string): Promise<Order> {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
