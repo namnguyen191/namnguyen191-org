@@ -6,11 +6,13 @@ import { loader as menuLoader, Menu } from './features/menu/Menu';
 import { CreateOrder } from './features/order/CreateOrder';
 import { Order } from './features/order/Order';
 import { AppLayout } from './ui/AppLayout';
+import { ErrorComponent } from './ui/ErrorComponent';
 import { Home } from './ui/Home';
 
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <ErrorComponent />,
     children: [
       {
         path: '/',
@@ -20,6 +22,7 @@ const router = createBrowserRouter([
         path: '/menu',
         element: <Menu />,
         loader: menuLoader,
+        errorElement: <ErrorComponent />,
       },
       {
         path: '/cart',
