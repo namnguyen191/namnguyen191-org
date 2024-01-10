@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { useNavigate, useRouteError } from 'react-router-dom';
+import { useRouteError } from 'react-router-dom';
+
+import { LinkButton } from './LinkButton';
 
 export const ErrorComponent: FC = () => {
-  const navigate = useNavigate();
   const routeErr = useRouteError();
 
   const getErrorMessage = (err: unknown): string => {
@@ -27,7 +28,7 @@ export const ErrorComponent: FC = () => {
         </span>
       </h1>
       <p>{getErrorMessage(routeErr)}</p>
-      <button onClick={() => navigate(-1)}>&larr; Go back</button>
+      <LinkButton to="-1">&larr; Go back</LinkButton>
     </div>
   );
 };
