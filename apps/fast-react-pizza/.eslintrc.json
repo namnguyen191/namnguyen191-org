@@ -1,5 +1,5 @@
 {
-  "extends": ["plugin:cypress/recommended", "../../.eslintrc-react.json"],
+  "extends": ["../../.eslintrc-react.json"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

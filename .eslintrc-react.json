@@ -6,7 +6,9 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "extends": ["airbnb-typescript"],
       "rules": {
-        "@typescript-eslint/indent": "off"
+        "@typescript-eslint/indent": "off",
+        "comma-dangle": "off",
+        "@typescript-eslint/comma-dangle": "off"
       }
     }
   ]

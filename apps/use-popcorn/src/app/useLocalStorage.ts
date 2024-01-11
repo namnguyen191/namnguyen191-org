@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 export const useLocalStorage = <T>(
   key: string,
-  initialState: T,
+  initialState: T
 ): readonly [T, React.Dispatch<React.SetStateAction<T>>] => {
   const [value, setValue] = useState<T>(() => {
     const valueFromLocalStorage = localStorage.getItem(key);

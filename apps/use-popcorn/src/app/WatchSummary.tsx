@@ -10,7 +10,7 @@ export const WatchSummary: FC<WatchSummaryProps> = ({ watched }) => {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(
-    watched.map((movie) => parseFloat(movie.Runtime.split(' ')[0] ?? '0')),
+    watched.map((movie) => parseFloat(movie.Runtime.split(' ')[0] ?? '0'))
   );
 
   return (

@@ -1,6 +1,6 @@
 export const debounced = <TArgs extends unknown[]>(
   cb: (...args: TArgs) => void,
-  delay = 500,
+  delay = 500
 ): ((...args: TArgs) => void) => {
   let cbTimer: number | null = null;
 

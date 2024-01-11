@@ -200,7 +200,7 @@ export const App: FC = () => {
 
   const onSplitBill = (updatedFriend: Friend): void => {
     setFriendsList((old) =>
-      old.map((friend) => (friend.id === updatedFriend.id ? updatedFriend : friend)),
+      old.map((friend) => (friend.id === updatedFriend.id ? updatedFriend : friend))
     );
     setSelectedFriend(null);
   };

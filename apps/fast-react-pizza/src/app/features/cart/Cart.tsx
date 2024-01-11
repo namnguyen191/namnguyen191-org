@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
 
 import { CartItem } from '../../services/apiRestaurant';
 import { Button } from '../../ui/Button';

@@ -9,7 +9,7 @@ export type OrderItemProps = {
   ingredients?: string[];
 };
 
-export const OrderItem: FC<OrderItemProps> = ({ item, isLoadingIngredients, ingredients }) => {
+export const OrderItem: FC<OrderItemProps> = ({ item }) => {
   const { quantity, name, totalPrice } = item;
 
   return (

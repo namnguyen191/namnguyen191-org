@@ -54,8 +54,8 @@ export const App: FC = () => {
 
     setWatched((oldWatched) =>
       oldWatched.map((old) =>
-        old.imdbID === newWatched.imdbID ? { ...old, userRating: newWatched.userRating } : old,
-      ),
+        old.imdbID === newWatched.imdbID ? { ...old, userRating: newWatched.userRating } : old
+      )
     );
   };
 
