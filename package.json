@@ -5,8 +5,10 @@
   "scripts": {
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm",
-    "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint type-check",
-    "lint:affected": "pnpm nx affected -t lint type-check"
+    "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint",
+    "lint:affected": "pnpm nx affected -t lint",
+    "fix-lint": "pnpm nx affected -t lint --fix",
+    "type-check:affected": "pnpm nx affected -t typecheck"
   },
   "private": true,
   "dependencies": {
@@ -52,6 +54,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "husky": "^8.0.3",
     "jsdom": "~22.1.0",
+    "lint-staged": "^15.2.0",
     "nx": "v17.2.5",
     "postcss": "^8.4.33",
     "prettier": "^3.1.1",

@@ -28,12 +28,16 @@ export type Order = {
   priority: boolean;
   estimatedDelivery: string;
   cart: CartItem[];
-  position: string;
+  position?: string;
   orderPrice: number;
   priorityPrice: number;
+  status: string;
 };
 
-export type CreateOrderBody = Pick<Order, 'address' | 'customer' | 'phone' | 'priority' | 'cart'>;
+export type CreateOrderBody = Pick<
+  Order,
+  'address' | 'customer' | 'phone' | 'priority' | 'cart' | 'position'
+>;
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
