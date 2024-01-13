@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "prepare": "husky install",
     "preinstall": "npx only-allow pnpm",
-    "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint type-check"
+    "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint type-check",
+    "lint:affected": "pnpm nx affected -t lint type-check"
   },
   "private": true,
   "dependencies": {
@@ -48,6 +50,7 @@
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "husky": "^8.0.3",
     "jsdom": "~22.1.0",
     "nx": "v17.2.5",
     "postcss": "^8.4.33",

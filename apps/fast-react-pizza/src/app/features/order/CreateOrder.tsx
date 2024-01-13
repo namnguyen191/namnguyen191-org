@@ -1,39 +1,20 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { ActionFunction, Form, redirect, useActionData, useNavigation } from 'react-router-dom';
 
+import { store } from '../../../store';
+import { useAppSelector } from '../../../storeHooks';
 import { createOrder, CreateOrderBody } from '../../services/apiRestaurant';
 import { Button } from '../../ui/Button';
-import { isValidPhone } from '../../utils/helper';
-
-const fakeCart = [
-  {
-    pizzaId: 12,
-    name: 'Mediterranean',
-    quantity: 2,
-    unitPrice: 16,
-    totalPrice: 32,
-  },
-  {
-    pizzaId: 6,
-    name: 'Vegetale',
-    quantity: 1,
-    unitPrice: 13,
-    totalPrice: 13,
-  },
-  {
-    pizzaId: 11,
-    name: 'Spinach and Mushroom',
-    quantity: 1,
-    unitPrice: 15,
-    totalPrice: 15,
-  },
-];
+import { formatCurrency, isValidPhone } from '../../utils/helper';
+import { clearCart, selectCart, selectCartTotalPrice } from '../cart/cartSlice';
+import { EmptyCart } from '../cart/EmptyCart';
+import { selectUsername } from '../user/userSlice';
 
 type ExpectedFormData = {
   address: string;
   customer: string;
   phone: string;
-  priority?: 'on';
+  priority?: 'true';
   cart: string; // Stringify Cart
 };
 
@@ -54,9 +35,11 @@ export const action: ActionFunction = async ({ request }): Promise<Response | Ac
   const order: CreateOrderBody = {
     ...data,
     cart: JSON.parse(data.cart),
-    priority: data.priority === 'on',
+    priority: data.priority === 'true',
   };
   const newOrder = await createOrder(order);
+
+  store.dispatch(clearCart());
 
   return redirect(`/order/${newOrder.id}`);
 };
@@ -64,9 +47,18 @@ export const action: ActionFunction = async ({ request }): Promise<Response | Ac
 export const CreateOrder: FC = () => {
   const navigation = useNavigation();
   const errors = useActionData() as ActionData | undefined;
+  const username = useAppSelector(selectUsername);
+  const cart = useAppSelector(selectCart);
+  const [isPriority, setIsPriority] = useState<boolean>(false);
+  const cartTotalPrice = useAppSelector(selectCartTotalPrice);
 
   const isSubmitting = navigation.state === 'submitting';
-  const cart = fakeCart;
+  const prioritySurCharge = isPriority ? cartTotalPrice * 0.2 : 0;
+  const totalPrice = cartTotalPrice + prioritySurCharge;
+
+  if (cart.length === 0) {
+    return <EmptyCart />;
+  }
 
   return (
     <div className="px-4 py-6">
@@ -75,7 +67,13 @@ export const CreateOrder: FC = () => {
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
-          <input className="input grow" type="text" name="customer" required />
+          <input
+            defaultValue={username}
+            className="input grow"
+            type="text"
+            name="customer"
+            required
+          />
         </div>
 
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -101,8 +99,8 @@ export const CreateOrder: FC = () => {
             type="checkbox"
             name="priority"
             id="priority"
-            // value={withPriority}
-            // onChange={(e) => setWithPriority(e.target.checked)}
+            value={isPriority.toString()}
+            onChange={(e) => setIsPriority(e.target.checked)}
           />
           <label className="font-medium" htmlFor="priority">
             Want to yo give your order priority?
@@ -111,7 +109,9 @@ export const CreateOrder: FC = () => {
 
         <div>
           <input type="hidden" value={JSON.stringify(cart)} name="cart" />
-          <Button disabled={isSubmitting}>{isSubmitting ? 'Placing order...' : 'Order now'}</Button>
+          <Button disabled={isSubmitting}>
+            {isSubmitting ? 'Placing order...' : `Order now for only ${formatCurrency(totalPrice)}`}
+          </Button>
         </div>
       </Form>
     </div>

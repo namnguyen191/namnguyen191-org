@@ -15,7 +15,6 @@ export const ErrorComponent: FC = () => {
       return err.message;
     }
 
-    console.log('Nam data is: ', err);
     return 'Unknow error';
   };
 

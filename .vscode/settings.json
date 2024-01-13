@@ -10,5 +10,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.associations": {
     "*.scss": "tailwindcss",
-  }
+  },
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

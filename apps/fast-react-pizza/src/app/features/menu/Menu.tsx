@@ -11,7 +11,6 @@ export const loader: LoaderFunction = async (): Promise<MenuItemType[]> => {
 
 export const Menu: FC = () => {
   const menu: MenuItemType[] = useLoaderData() as MenuItemType[];
-  console.log('Nam data is: ', menu);
   return (
     <ul className="divide-y divide-stone-200 px-2">
       {menu.map((item) => (
