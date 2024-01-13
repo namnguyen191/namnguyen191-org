@@ -1,9 +1,8 @@
 module.exports = {
-  '{apps,libs,tools}/**/*.{ts,tsx}': (files) => {
-    return `pnpm nx affected --target=typecheck --files=${files.join(',')}`;
-  },
+  'package.json': ['pnpm typecheck:all', 'pnpm lint:all', 'pnpm build:all'],
+  '{apps,libs,tools}/**/*.{ts,tsx}': 'pnpm type-check:affected',
   '{apps,libs,tools}/**/*.{js,ts,jsx,tsx,json}': [
-    (files) => `pnpm nx affected:lint --files=${files.join(',')}`,
+    'pnpm lint:affected',
     (files) => `pnpm nx format:write --files=${files.join(',')}`,
   ],
 };
