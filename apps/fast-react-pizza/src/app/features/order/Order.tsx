@@ -1,7 +1,8 @@
 import { FC, useEffect } from 'react';
-import { LoaderFunction, useFetcher, useLoaderData } from 'react-router-dom';
+import { ActionFunction, LoaderFunction, useFetcher, useLoaderData } from 'react-router-dom';
 
-import { getOrder, MenuItem, Order as OrderType } from '../../services/apiRestaurant';
+import { getOrder, MenuItem, Order as OrderType, updateOrder } from '../../services/apiRestaurant';
+import { Button } from '../../ui/Button';
 import { calcMinutesLeft, formatCurrency, formatDate } from '../../utils/helper';
 import { OrderItem } from './OrderItem';
 
@@ -11,6 +12,16 @@ export const loader: LoaderFunction = async ({ params }): Promise<OrderType> => 
   }
   const order = await getOrder(params.orderId);
   return order;
+};
+
+export const action: ActionFunction = async ({ params }): Promise<null> => {
+  const data = { priority: true };
+  const orderId = params.orderId;
+  if (orderId) {
+    await updateOrder(orderId, data);
+  }
+
+  return null;
 };
 
 export const Order: FC = () => {
@@ -80,6 +91,12 @@ export const Order: FC = () => {
           To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}
         </p>
       </div>
+
+      {!priority && (
+        <fetcher.Form method="PATCH" className="text-right">
+          <Button>Make it high priority!</Button>
+        </fetcher.Form>
+      )}
     </div>
   );
 };
