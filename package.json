@@ -7,6 +7,7 @@
     "preinstall": "npx only-allow pnpm",
     "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint",
     "lint:affected": "pnpm nx affected -t lint",
+    "typecheck:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t typecheck",
     "fix-lint": "pnpm nx affected -t lint --fix",
     "type-check:affected": "pnpm nx affected -t typecheck"
   },
