@@ -31,6 +31,7 @@ export const CreateUser: FC = () => {
       </p>
 
       <input
+        data-cy="username-input"
         type="text"
         placeholder="Your full name"
         value={username}
@@ -40,7 +41,7 @@ export const CreateUser: FC = () => {
 
       {username !== '' && (
         <div>
-          <Button>Start ordering</Button>
+          <Button data-cy="start-order-button">Start ordering</Button>
         </div>
       )}
     </form>

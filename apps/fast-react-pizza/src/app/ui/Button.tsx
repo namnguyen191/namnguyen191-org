@@ -6,12 +6,14 @@ export type ButtonProps = DetailedHTMLProps<
   HTMLButtonElement
 > & {
   to?: string;
+  'data-cy'?: string;
   btnType?: 'primary' | 'small' | 'secondary' | 'round';
 };
 
 export const Button: FC<PropsWithChildren<ButtonProps>> = ({
   children,
   to,
+  'data-cy': dataCy,
   btnType = 'primary',
   ...buttonProps
 }) => {
@@ -29,14 +31,14 @@ export const Button: FC<PropsWithChildren<ButtonProps>> = ({
 
   if (to) {
     return (
-      <Link className={styles[btnType]} to={to}>
+      <Link className={styles[btnType]} to={to} data-cy={dataCy}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={styles[btnType]} {...buttonProps}>
+    <button className={styles[btnType]} {...buttonProps} data-cy={dataCy}>
       {children}
     </button>
   );

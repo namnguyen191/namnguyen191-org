@@ -11,11 +11,19 @@ export const Home: FC = () => {
   return (
     <div className="my-10 text-center sm:my-16">
       <h1 className="mb-8 text-xl font-semibold text-stone-700">
-        The best pizza.
+        <span data-cy="header-welcome-text">The best pizza.</span>
         <br />
-        <span className="text-yellow-500">Straigth out of the oven, straigth to you.</span>
+        <span data-cy="header-welcome-sub-text" className="text-yellow-500">
+          Straigth out of the oven, straigth to you.
+        </span>
       </h1>
-      {username ? <Button to="menu">Continue ordering, {username}</Button> : <CreateUser />}
+      {username ? (
+        <Button data-cy="continue-order-button" to="menu">
+          Continue ordering, {username}
+        </Button>
+      ) : (
+        <CreateUser />
+      )}
     </div>
   );
 };
