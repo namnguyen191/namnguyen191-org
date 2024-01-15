@@ -1,0 +1,11 @@
+{
+  "extends": ["../../.eslintrc-react.json"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": "./apps/the-wild-oasis/tsconfig.app.json"
+      }
+    }
+  ]
+}
