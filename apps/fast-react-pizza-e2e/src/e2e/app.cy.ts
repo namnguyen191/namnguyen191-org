@@ -26,6 +26,11 @@ describe('fast-react-pizza-e2e', () => {
     cy.location('pathname').should('eq', '/menu');
   });
 
+  it('should go to menu page when the user typed in their name and click enter', () => {
+    getUsernameInput().type('Nam Nguyen{enter}');
+    cy.location('pathname').should('eq', '/menu');
+  });
+
   it('should display continue to order button when the user have already provide their username and navigate back from menu page', () => {
     const username = 'Nam Nguyen';
     getUsernameInput().type(username);

@@ -12,6 +12,9 @@
         "devServerTarget": "fast-react-pizza:serve"
       },
       "configurations": {
+        "development": {
+          "watch": true
+        },
         "production": {
           "devServerTarget": "fast-react-pizza:serve:production"
         },
