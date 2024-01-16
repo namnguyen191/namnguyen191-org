@@ -28,6 +28,7 @@ specifiers:
   '@vitest/ui': ^1.0.4
   autoprefixer: ^10.4.16
   cypress: ^13.6.2
+  date-fns: ^3.2.0
   eslint: ~8.48.0
   eslint-config-airbnb-typescript: ^17.1.0
   eslint-config-prettier: ^9.1.0
@@ -47,6 +48,7 @@ specifiers:
   prettier-plugin-tailwindcss: ^0.5.11
   react: 18.2.0
   react-dom: 18.2.0
+  react-icons: ^5.0.1
   react-is: 18.2.0
   react-redux: ^9.0.4
   react-router-dom: ^6.21.1
@@ -61,8 +63,10 @@ specifiers:
 dependencies:
   '@reduxjs/toolkit': 2.0.1_xjpui5vowofmlfxsssmirucdoe
   '@swc/helpers': 0.5.3
+  date-fns: 3.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-icons: 5.0.1_react@18.2.0
   react-is: 18.2.0
   react-redux: 9.1.0_a2jcuednruyfa5nnbkfda7b4da
   react-router-dom: 6.21.2_biqbaboplfbrettd7655fr4n2y
@@ -4810,6 +4814,10 @@ packages:
       whatwg-url: 12.0.1
     dev: true
 
+  /date-fns/3.2.0:
+    resolution: {integrity: sha512-E4KWKavANzeuusPi0jUjpuI22SURAznGkx7eZV+4i6x2A+IZxAMcajgkvuDAU1bg40+xuhW1zRdVIIM/4khuIg==}
+    dev: false
+
   /dayjs/1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: true
@@ -8048,6 +8056,14 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+
+  /react-icons/5.0.1_react@18.2.0:
+    resolution: {integrity: sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
