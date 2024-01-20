@@ -16,6 +16,7 @@ specifiers:
   '@swc/helpers': ~0.5.2
   '@swc/plugin-styled-components': ^1.5.67
   '@tanstack/react-query': ^5.17.19
+  '@tanstack/react-query-devtools': ^5.17.19
   '@testing-library/react': 14.0.0
   '@types/node': 18.14.2
   '@types/react': 18.2.33
@@ -67,6 +68,7 @@ dependencies:
   '@supabase/supabase-js': 2.39.3
   '@swc/helpers': 0.5.3
   '@tanstack/react-query': 5.17.19_react@18.2.0
+  '@tanstack/react-query-devtools': 5.17.19_dcwkrwystdzr7t6hqjpxjxaire
   date-fns: 3.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -3260,6 +3262,21 @@ packages:
 
   /@tanstack/query-core/5.17.19:
     resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
+    dev: false
+
+  /@tanstack/query-devtools/5.17.7:
+    resolution: {integrity: sha512-TfgvOqza5K7Sk6slxqkRIvXlEJoUoPSsGGwpuYSrpqgSwLSSvPPpZhq7hv7hcY5IvRoTNGoq6+MT01C/jILqoQ==}
+    dev: false
+
+  /@tanstack/react-query-devtools/5.17.19_dcwkrwystdzr7t6hqjpxjxaire:
+    resolution: {integrity: sha512-DvUuEsrN4Ndmf52t1fN7VuW0dPwP55Q7mXmHF3jI0ORsjsaviZF8C9SdOEwhaXVKdPH+lvM+jJOuxv/1IrDy9Q==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.17.19
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-devtools': 5.17.7
+      '@tanstack/react-query': 5.17.19_react@18.2.0
+      react: 18.2.0
     dev: false
 
   /@tanstack/react-query/5.17.19_react@18.2.0:
