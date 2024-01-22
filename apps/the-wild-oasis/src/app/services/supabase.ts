@@ -2,6 +2,16 @@ import { createClient } from '@supabase/supabase-js';
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
+export type CabinRow = {
+  description: string;
+  discount: number;
+  id: number;
+  image: string;
+  max_capacity: number;
+  name: string;
+  regular_price: number;
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -75,36 +85,9 @@ export interface Database {
         ];
       };
       cabins: {
-        Row: {
-          created_at: string;
-          description: string | null;
-          discount: number | null;
-          id: number;
-          image: string | null;
-          max_capacity: number | null;
-          name: string | null;
-          regular_price: number | null;
-        };
-        Insert: {
-          created_at?: string;
-          description?: string | null;
-          discount?: number | null;
-          id?: number;
-          image?: string | null;
-          max_capacity?: number | null;
-          name?: string | null;
-          regular_price?: number | null;
-        };
-        Update: {
-          created_at?: string;
-          description?: string | null;
-          discount?: number | null;
-          id?: number;
-          image?: string | null;
-          max_capacity?: number | null;
-          name?: string | null;
-          regular_price?: number | null;
-        };
+        Row: CabinRow;
+        Insert: Partial<CabinRow>;
+        Update: Partial<CabinRow>;
         Relationships: [];
       };
       guests: {
@@ -254,7 +237,7 @@ export type Enums<
     ? Database['public']['Enums'][PublicEnumNameOrOptions]
     : never;
 
-const supabaseUrl = 'https://ftuinjmlmtgcuvzwlahm.supabase.co';
-const supabaseKey =
+export const supabaseUrl = 'https://ftuinjmlmtgcuvzwlahm.supabase.co';
+export const supabaseKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0dWluam1sbXRnY3V2endsYWhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU2MzgyMzksImV4cCI6MjAyMTIxNDIzOX0.toFnKPTuYXPrsDiWLXxmbVipIPu4evmt1Fw9vHbQCII'; // public API Key
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey);

@@ -61,6 +61,7 @@ export const Button = styled.button<ButtonProps>`
   ${(props): FlattenSimpleInterpolation => sizes[props.size]}
   ${(props): FlattenSimpleInterpolation => variations[props.variation]}
 `;
+
 export const buttonDefaultProps = {
   variation: 'primary',
   size: 'medium',

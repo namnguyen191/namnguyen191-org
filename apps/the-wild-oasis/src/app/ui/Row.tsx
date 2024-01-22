@@ -6,7 +6,7 @@ export type RowsProps = {
 export const Row = styled.div<RowsProps>`
   display: flex;
   ${(props): FlattenSimpleInterpolation =>
-    props.type !== 'horizontal'
+    props.type === 'horizontal'
       ? css`
           justify-content: space-between;
           align-items: center;
