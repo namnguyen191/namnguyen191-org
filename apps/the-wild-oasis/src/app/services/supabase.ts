@@ -12,6 +12,15 @@ export type CabinRow = {
   regular_price: number;
 };
 
+export type SettingRow = {
+  breakfast_price: number;
+  created_at: string;
+  id: number;
+  max_booking_length: number;
+  max_guests_per_booking: number;
+  min_booking_length: number;
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -121,30 +130,9 @@ export interface Database {
         Relationships: [];
       };
       settings: {
-        Row: {
-          breakfast_price: number | null;
-          created_at: string;
-          id: number;
-          max_booking_length: number | null;
-          max_guests_per_booking: number | null;
-          min_booking_length: number | null;
-        };
-        Insert: {
-          breakfast_price?: number | null;
-          created_at?: string;
-          id?: number;
-          max_booking_length?: number | null;
-          max_guests_per_booking?: number | null;
-          min_booking_length?: number | null;
-        };
-        Update: {
-          breakfast_price?: number | null;
-          created_at?: string;
-          id?: number;
-          max_booking_length?: number | null;
-          max_guests_per_booking?: number | null;
-          min_booking_length?: number | null;
-        };
+        Row: SettingRow;
+        Insert: Partial<SettingRow>;
+        Update: Partial<SettingRow>;
         Relationships: [];
       };
     };
