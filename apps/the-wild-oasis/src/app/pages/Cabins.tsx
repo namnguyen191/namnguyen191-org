@@ -1,13 +1,11 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
+import { AddCabin } from '../features/cabins/AddCabin';
 import { CabinTable } from '../features/cabins/CabinTable';
-import { CreateCabinForm } from '../features/cabins/CreateCabinForm';
-import { Button, buttonDefaultProps } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import { Row } from '../ui/Row';
 
 export const Cabins: FC = () => {
-  const [showForm, setShowForm] = useState<boolean>(false);
   return (
     <>
       <Row type="horizontal">
@@ -17,11 +15,7 @@ export const Cabins: FC = () => {
 
       <Row>
         <CabinTable />
-
-        <Button {...buttonDefaultProps} onClick={() => setShowForm(!showForm)}>
-          Add new cabin
-        </Button>
-        {showForm && <CreateCabinForm />}
+        <AddCabin />
       </Row>
     </>
   );

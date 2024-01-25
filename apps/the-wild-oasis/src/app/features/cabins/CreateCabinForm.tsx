@@ -29,8 +29,9 @@ type FormInputs = {
 
 export type CreateCabinFormProps = {
   cabin?: Cabin;
+  onCloseModal?: () => void;
 };
-export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin }) => {
+export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin, onCloseModal }) => {
   const isEditMode = cabin !== undefined;
   const { register, handleSubmit, reset, getValues, formState } = useForm<FormInputs>({
     defaultValues: {
@@ -52,12 +53,20 @@ export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin }) => {
     if (isEditMode && cabin) {
       updateCabin({ ...cabin, ...upsertData, imageFile: imageFile?.[0] });
     } else {
-      createCabin({ ...upsertData, imageFile: imageFile[0]! }, { onSuccess: () => reset() });
+      createCabin(
+        { ...upsertData, imageFile: imageFile[0]! },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
     }
   };
 
   return (
-    <Form type="normal" onSubmit={handleSubmit(onSubmit)}>
+    <Form type={onCloseModal ? 'modal' : 'regular'} onSubmit={handleSubmit(onSubmit)}>
       <FormRow label="name" error={formState.errors.name?.message}>
         <Input
           type="text"
@@ -138,6 +147,7 @@ export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin }) => {
           variation="secondary"
           type="reset"
           disabled={isCreatingCabin || isUpdatingCabin}
+          onClick={onCloseModal}
         >
           Cancel
         </Button>
