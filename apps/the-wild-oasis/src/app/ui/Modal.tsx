@@ -1,7 +1,17 @@
-import { FC, PropsWithChildren } from 'react';
+import {
+  cloneElement,
+  createContext,
+  FC,
+  PropsWithChildren,
+  ReactElement,
+  useContext,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
 import styled from 'styled-components';
+
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 export const StyledModal = styled.div`
   position: fixed;
@@ -52,19 +62,73 @@ export const Button = styled.button`
   }
 `;
 
-export type ModalProps = {
-  onClose?: () => void;
+const ModalContext = createContext<{
+  openTargetWindow: string | null;
+  open: (windowId: string) => void;
+  close: () => void;
+}>({
+  openTargetWindow: null,
+  open: () => console.log('Please provide Modal context open method'),
+  close: () => console.log('Please provide Modal context close method'),
+});
+
+export type WindowProps = {
+  id: string;
+  children: ReactElement;
 };
-export const Modal: FC<PropsWithChildren<ModalProps>> = ({ children, onClose }) => {
+const Window: FC<WindowProps> = ({ children, id }) => {
+  const { openTargetWindow, close } = useContext(ModalContext);
+  const outsideClickRef = useOutsideClick<HTMLDivElement>(close);
+
+  if (openTargetWindow !== id) {
+    return null;
+  }
+
   return createPortal(
     <Overlay>
-      <StyledModal>
-        <Button onClick={onClose}>
+      <StyledModal ref={outsideClickRef}>
+        <Button onClick={close}>
           <HiXMark />
         </Button>
-        <div>{children}</div>
+        <div>{cloneElement(children, { onCloseModal: close })}</div>
       </StyledModal>
     </Overlay>,
     document.body
   );
 };
+
+export type OpenProps = {
+  windowTargetId: string;
+  children: ReactElement;
+};
+const Open: FC<PropsWithChildren<OpenProps>> = ({ children, windowTargetId }) => {
+  const { open } = useContext(ModalContext);
+  return (
+    <>
+      {cloneElement(children, {
+        onClick: () => {
+          children.props.onClick?.();
+          open(windowTargetId);
+        },
+      })}
+    </>
+  );
+};
+
+const Modal: FC<PropsWithChildren> & { Open: typeof Open; Window: typeof Window } = ({
+  children,
+}) => {
+  const [openTargetWindow, setOpenTargetWindow] = useState<null | string>(null);
+  const open = (windowId: string): void => setOpenTargetWindow(windowId);
+  const close = (): void => setOpenTargetWindow(null);
+
+  return (
+    <ModalContext.Provider value={{ openTargetWindow, open, close }}>
+      {children}
+    </ModalContext.Provider>
+  );
+};
+Modal.Open = Open;
+Modal.Window = Window;
+
+export { Modal };
