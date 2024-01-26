@@ -3,6 +3,7 @@ import { HiPencil, HiSquare2Stack, HiTrash } from 'react-icons/hi2';
 import styled from 'styled-components';
 
 import { Cabin } from '../../services/apiCabins';
+import { ConfirmDelete } from '../../ui/ConfirmDelete';
 import { Modal } from '../../ui/Modal';
 import { formatCurrency } from '../../utils/helpers';
 import { useDeleteCabin, useDuplicateCabin } from './cabinQueryHooks';
@@ -81,9 +82,16 @@ export const CabinRow: FC<CabinRowProps> = ({ cabin }) => {
             <CreateCabinForm cabin={cabin} />
           </Modal.Window>
         </Modal>
-        <button onClick={() => deleteCabin(id)} disabled={isDeletingCabin}>
-          <HiTrash />
-        </button>
+        <Modal>
+          <Modal.Open windowTargetId="deleteCabinConfirmation">
+            <button disabled={isDeletingCabin}>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+          <Modal.Window id="deleteCabinConfirmation">
+            <ConfirmDelete resourceName="cabin" onConfirm={() => deleteCabin(id)}></ConfirmDelete>
+          </Modal.Window>
+        </Modal>
       </div>
     </TableRow>
   );

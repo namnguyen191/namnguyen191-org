@@ -51,7 +51,14 @@ export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin, onCloseModal 
       discount: Number(discount),
     };
     if (isEditMode && cabin) {
-      updateCabin({ ...cabin, ...upsertData, imageFile: imageFile?.[0] });
+      updateCabin(
+        { ...cabin, ...upsertData, imageFile: imageFile?.[0] },
+        {
+          onSuccess: () => {
+            onCloseModal?.();
+          },
+        }
+      );
     } else {
       createCabin(
         { ...upsertData, imageFile: imageFile[0]! },
