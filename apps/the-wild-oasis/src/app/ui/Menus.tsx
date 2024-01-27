@@ -1,12 +1,31 @@
+import {
+  createContext,
+  FC,
+  MouseEventHandler,
+  PropsWithChildren,
+  ReactElement,
+  ReactEventHandler,
+  useContext,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
+import { HiEllipsisVertical } from 'react-icons/hi2';
 import styled from 'styled-components';
 
-export const StyledMenu = styled.div`
+import { useOutsideClick } from '../hooks/useOutsideClick';
+
+export type MenuPosition = {
+  x: number;
+  y: number;
+};
+
+const Menu = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
 `;
 
-export const StyledToggle = styled.button`
+const StyledToggle = styled.button`
   background: none;
   border: none;
   padding: 0.4rem;
@@ -25,7 +44,7 @@ export const StyledToggle = styled.button`
   }
 `;
 
-export const StyledList = styled.ul<{ position: { x: number; y: number } }>`
+const StyledList = styled.ul<{ position: MenuPosition }>`
   position: fixed;
 
   background-color: var(--color-grey-0);
@@ -36,7 +55,7 @@ export const StyledList = styled.ul<{ position: { x: number; y: number } }>`
   top: ${(props): number => props.position.y}px;
 `;
 
-export const StyledButton = styled.button`
+const StyledButton = styled.button`
   width: 100%;
   text-align: left;
   background: none;
@@ -60,3 +79,111 @@ export const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
+
+export type MenuContextValues = {
+  openId: string;
+  close: () => void;
+  open: (id: string) => void;
+  position: MenuPosition;
+  setPosition: (position: MenuPosition) => void;
+};
+const MenusContext = createContext<MenuContextValues>({
+  openId: '',
+  close: () => console.error('Please provide the close method for MenuContext'),
+  open: () => console.error('Please provide the close method for MenuContext'),
+  setPosition: () => console.error('Please provide the close method for MenuContext'),
+  position: { x: 0, y: 0 },
+});
+
+const Toggle: FC<{ id: string }> = ({ id }) => {
+  const { openId, close, open, setPosition } = useContext(MenusContext);
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const target = e.target as HTMLButtonElement;
+    const rect = target.closest('button')?.getBoundingClientRect();
+
+    if (!rect) {
+      return;
+    }
+
+    setPosition({
+      x: window.innerWidth - rect.width - rect.x,
+      y: rect.y + rect.height + 8,
+    });
+
+    if (openId === '' || openId !== id) {
+      open(id);
+    } else {
+      close();
+    }
+  };
+
+  return (
+    <StyledToggle onClick={handleClick}>
+      <HiEllipsisVertical />
+    </StyledToggle>
+  );
+};
+
+const List: FC<PropsWithChildren<{ id: string }>> = ({ id, children }) => {
+  const { openId, position, close } = useContext(MenusContext);
+
+  const ref = useOutsideClick<HTMLUListElement>(close);
+
+  if (openId !== id) return null;
+
+  return createPortal(
+    <StyledList position={position} ref={ref}>
+      {children}
+    </StyledList>,
+    document.body
+  );
+};
+
+const Button: FC<
+  PropsWithChildren<{ icon: ReactElement; onClick?: () => void; disabled?: boolean }>
+> = ({ children, icon, onClick, disabled }) => {
+  const { close } = useContext(MenusContext);
+
+  const handleClick: ReactEventHandler<HTMLButtonElement> = () => {
+    onClick?.();
+    close();
+  };
+
+  return (
+    <li>
+      <StyledButton onClick={handleClick} disabled={disabled}>
+        {icon}
+        <span>{children}</span>
+      </StyledButton>
+    </li>
+  );
+};
+
+const Menus: FC<PropsWithChildren> & {
+  Menu: typeof Menu;
+  Toggle: typeof Toggle;
+  List: typeof List;
+  Button: typeof Button;
+} = ({ children }) => {
+  const [openId, setOpenId] = useState<string>('');
+  const [position, setPosition] = useState<MenuPosition>({ x: 0, y: 0 });
+
+  const close = (): void => {
+    setOpenId('');
+  };
+  const open = setOpenId;
+
+  return (
+    <MenusContext.Provider value={{ openId, close, open, position, setPosition }}>
+      {children}
+    </MenusContext.Provider>
+  );
+};
+
+Menus.Menu = Menu;
+Menus.Toggle = Toggle;
+Menus.List = List;
+Menus.Button = Button;
+
+export default Menus;

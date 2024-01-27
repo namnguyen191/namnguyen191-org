@@ -43,7 +43,14 @@ export const ConfirmDelete: FC<ConfirmDeleteProps> = ({
       </p>
 
       <div>
-        <Button {...buttonDefaultProps} variation="secondary" disabled={disabled}>
+        <Button
+          onClick={() => {
+            onCloseModal?.();
+          }}
+          {...buttonDefaultProps}
+          variation="secondary"
+          disabled={disabled}
+        >
           Cancel
         </Button>
         <Button
