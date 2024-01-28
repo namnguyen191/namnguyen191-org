@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 
 export const StyledFilter = styled.div`
@@ -33,3 +35,42 @@ export const FilterButton = styled.button<{ active: boolean }>`
     color: var(--color-brand-50);
   }
 `;
+
+export type FilterOption = { value: string; label: string };
+export type FilterProps = {
+  filterKey: string;
+  options: FilterOption[];
+};
+export const Filter = (props: FilterProps): ReactElement => {
+  const { options, filterKey } = props;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterSearchParams = searchParams.get(filterKey);
+
+  const isActive = (option: FilterOption, index: number): boolean => {
+    if (!options[0]) {
+      return false;
+    }
+
+    if (filterSearchParams === null && index === 0) {
+      setSearchParams({ [filterKey]: options[0].value });
+      return true;
+    }
+
+    return filterSearchParams === option.value;
+  };
+
+  return (
+    <StyledFilter>
+      {options.map((option, i) => (
+        <FilterButton
+          key={option.value}
+          onClick={() => setSearchParams({ [filterKey]: option.value })}
+          active={isActive(option, i)}
+        >
+          {option.label}
+        </FilterButton>
+      ))}
+    </StyledFilter>
+  );
+};
