@@ -53,7 +53,8 @@ export const Filter = (props: FilterProps): ReactElement => {
     }
 
     if (filterSearchParams === null && index === 0) {
-      setSearchParams({ [filterKey]: options[0].value });
+      searchParams.set(filterKey, options[0].value);
+      setSearchParams(searchParams);
       return true;
     }
 
@@ -65,7 +66,10 @@ export const Filter = (props: FilterProps): ReactElement => {
       {options.map((option, i) => (
         <FilterButton
           key={option.value}
-          onClick={() => setSearchParams({ [filterKey]: option.value })}
+          onClick={() => {
+            searchParams.set(filterKey, option.value);
+            setSearchParams(searchParams);
+          }}
           active={isActive(option, i)}
         >
           {option.label}

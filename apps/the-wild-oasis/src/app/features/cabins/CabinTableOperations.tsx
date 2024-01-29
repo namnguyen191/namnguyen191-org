@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 
 import { Filter } from '../../ui/Filter';
+import { SortBy } from '../../ui/SortBy';
 import { TableOperations } from '../../ui/TableOperations';
 
 export const CabinTableOperations = (): ReactElement => {
@@ -14,6 +15,7 @@ export const CabinTableOperations = (): ReactElement => {
           { label: 'With discount', value: 'discount' },
         ]}
       />
+      <SortBy />
     </TableOperations>
   );
 };
