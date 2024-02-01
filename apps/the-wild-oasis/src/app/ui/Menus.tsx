@@ -186,4 +186,4 @@ Menus.Toggle = Toggle;
 Menus.List = List;
 Menus.Button = Button;
 
-export default Menus;
+export { Menus };

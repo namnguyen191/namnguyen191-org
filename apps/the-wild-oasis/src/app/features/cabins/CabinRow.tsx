@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Cabin } from '../../services/apiCabins';
 import { ConfirmDelete } from '../../ui/ConfirmDelete';
-import Menus from '../../ui/Menus';
+import { Menus } from '../../ui/Menus';
 import { Modal } from '../../ui/Modal';
 import { formatCurrency } from '../../utils/helpers';
 import { useDeleteCabin, useDuplicateCabin } from './cabinQueryHooks';

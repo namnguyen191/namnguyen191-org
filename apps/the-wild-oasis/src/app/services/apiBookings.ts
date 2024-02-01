@@ -1,97 +1,111 @@
-// import { getToday } from '../utils/helpers';
-// import supabase from './supabase';
+import { getToday } from '../utils/helpers';
+import { BookingRow, supabase } from './supabase';
 
-// export const getBooking = async (id: string): Promise<unknown> => {
-//   const { data, error } = await supabase
-//     .from('bookings')
-//     .select('*, cabins(*), guests(*)')
-//     .eq('id', id)
-//     .single();
+export const getBookings = async (): Promise<BookingRow[]> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, guests(full_name, email), cabins(name)');
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Booking not found');
-//   }
+  if (error) {
+    console.error(error);
+    throw new Error('Booking not found');
+  }
 
-//   return data;
-// };
+  return data;
+};
 
-// // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-// export const getBookingsAfterDate = async (date: string): Promise<unknown> => {
-//   const { data, error } = await supabase
-//     .from('bookings')
-//     .select('created_at, totalPrice, extrasPrice')
-//     .gte('created_at', date)
-//     .lte('created_at', getToday({ end: true }));
+export const getBookingById = async (id: string): Promise<BookingRow> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, cabins(*), guests(*)')
+    .eq('id', id)
+    .single();
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Bookings could not get loaded');
-//   }
+  if (error) {
+    console.error(error);
+    throw new Error('Booking not found');
+  }
 
-//   return data;
-// };
+  return data;
+};
 
-// // Returns all STAYS that are were created after the given date
-// export const getStaysAfterDate = async (date: string): Promise<unknown> => {
-//   const { data, error } = await supabase
-//     .from('bookings')
-//     // .select('*')
-//     .select('*, guests(fullName)')
-//     .gte('startDate', date)
-//     .lte('startDate', getToday());
+// Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
+export const getBookingsAfterDate = async (
+  date: string
+): Promise<Pick<BookingRow, 'created_at' | 'total_price' | 'extra_price'>[]> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('created_at, total_price, extra_price')
+    .gte('created_at', date)
+    .lte('created_at', getToday({ end: true }));
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Bookings could not get loaded');
-//   }
+  if (error) {
+    console.error(error);
+    throw new Error('Bookings could not get loaded');
+  }
 
-//   return data;
-// };
+  return data;
+};
 
-// // Activity means that there is a check in or a check out today
-// export const getStaysTodayActivity = async (): Promise<unknown> => {
-//   const { data, error } = await supabase
-//     .from('bookings')
-//     .select('*, guests(fullName, nationality, countryFlag)')
-//     .or(
-//       `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
-//     )
-//     .order('created_at');
+// Returns all STAYS that are were created after the given date
+export type BookingWithGuestLastName = BookingRow & { guests: unknown };
+export const getStaysAfterDate = async (date: string): Promise<BookingWithGuestLastName[]> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, guests(full_name)')
+    .gte('start_date', date)
+    .lte('start_date', getToday());
 
-//   // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-//   // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-//   // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
+  if (error) {
+    console.error(error);
+    throw new Error('Bookings could not get loaded');
+  }
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Bookings could not get loaded');
-//   }
-//   return data;
-// };
+  return data;
+};
 
-// export const updateBooking = async (id: string, obj: unknown): Promise<unknown> => {
-//   const { data, error } = await supabase
-//     .from('bookings')
-//     .update(obj)
-//     .eq('id', id)
-//     .select()
-//     .single();
+// Activity means that there is a check in or a check out today
+export const getStaysTodayActivity = async (): Promise<BookingRow[]> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, guests(full_name, nationality, country_flag)')
+    .or(
+      `and(status.eq.unconfirmed,start_date.eq.${getToday()}),and(status.eq.checked-in,end_date.eq.${getToday()})`
+    )
+    .order('created_at');
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Booking could not be updated');
-//   }
-//   return data;
-// };
+  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
+  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
+  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
 
-// export const deleteBooking = async (id: string): Promise<unknown> => {
-//   // REMEMBER RLS POLICIES
-//   const { data, error } = await supabase.from('bookings').delete().eq('id', id);
+  if (error) {
+    console.error(error);
+    throw new Error('Bookings could not get loaded');
+  }
+  return data;
+};
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error('Booking could not be deleted');
-//   }
-//   return data;
-// };
+export const updateBooking = async (id: string, obj: Partial<BookingRow>): Promise<BookingRow> => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .update(obj)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error('Booking could not be updated');
+  }
+  return data;
+};
+
+export const deleteBooking = async (id: string): Promise<void> => {
+  // REMEMBER RLS POLICIES
+  const { error } = await supabase.from('bookings').delete().eq('id', id);
+
+  if (error) {
+    console.error(error);
+    throw new Error('Booking could not be deleted');
+  }
+};

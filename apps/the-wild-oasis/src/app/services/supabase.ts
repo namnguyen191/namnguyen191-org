@@ -21,61 +21,31 @@ export type SettingRow = {
   min_booking_length: number;
 };
 
+export type BookingRow = {
+  cabin_id: number | null;
+  cabin_price: number | null;
+  created_at: string;
+  end_date: string | null;
+  extra_price: number | null;
+  guest_id: number | null;
+  has_breakfast: boolean | null;
+  has_paid: boolean | null;
+  id: number;
+  num_guests: number | null;
+  num_nights: number | null;
+  observations: string | null;
+  start_date: string | null;
+  status: string | null;
+  total_price: number | null;
+};
+
 export interface Database {
   public: {
     Tables: {
       bookings: {
-        Row: {
-          cabin_id: number | null;
-          cabin_price: number | null;
-          created_at: string;
-          end_date: string | null;
-          extra_price: number | null;
-          guest_id: number | null;
-          has_breakfast: boolean | null;
-          has_paid: boolean | null;
-          id: number;
-          num_guests: number | null;
-          num_nights: number | null;
-          observations: string | null;
-          start_date: string | null;
-          status: string | null;
-          total_price: number | null;
-        };
-        Insert: {
-          cabin_id?: number | null;
-          cabin_price?: number | null;
-          created_at?: string;
-          end_date?: string | null;
-          extra_price?: number | null;
-          guest_id?: number | null;
-          has_breakfast?: boolean | null;
-          has_paid?: boolean | null;
-          id?: number;
-          num_guests?: number | null;
-          num_nights?: number | null;
-          observations?: string | null;
-          start_date?: string | null;
-          status?: string | null;
-          total_price?: number | null;
-        };
-        Update: {
-          cabin_id?: number | null;
-          cabin_price?: number | null;
-          created_at?: string;
-          end_date?: string | null;
-          extra_price?: number | null;
-          guest_id?: number | null;
-          has_breakfast?: boolean | null;
-          has_paid?: boolean | null;
-          id?: number;
-          num_guests?: number | null;
-          num_nights?: number | null;
-          observations?: string | null;
-          start_date?: string | null;
-          status?: string | null;
-          total_price?: number | null;
-        };
+        Row: BookingRow;
+        Insert: Partial<BookingRow>;
+        Update: Partial<BookingRow>;
         Relationships: [
           {
             foreignKeyName: 'bookings_cabin_id_fkey';
