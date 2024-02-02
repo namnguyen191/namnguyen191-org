@@ -47,15 +47,9 @@ export const Filter = (props: FilterProps): ReactElement => {
   const [searchParams, setSearchParams] = useSearchParams();
   const filterSearchParams = searchParams.get(filterKey);
 
-  const isActive = (option: FilterOption, index: number): boolean => {
+  const isActive = (option: FilterOption): boolean => {
     if (!options[0]) {
       return false;
-    }
-
-    if (filterSearchParams === null && index === 0) {
-      searchParams.set(filterKey, options[0].value);
-      setSearchParams(searchParams);
-      return true;
     }
 
     return filterSearchParams === option.value;
@@ -63,14 +57,14 @@ export const Filter = (props: FilterProps): ReactElement => {
 
   return (
     <StyledFilter>
-      {options.map((option, i) => (
+      {options.map((option) => (
         <FilterButton
           key={option.value}
           onClick={() => {
             searchParams.set(filterKey, option.value);
             setSearchParams(searchParams);
           }}
-          active={isActive(option, i)}
+          active={isActive(option)}
         >
           {option.label}
         </FilterButton>

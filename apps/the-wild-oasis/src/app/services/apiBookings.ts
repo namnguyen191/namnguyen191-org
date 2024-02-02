@@ -1,10 +1,24 @@
 import { getToday } from '../utils/helpers';
 import { BookingRow, supabase } from './supabase';
 
-export const getBookings = async (): Promise<BookingRow[]> => {
-  const { data, error } = await supabase
-    .from('bookings')
-    .select('*, guests(full_name, email), cabins(name)');
+export type FilterOperation = {
+  operation?: 'eq' | 'gt' | 'gte' | 'lt' | 'lte';
+  key: string;
+  value: string | number | boolean;
+};
+
+export const getBookings = async (filters?: FilterOperation[]): Promise<BookingRow[]> => {
+  const query = supabase.from('bookings').select('*, guests(full_name, email), cabins(name)');
+  if (filters?.length) {
+    for (const filter of filters) {
+      if (typeof query[filter.operation ?? 'eq'] === 'function') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (query as unknown as any)[filter.operation ?? 'eq'](filter.key, filter.value);
+      }
+    }
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(error);

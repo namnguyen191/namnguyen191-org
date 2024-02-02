@@ -1,22 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { getBookings } from '../../services/apiBookings';
+import { FilterOperation, getBookings } from '../../services/apiBookings';
 import { BookingRow } from '../../services/supabase';
 
 const ALL_BOOKINGS_QUERY_KEY = 'bookings';
 
-export const useBookings = (): {
+export const useBookings = (
+  filters?: FilterOperation[]
+): {
   readonly bookings: BookingRow[] | undefined;
   readonly error: Error | null;
   readonly isLoadingBookings: boolean;
 } => {
+  const filterKey = 'none' + (filters ?? []).map((filter) => `${filter.key}-${filter.value}`);
+
   const {
     isLoading: isLoadingBookings,
     data: bookings,
     error,
   } = useQuery({
-    queryKey: [ALL_BOOKINGS_QUERY_KEY],
-    queryFn: getBookings,
+    queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey],
+    queryFn: () => getBookings(filters),
   });
 
   return { bookings, error, isLoadingBookings } as const;

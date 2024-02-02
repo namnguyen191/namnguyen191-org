@@ -1,14 +1,26 @@
 import { FC } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
+import { FilterOperation } from '../../services/apiBookings';
 import { Empty } from '../../ui/Empty';
 import { Menus } from '../../ui/Menus';
 import { Spinner } from '../../ui/Spinner';
 import { Table } from '../../ui/Table';
 import { useBookings } from './bookingQueryHooks';
 import { BookingRow } from './BookingRow';
+import { StatusFilterKey, StatusFilterValue } from './BookingTableOperations';
 
 export const BookingTable: FC = () => {
-  const { bookings, isLoadingBookings } = useBookings();
+  const [searchParams] = useSearchParams();
+
+  const statusFilter: StatusFilterValue | null = searchParams.get(
+    StatusFilterKey
+  ) as StatusFilterValue;
+
+  const filters: FilterOperation[] =
+    statusFilter && statusFilter !== 'all' ? [{ key: 'status', value: statusFilter }] : [];
+  console.log('Nam data is: ', filters);
+  const { bookings, isLoadingBookings } = useBookings(filters);
 
   if (isLoadingBookings) {
     return <Spinner />;
