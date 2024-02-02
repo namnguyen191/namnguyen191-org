@@ -3,6 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 
 import { Select } from './Select';
 
+export const SortByParamKey = 'sortBy';
+export const SortOrderParamKey = 'sortOrder';
+
 export type SortOption = {
   label: string;
   value: `${string}-${string}`;
@@ -26,8 +29,8 @@ export const SortBy = (props: SortByProps): ReactElement => {
       return;
     }
 
-    searchParams.set('sortBy', sortBy);
-    searchParams.set('sortOrder', sortOrder);
+    searchParams.set(SortByParamKey, sortBy);
+    searchParams.set(SortOrderParamKey, sortOrder);
     setSearchParams(searchParams);
   };
 

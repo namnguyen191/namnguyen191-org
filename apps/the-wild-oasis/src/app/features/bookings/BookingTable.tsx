@@ -2,8 +2,10 @@ import { FC } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { FilterOperation } from '../../services/apiBookings';
+import { BookingRow as BookingRowType } from '../../services/supabase';
 import { Empty } from '../../ui/Empty';
 import { Menus } from '../../ui/Menus';
+import { SortByParamKey, SortOrderParamKey } from '../../ui/SortBy';
 import { Spinner } from '../../ui/Spinner';
 import { Table } from '../../ui/Table';
 import { useBookings } from './bookingQueryHooks';
@@ -19,14 +21,41 @@ export const BookingTable: FC = () => {
 
   const filters: FilterOperation[] =
     statusFilter && statusFilter !== 'all' ? [{ key: 'status', value: statusFilter }] : [];
-  console.log('Nam data is: ', filters);
   const { bookings, isLoadingBookings } = useBookings(filters);
+
+  let bookingsWithOperation = bookings ?? [];
+
+  const sortBy = searchParams.get(SortByParamKey);
+  const sortOrder = searchParams.get(SortOrderParamKey);
+  if (sortBy && sortOrder) {
+    const sortByParamsExist = (
+      param: unknown,
+      booking: BookingRowType
+    ): param is keyof typeof booking => {
+      return Object.prototype.hasOwnProperty.call(booking, sortBy);
+    };
+    bookingsWithOperation = bookingsWithOperation.sort((bookingA, bookingB) => {
+      let result = 0;
+      if (sortByParamsExist(sortBy, bookingA)) {
+        if ((bookingA[sortBy] ?? 0) > (bookingB[sortBy] ?? 0)) {
+          result = 1;
+        } else {
+          result = -1;
+        }
+      }
+      if (sortOrder === 'des') {
+        result = -1 * result;
+      }
+
+      return result;
+    });
+  }
 
   if (isLoadingBookings) {
     return <Spinner />;
   }
 
-  if (!bookings || bookings?.length === 0) {
+  if (bookingsWithOperation.length === 0) {
     return <Empty resourceName="bookings" />;
   }
 
@@ -43,7 +72,7 @@ export const BookingTable: FC = () => {
         </Table.Header>
 
         <Table.Body
-          data={bookings}
+          data={bookingsWithOperation}
           render={(booking) => <BookingRow key={booking.id} booking={booking} />}
         />
       </Table>

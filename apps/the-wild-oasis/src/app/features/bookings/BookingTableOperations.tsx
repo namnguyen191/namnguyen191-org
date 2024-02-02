@@ -22,13 +22,13 @@ export const BookingTableOperations: FC = () => {
 
       <SortBy
         options={[
-          { value: 'startDate-desc', label: 'Sort by date (recent first)' },
-          { value: 'startDate-asc', label: 'Sort by date (earlier first)' },
+          { value: 'start_date-des', label: 'Sort by date (recent first)' },
+          { value: 'start_date-asc', label: 'Sort by date (earlier first)' },
           {
-            value: 'totalPrice-desc',
+            value: 'total_price-des',
             label: 'Sort by amount (high first)',
           },
-          { value: 'totalPrice-asc', label: 'Sort by amount (low first)' },
+          { value: 'total_price-asc', label: 'Sort by amount (low first)' },
         ]}
       />
     </TableOperations>
