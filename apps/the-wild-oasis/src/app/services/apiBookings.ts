@@ -7,7 +7,16 @@ export type FilterOperation = {
   value: string | number | boolean;
 };
 
-export const getBookings = async (filters?: FilterOperation[]): Promise<BookingRow[]> => {
+export type SortOperation = {
+  field: string;
+  asc?: boolean;
+};
+
+export const getBookings = async (args: {
+  filters?: FilterOperation[];
+  sort?: SortOperation;
+}): Promise<BookingRow[]> => {
+  const { filters, sort } = args;
   const query = supabase.from('bookings').select('*, guests(full_name, email), cabins(name)');
   if (filters?.length) {
     for (const filter of filters) {
@@ -16,6 +25,12 @@ export const getBookings = async (filters?: FilterOperation[]): Promise<BookingR
         (query as unknown as any)[filter.operation ?? 'eq'](filter.key, filter.value);
       }
     }
+  }
+
+  if (sort) {
+    query.order(sort.field, {
+      ascending: sort.asc,
+    });
   }
 
   const { data, error } = await query;
