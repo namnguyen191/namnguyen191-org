@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { FilterOperation } from '../../services/apiBookings';
 import { Empty } from '../../ui/Empty';
 import { Menus } from '../../ui/Menus';
+import { Pagination, PAGINATION_PARAM } from '../../ui/Pagination';
 import { SortByParamKey, SortOrderParamKey } from '../../ui/SortBy';
 import { Spinner } from '../../ui/Spinner';
 import { Table } from '../../ui/Table';
@@ -22,10 +23,16 @@ export const BookingTable: FC = () => {
     statusFilter && statusFilter !== 'all' ? [{ key: 'status', value: statusFilter }] : [];
   const sortBy = searchParams.get(SortByParamKey);
   const sortOrder = searchParams.get(SortOrderParamKey);
+  const page = Number(searchParams.get(PAGINATION_PARAM) ?? '1');
 
-  const { bookings, isLoadingBookings } = useBookings({
+  const {
+    bookings,
+    isLoadingBookings,
+    count: bookingsTotalCount,
+  } = useBookings({
     filters,
     sort: sortBy ? { field: sortBy, asc: sortOrder === 'asc' } : undefined,
+    pagination: { page },
   });
 
   if (isLoadingBookings) {
@@ -52,6 +59,10 @@ export const BookingTable: FC = () => {
           data={bookings}
           render={(booking) => <BookingRow key={booking.id} booking={booking} />}
         />
+
+        <Table.Footer>
+          <Pagination totalCount={bookingsTotalCount ?? 0} />
+        </Table.Footer>
       </Table>
     </Menus>
   );

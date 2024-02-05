@@ -1,3 +1,4 @@
+import { PAGE_SIZE } from '../utils/global-const';
 import { getToday } from '../utils/helpers';
 import { BookingRow, supabase } from './supabase';
 
@@ -12,12 +13,22 @@ export type SortOperation = {
   asc?: boolean;
 };
 
+export type PaginationOperation = {
+  page: number;
+};
+
 export const getBookings = async (args: {
   filters?: FilterOperation[];
   sort?: SortOperation;
-}): Promise<BookingRow[]> => {
-  const { filters, sort } = args;
-  const query = supabase.from('bookings').select('*, guests(full_name, email), cabins(name)');
+  pagination?: PaginationOperation;
+}): Promise<{
+  bookings: BookingRow[];
+  count: number;
+}> => {
+  const { filters, sort, pagination } = args;
+  const query = supabase
+    .from('bookings')
+    .select('*, guests(full_name, email), cabins(name)', { count: 'exact' });
   if (filters?.length) {
     for (const filter of filters) {
       if (typeof query[filter.operation ?? 'eq'] === 'function') {
@@ -33,14 +44,20 @@ export const getBookings = async (args: {
     });
   }
 
-  const { data, error } = await query;
+  if (pagination) {
+    const from = (pagination.page - 1) * PAGE_SIZE;
+    const to = pagination.page * PAGE_SIZE;
+    query.range(from, to);
+  }
+
+  const { data: bookings, error, count } = await query;
 
   if (error) {
     console.error(error);
     throw new Error('Booking not found');
   }
 
-  return data;
+  return { bookings, count: count ?? 0 };
 };
 
 export const getBookingById = async (id: string): Promise<BookingRow> => {

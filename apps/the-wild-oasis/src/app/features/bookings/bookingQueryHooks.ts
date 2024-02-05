@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { FilterOperation, getBookings, SortOperation } from '../../services/apiBookings';
+import {
+  FilterOperation,
+  getBookings,
+  PaginationOperation,
+  SortOperation,
+} from '../../services/apiBookings';
 import { BookingRow } from '../../services/supabase';
 
 const ALL_BOOKINGS_QUERY_KEY = 'bookings';
@@ -8,27 +13,35 @@ const ALL_BOOKINGS_QUERY_KEY = 'bookings';
 export const useBookings = (args: {
   filters?: FilterOperation[];
   sort?: SortOperation;
+  pagination?: PaginationOperation;
 }): {
   readonly bookings: BookingRow[] | undefined;
+  readonly count: number | undefined;
   readonly error: Error | null;
   readonly isLoadingBookings: boolean;
 } => {
-  const { filters, sort } = args;
+  const { filters, sort, pagination } = args;
   const filterKey =
     'none' +
     (filters ?? []).map((filter) => `${filter.key}-${filter.value}`) +
-    (sort ? `${sort.field} - ${sort?.asc ? 'asc' : 'des'}` : '');
+    (sort ? `${sort.field} - ${sort?.asc ? 'asc' : 'des'}` : '') +
+    (pagination?.page ?? '');
 
   const {
     isLoading: isLoadingBookings,
-    data: bookings,
+    data: bookingsData,
     error,
   } = useQuery({
     queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey],
-    queryFn: () => getBookings({ filters, sort }),
+    queryFn: () => getBookings({ filters, sort, pagination }),
   });
 
-  return { bookings, error, isLoadingBookings } as const;
+  return {
+    bookings: bookingsData?.bookings,
+    count: bookingsData?.count,
+    error,
+    isLoadingBookings,
+  } as const;
 };
 
 // export const useDeleteCabin = (): {
