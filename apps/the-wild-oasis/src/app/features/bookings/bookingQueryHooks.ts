@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   FilterOperation,
@@ -7,6 +7,7 @@ import {
   SortOperation,
 } from '../../services/apiBookings';
 import { BookingRow } from '../../services/supabase';
+import { PAGE_SIZE } from '../../utils/global-const';
 
 const ALL_BOOKINGS_QUERY_KEY = 'bookings';
 
@@ -21,20 +22,34 @@ export const useBookings = (args: {
   readonly isLoadingBookings: boolean;
 } => {
   const { filters, sort, pagination } = args;
-  const filterKey =
-    'none' +
-    (filters ?? []).map((filter) => `${filter.key}-${filter.value}`) +
-    (sort ? `${sort.field} - ${sort?.asc ? 'asc' : 'des'}` : '') +
-    (pagination?.page ?? '');
+  const filterKey = 'none' + (filters ?? []).map((filter) => `${filter.key}-${filter.value}`);
+  const sortKey = sort ? `${sort.field} - ${sort?.asc ? 'asc' : 'des'}` : '';
+  const paginationKey = pagination?.page ?? '1';
+  const queryClient = useQueryClient();
 
   const {
     isLoading: isLoadingBookings,
     data: bookingsData,
     error,
   } = useQuery({
-    queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey],
+    queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey, sortKey, paginationKey],
     queryFn: () => getBookings({ filters, sort, pagination }),
   });
+
+  const pageCount = Math.ceil((bookingsData?.count ?? 0) / PAGE_SIZE);
+  const currentPage = pagination?.page ?? 1;
+  if (currentPage > 1) {
+    queryClient.prefetchQuery({
+      queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey, sortKey, currentPage - 1],
+      queryFn: () => getBookings({ filters, sort, pagination }),
+    });
+  }
+  if (currentPage < pageCount) {
+    queryClient.prefetchQuery({
+      queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey, sortKey, currentPage + 1],
+      queryFn: () => getBookings({ filters, sort, pagination }),
+    });
+  }
 
   return {
     bookings: bookingsData?.bookings,
