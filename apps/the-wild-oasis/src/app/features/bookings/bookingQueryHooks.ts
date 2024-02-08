@@ -1,7 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  BookingWithGuestInfoAndCabinName,
   FilterOperation,
+  getBookingById,
   getBookings,
   PaginationOperation,
   SortOperation,
@@ -41,13 +43,13 @@ export const useBookings = (args: {
   if (currentPage > 1) {
     queryClient.prefetchQuery({
       queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey, sortKey, currentPage - 1],
-      queryFn: () => getBookings({ filters, sort, pagination }),
+      queryFn: () => getBookings({ filters, sort, pagination: { page: currentPage - 1 } }),
     });
   }
   if (currentPage < pageCount) {
     queryClient.prefetchQuery({
       queryKey: [ALL_BOOKINGS_QUERY_KEY, filterKey, sortKey, currentPage + 1],
-      queryFn: () => getBookings({ filters, sort, pagination }),
+      queryFn: () => getBookings({ filters, sort, pagination: { page: currentPage + 1 } }),
     });
   }
 
@@ -56,6 +58,31 @@ export const useBookings = (args: {
     count: bookingsData?.count,
     error,
     isLoadingBookings,
+  } as const;
+};
+
+export const useBookingDetail = (args: {
+  id: string;
+}): {
+  readonly booking: BookingWithGuestInfoAndCabinName | undefined;
+  readonly error: Error | null;
+  readonly isLoadingBooking: boolean;
+} => {
+  const { id } = args;
+
+  const {
+    isLoading: isLoadingBooking,
+    data: bookingsData,
+    error,
+  } = useQuery({
+    queryKey: [ALL_BOOKINGS_QUERY_KEY, `id=${id}`],
+    queryFn: () => getBookingById(id),
+  });
+
+  return {
+    booking: bookingsData,
+    error,
+    isLoadingBooking,
   } as const;
 };
 

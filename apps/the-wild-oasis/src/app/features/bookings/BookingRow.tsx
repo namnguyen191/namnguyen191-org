@@ -1,8 +1,11 @@
 import { format, isToday } from 'date-fns';
 import { FC } from 'react';
+import { HiEye } from 'react-icons/hi2';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { BookingRow as BookingRowType } from '../../services/supabase';
+import { Menus } from '../../ui/Menus';
 import { Table } from '../../ui/Table';
 import { Tag } from '../../ui/Tag';
 import { formatCurrency } from '../../utils/helpers';
@@ -38,6 +41,7 @@ const Amount = styled.div`
 // eslint-disable-next-line
 export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
   booking: {
+    id,
     start_date,
     end_date,
     num_nights,
@@ -47,6 +51,7 @@ export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
     cabins: { name: cabinName },
   },
 }) => {
+  const navigate = useNavigate();
   const statusToTagName = {
     unconfirmed: 'blue',
     'checked-in': 'green',
@@ -76,6 +81,17 @@ export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
       <Tag type={statusToTagName[status as 'unconfirmed']}>{status.replace('-', ' ')}</Tag>
 
       <Amount>{formatCurrency(total_price)}</Amount>
+
+      <Menus>
+        <Menus.Toggle id={id.toString()}></Menus.Toggle>
+        <Menus.Menu>
+          <Menus.List id={id.toString()}>
+            <Menus.Button icon={<HiEye />} onClick={() => navigate(`/bookings/${id}`)}>
+              View details
+            </Menus.Button>
+          </Menus.List>
+        </Menus.Menu>
+      </Menus>
     </Table.Row>
   );
 };

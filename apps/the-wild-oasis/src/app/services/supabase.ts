@@ -22,21 +22,31 @@ export type SettingRow = {
 };
 
 export type BookingRow = {
-  cabin_id: number | null;
-  cabin_price: number | null;
+  cabin_id: number;
+  cabin_price: number;
   created_at: string;
-  end_date: string | null;
-  extra_price: number | null;
-  guest_id: number | null;
-  has_breakfast: boolean | null;
-  has_paid: boolean | null;
+  end_date: string;
+  extra_price: number;
+  guest_id: number;
+  has_breakfast: boolean;
+  has_paid: boolean;
   id: number;
-  num_guests: number | null;
-  num_nights: number | null;
-  observations: string | null;
-  start_date: string | null;
-  status: string | null;
-  total_price: number | null;
+  num_guests: number;
+  num_nights: number;
+  observations: string;
+  start_date: string;
+  status: string;
+  total_price: number;
+};
+
+export type GuestRow = {
+  country_flag: string;
+  created_at: string;
+  email: string;
+  full_name: string;
+  id: number;
+  national_id_number: string;
+  nationality: string;
 };
 
 export interface Database {
@@ -70,33 +80,9 @@ export interface Database {
         Relationships: [];
       };
       guests: {
-        Row: {
-          country_flag: string | null;
-          created_at: string;
-          email: string | null;
-          full_name: string | null;
-          id: number;
-          national_id_number: string | null;
-          nationality: string | null;
-        };
-        Insert: {
-          country_flag?: string | null;
-          created_at?: string;
-          email?: string | null;
-          full_name?: string | null;
-          id?: number;
-          national_id_number?: string | null;
-          nationality?: string | null;
-        };
-        Update: {
-          country_flag?: string | null;
-          created_at?: string;
-          email?: string | null;
-          full_name?: string | null;
-          id?: number;
-          national_id_number?: string | null;
-          nationality?: string | null;
-        };
+        Row: GuestRow;
+        Insert: Partial<GuestRow>;
+        Update: Partial<GuestRow>;
         Relationships: [];
       };
       settings: {

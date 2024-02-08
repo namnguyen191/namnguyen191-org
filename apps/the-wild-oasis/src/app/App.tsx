@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { Account } from './pages/Account';
+import { Booking } from './pages/Booking';
 import { Bookings } from './pages/Bookings';
 import { Cabins } from './pages/Cabins';
 import { Dashboard } from './pages/Dashboard';
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/bookings',
         element: <Bookings />,
+      },
+      {
+        path: '/bookings/:id',
+        element: <Booking />,
       },
       {
         path: '/cabins',

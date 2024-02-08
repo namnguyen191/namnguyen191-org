@@ -8,6 +8,7 @@ import {
 } from 'react-icons/hi2';
 import styled from 'styled-components';
 
+import { BookingWithGuestInfoAndCabinName } from '../../services/apiBookings';
 import { DataItem } from '../../ui/DataItem';
 import { Flag } from '../../ui/Flag';
 import { formatCurrency, formatDistanceFromNow } from '../../utils/helpers';
@@ -101,22 +102,23 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
-// A purely presentational component
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BookingDataBox: FC<any> = ({ booking }) => {
+export type BookingDataBoxProps = {
+  booking: BookingWithGuestInfoAndCabinName;
+};
+export const BookingDataBox: FC<BookingDataBoxProps> = ({ booking }) => {
   const {
-    created_at: createdAt,
-    startDate,
-    endDate,
-    numNights,
-    numGuests,
-    cabinPrice,
-    extrasPrice,
-    totalPrice,
-    hasBreakfast,
+    created_at,
+    start_date,
+    end_date,
+    num_nights,
+    num_guests,
+    cabin_price,
+    extra_price,
+    total_price,
+    has_breakfast,
     observations,
-    isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+    has_paid,
+    guests: { full_name: guestName, email, nationality, country_flag, national_id_number },
     cabins: { name: cabinName },
   } = booking;
 
@@ -126,27 +128,27 @@ export const BookingDataBox: FC<any> = ({ booking }) => {
         <div>
           <HiOutlineHomeModern />
           <p>
-            {numNights} nights in Cabin <span>{cabinName}</span>
+            {num_nights} nights in Cabin <span>{cabinName}</span>
           </p>
         </div>
 
         <p>
-          {format(new Date(startDate), 'EEE, MMM dd yyyy')} (
-          {isToday(new Date(startDate)) ? 'Today' : formatDistanceFromNow(startDate)}) &mdash;{' '}
-          {format(new Date(endDate), 'EEE, MMM dd yyyy')}
+          {format(new Date(start_date), 'EEE, MMM dd yyyy')} (
+          {isToday(new Date(start_date)) ? 'Today' : formatDistanceFromNow(start_date)}) &mdash;{' '}
+          {format(new Date(end_date), 'EEE, MMM dd yyyy')}
         </p>
       </Header>
 
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {country_flag && <Flag src={country_flag} alt={`Flag of ${nationality}`} />}
           <p>
-            {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ''}
+            {guestName} {num_guests > 1 ? `+ ${num_guests - 1} guests` : ''}
           </p>
           <span>&bull;</span>
           <p>{email}</p>
           <span>&bull;</span>
-          <p>National ID {nationalID}</p>
+          <p>National ID {national_id_number}</p>
         </Guest>
 
         {observations && (
@@ -156,23 +158,23 @@ export const BookingDataBox: FC<any> = ({ booking }) => {
         )}
 
         <DataItem icon={<HiOutlineCheckCircle />} label="Breakfast included?">
-          {hasBreakfast ? 'Yes' : 'No'}
+          {has_breakfast ? 'Yes' : 'No'}
         </DataItem>
 
-        <Price isPaid={isPaid}>
+        <Price isPaid={has_paid}>
           <DataItem icon={<HiOutlineCurrencyDollar />} label={'Total price'}>
-            {formatCurrency(totalPrice)}
+            {formatCurrency(total_price)}
 
-            {hasBreakfast &&
-              ` (${formatCurrency(cabinPrice)} cabin + ${formatCurrency(extrasPrice)} breakfast)`}
+            {has_breakfast &&
+              ` (${formatCurrency(cabin_price)} cabin + ${formatCurrency(extra_price)} breakfast)`}
           </DataItem>
 
-          <p>{isPaid ? 'Paid' : 'Will pay at property'}</p>
+          <p>{has_breakfast ? 'Paid' : 'Will pay at property'}</p>
         </Price>
       </Section>
 
       <Footer>
-        <p>Booked {format(new Date(createdAt), 'EEE, MMM dd yyyy, p')}</p>
+        <p>Booked {format(new Date(created_at), 'EEE, MMM dd yyyy, p')}</p>
       </Footer>
     </StyledBookingDataBox>
   );

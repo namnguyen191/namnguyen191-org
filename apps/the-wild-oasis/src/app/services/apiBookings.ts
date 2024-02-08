@@ -1,6 +1,6 @@
 import { PAGE_SIZE } from '../utils/global-const';
 import { getToday } from '../utils/helpers';
-import { BookingRow, supabase } from './supabase';
+import { BookingRow, GuestRow, supabase } from './supabase';
 
 export type FilterOperation = {
   operation?: 'eq' | 'gt' | 'gte' | 'lt' | 'lte';
@@ -60,10 +60,13 @@ export const getBookings = async (args: {
   return { bookings, count: count ?? 0 };
 };
 
-export const getBookingById = async (id: string): Promise<BookingRow> => {
+export type BookingWithGuestInfoAndCabinName = BookingRow & { guests: GuestRow } & {
+  cabins: { name: string };
+};
+export const getBookingById = async (id: string): Promise<BookingWithGuestInfoAndCabinName> => {
   const { data, error } = await supabase
     .from('bookings')
-    .select('*, cabins(*), guests(*)')
+    .select('*, cabins(name), guests(*)')
     .eq('id', id)
     .single();
 
@@ -72,7 +75,7 @@ export const getBookingById = async (id: string): Promise<BookingRow> => {
     throw new Error('Booking not found');
   }
 
-  return data;
+  return data as BookingWithGuestInfoAndCabinName;
 };
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
