@@ -60,8 +60,11 @@ export const CreateCabinForm: FC<CreateCabinFormProps> = ({ cabin, onCloseModal 
         }
       );
     } else {
+      if (!imageFile[0]) {
+        return;
+      }
       createCabin(
-        { ...upsertData, imageFile: imageFile[0]! },
+        { ...upsertData, imageFile: imageFile[0] },
         {
           onSuccess: () => {
             reset();
