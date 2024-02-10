@@ -71,6 +71,14 @@
       "options": {
         "jestConfig": "apps/angular-patterns/jest.config.ts"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.app.json --noEmit"],
+        "cwd": "apps/angular-patterns",
+        "forwardAllArgs": false
+      }
     }
   }
 }
