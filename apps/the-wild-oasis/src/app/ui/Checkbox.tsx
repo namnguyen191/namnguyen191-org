@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react';
+import { ChangeEventHandler, FC, PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 export const StyledCheckbox = styled.div`
@@ -27,8 +27,8 @@ export const StyledCheckbox = styled.div`
 `;
 
 export type CheckboxProps = {
-  checked: boolean;
-  onChange?: () => void;
+  checked?: boolean;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
   disabled?: boolean;
   id?: string;
 };

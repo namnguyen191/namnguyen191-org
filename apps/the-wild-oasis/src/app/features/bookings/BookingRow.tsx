@@ -1,5 +1,6 @@
 import { format, isToday } from 'date-fns';
 import { FC } from 'react';
+import { BiBell } from 'react-icons/bi';
 import { HiEye } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -89,6 +90,11 @@ export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
             <Menus.Button icon={<HiEye />} onClick={() => navigate(`/bookings/${id}`)}>
               View details
             </Menus.Button>
+            {status === 'unconfirmed' && (
+              <Menus.Button icon={<BiBell />} onClick={() => navigate(`/checkin/${id}`)}>
+                Check-In
+              </Menus.Button>
+            )}
           </Menus.List>
         </Menus.Menu>
       </Menus>
