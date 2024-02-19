@@ -4,16 +4,23 @@ import toast from 'react-hot-toast';
 import { updateBooking } from '../../services/apiBookings';
 import { BookingRow } from '../../services/supabase';
 
-export const useCheckIn = (
-  bookingId: string
-): {
-  readonly checkIn: UseMutateFunction<BookingRow, Error, void, unknown>;
+export type BreakfastMutation = Pick<BookingRow, 'has_breakfast' | 'extra_price' | 'total_price'>;
+type CheckinBookingArgs = {
+  bookingId: string;
+  breakfast?: BreakfastMutation;
+};
+export const useCheckIn = (): {
+  readonly checkIn: UseMutateFunction<BookingRow, Error, CheckinBookingArgs, unknown>;
   readonly isCheckingIn: boolean;
 } => {
   const queryClient = useQueryClient();
 
   const { mutate: checkIn, isPending: isCheckingIn } = useMutation({
-    mutationFn: () => updateBooking(bookingId, { status: 'checked-in', has_paid: true }),
+    mutationFn: (args: CheckinBookingArgs) => {
+      const { bookingId, breakfast = {} } = args;
+
+      return updateBooking(bookingId, { status: 'checked-in', has_paid: true, ...breakfast });
+    },
     onSuccess: (data: BookingRow) => {
       toast.success(`Booking ${data.id} check-in successfully!`);
       queryClient.invalidateQueries({

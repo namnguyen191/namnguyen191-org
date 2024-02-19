@@ -13,7 +13,8 @@ import { Spinner } from '../../ui/Spinner';
 import { formatCurrency } from '../../utils/helpers';
 import { BookingDataBox } from '../bookings/BookingDataBox';
 import { useBookingDetail } from '../bookings/bookingQueryHooks';
-import { useCheckIn } from './checkinHooks';
+import { useSettings } from '../settings/settingQueryHooks';
+import { BreakfastMutation, useCheckIn } from './checkinHooks';
 
 const Box = styled.div`
   /* Box */
@@ -28,29 +29,40 @@ export const CheckinBooking: FC = () => {
   const params = useParams();
   const bookingId = params.id as string;
   const { booking, isLoadingBooking, error } = useBookingDetail({ id: bookingId });
-  const { checkIn, isCheckingIn } = useCheckIn(bookingId);
+  const { checkIn, isCheckingIn } = useCheckIn();
+  const { settings, isLoadingSettings } = useSettings();
   const [confirmPaid, setConfirmPaid] = useState<boolean>(false);
+  const [includeBreakfast, setIncludeBreakfast] = useState<boolean>(false);
 
   useEffect(() => {
     setConfirmPaid(!!booking?.has_paid);
-  }, [booking?.has_paid]);
+    setIncludeBreakfast(!!booking?.has_breakfast);
+  }, [booking?.has_paid, booking?.has_breakfast]);
 
-  if (isLoadingBooking || isCheckingIn) {
+  if (isLoadingBooking || isCheckingIn || isLoadingSettings) {
     return <Spinner />;
   }
 
-  if (error || !booking) {
+  if (error || !booking || !settings) {
     return <span>Something went wrong please try again later!</span>;
   }
 
-  const { guests: guest, total_price, has_paid } = booking;
+  const { guests: guest, total_price, has_paid, status, cabin_price } = booking;
+  if (status === 'checked-in') {
+    return <h4>This booking has already been checked-in</h4>;
+  }
+
+  const totalPrice = includeBreakfast ? cabin_price + settings.breakfast_price : total_price;
 
   const handleCheckin = (): void => {
-    if (has_paid) {
+    if (!confirmPaid) {
       return;
     }
 
-    checkIn();
+    const breakfast: BreakfastMutation | undefined = includeBreakfast
+      ? { has_breakfast: true, extra_price: settings.breakfast_price, total_price: totalPrice }
+      : undefined;
+    checkIn({ bookingId, breakfast });
   };
 
   return (
@@ -65,16 +77,31 @@ export const CheckinBooking: FC = () => {
       <Box>
         <Checkbox
           onChange={() => {
+            setIncludeBreakfast((oldValue) => !oldValue);
+          }}
+          checked={includeBreakfast}
+          disabled={has_paid}
+          id="include_breakfast"
+        >
+          Add breakfast for {formatCurrency(settings.breakfast_price)}
+        </Checkbox>
+      </Box>
+
+      <Box>
+        <Checkbox
+          onChange={() => {
             setConfirmPaid((oldValue) => !oldValue);
           }}
           checked={confirmPaid}
           disabled={has_paid}
           id="confirm"
         >
-          I confirm that {guest.full_name} has paid the total amount of{' '}
-          {formatCurrency(total_price)}
+          I confirm that {guest.full_name} has paid the total amount of {formatCurrency(totalPrice)}{' '}
+          {includeBreakfast &&
+            `(${formatCurrency(total_price)} + ${formatCurrency(settings.breakfast_price)})`}
         </Checkbox>
       </Box>
+
       <ButtonGroup>
         <Button {...buttonDefaultProps} onClick={handleCheckin} disabled={!confirmPaid}>
           Check in booking #{bookingId}
