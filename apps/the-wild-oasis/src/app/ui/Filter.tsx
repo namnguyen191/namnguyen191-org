@@ -2,6 +2,8 @@ import { ReactElement } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 
+import { PAGINATION_PARAM } from './Pagination';
+
 export const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
   background-color: var(--color-grey-0);
@@ -55,15 +57,22 @@ export const Filter = (props: FilterProps): ReactElement => {
     return filterSearchParams === option.value;
   };
 
+  const selectFilter = (filterValue: string): void => {
+    searchParams.set(filterKey, filterValue);
+
+    if (searchParams.get(PAGINATION_PARAM)) {
+      searchParams.set(PAGINATION_PARAM, '1');
+    }
+
+    setSearchParams(searchParams);
+  };
+
   return (
     <StyledFilter>
       {options.map((option) => (
         <FilterButton
           key={option.value}
-          onClick={() => {
-            searchParams.set(filterKey, option.value);
-            setSearchParams(searchParams);
-          }}
+          onClick={() => selectFilter(option.value)}
           active={isActive(option)}
         >
           {option.label}
