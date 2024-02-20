@@ -1,0 +1,22 @@
+{
+  "name": "types-helper",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/types-helper/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/shared/types-helper",
+        "main": "libs/shared/types-helper/src/index.ts",
+        "tsConfig": "libs/shared/types-helper/tsconfig.lib.json",
+        "assets": ["libs/shared/types-helper/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "tags": []
+}

@@ -16,7 +16,9 @@
     "baseUrl": ".",
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "paths": {}
+    "paths": {
+      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
