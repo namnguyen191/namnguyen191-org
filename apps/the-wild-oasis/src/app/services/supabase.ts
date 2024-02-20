@@ -21,6 +21,7 @@ export type SettingRow = {
   min_booking_length: number;
 };
 
+export type BookingStatus = 'unconfirmed' | 'checked-out' | 'checked-in';
 export type BookingRow = {
   cabin_id: number;
   cabin_price: number;
@@ -35,7 +36,7 @@ export type BookingRow = {
   num_nights: number;
   observations: string;
   start_date: string;
-  status: string;
+  status: BookingStatus;
   total_price: number;
 };
 

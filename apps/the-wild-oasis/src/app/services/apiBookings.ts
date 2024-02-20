@@ -1,6 +1,6 @@
 import { PAGE_SIZE } from '../utils/global-const';
 import { getToday } from '../utils/helpers';
-import { BookingRow, GuestRow, supabase } from './supabase';
+import { BookingRow, CabinRow, GuestRow, supabase } from './supabase';
 
 export type FilterOperation = {
   operation?: 'eq' | 'gt' | 'gte' | 'lt' | 'lte';
@@ -17,12 +17,16 @@ export type PaginationOperation = {
   page: number;
 };
 
+export type BookingRowsWithGuestAndCabin = (BookingRow & {
+  guests: Pick<GuestRow, 'full_name' | 'email'>;
+  cabins: Pick<CabinRow, 'name'>;
+})[];
 export const getBookings = async (args: {
   filters?: FilterOperation[];
   sort?: SortOperation;
   pagination?: PaginationOperation;
 }): Promise<{
-  bookings: BookingRow[];
+  bookings: BookingRowsWithGuestAndCabin;
   count: number;
 }> => {
   const { filters, sort, pagination } = args;
@@ -57,7 +61,7 @@ export const getBookings = async (args: {
     throw new Error('Booking not found');
   }
 
-  return { bookings, count: count ?? 0 };
+  return { bookings: bookings as any, count: count ?? 0 };
 };
 
 export type BookingWithGuestInfoAndCabinName = BookingRow & { guests: GuestRow } & {

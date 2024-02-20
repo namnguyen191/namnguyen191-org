@@ -1,16 +1,22 @@
 import { format, isToday } from 'date-fns';
 import { FC } from 'react';
 import { BiBell } from 'react-icons/bi';
-import { HiEye } from 'react-icons/hi2';
+import { HiArrowUpOnSquare, HiEye } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { BookingRow as BookingRowType } from '../../services/supabase';
+import {
+  BookingRow as BookingRowType,
+  BookingStatus,
+  CabinRow,
+  GuestRow,
+} from '../../services/supabase';
 import { Menus } from '../../ui/Menus';
 import { Table } from '../../ui/Table';
 import { Tag } from '../../ui/Tag';
 import { formatCurrency } from '../../utils/helpers';
 import { formatDistanceFromNow } from '../../utils/helpers';
+import { useCheckOut } from '../check-in-out/checkoutHooks';
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -40,7 +46,12 @@ const Amount = styled.div`
 `;
 
 // eslint-disable-next-line
-export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
+export const BookingRow: FC<{
+  booking: BookingRowType & {
+    guests: Pick<GuestRow, 'full_name' | 'email'>;
+    cabins: Pick<CabinRow, 'name'>;
+  };
+}> = ({
   booking: {
     id,
     start_date,
@@ -53,10 +64,18 @@ export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
   },
 }) => {
   const navigate = useNavigate();
-  const statusToTagName = {
+  const { checkOut, isCheckingOut } = useCheckOut();
+
+  const statusToTagName: {
+    [K in BookingStatus]: string;
+  } = {
     unconfirmed: 'blue',
     'checked-in': 'green',
     'checked-out': 'silver',
+  };
+
+  const onCheckOutClick = (bookingId: string): void => {
+    checkOut(bookingId);
   };
 
   return (
@@ -93,6 +112,15 @@ export const BookingRow: FC<{ booking: BookingRowType & any }> = ({
             {status === 'unconfirmed' && (
               <Menus.Button icon={<BiBell />} onClick={() => navigate(`/checkin/${id}`)}>
                 Check-In
+              </Menus.Button>
+            )}
+            {status === 'checked-in' && (
+              <Menus.Button
+                disabled={isCheckingOut}
+                onClick={() => onCheckOutClick(`${id}`)}
+                icon={<HiArrowUpOnSquare />}
+              >
+                Check-Out
               </Menus.Button>
             )}
           </Menus.List>

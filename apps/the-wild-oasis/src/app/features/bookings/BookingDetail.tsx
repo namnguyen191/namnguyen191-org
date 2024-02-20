@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useMoveBack } from '../../hooks/useMoveBack';
+import { BookingStatus } from '../../services/supabase';
 import { Button, buttonDefaultProps } from '../../ui/Button';
 import { ButtonGroup } from '../../ui/ButtonGroup';
 import { ButtonText } from '../../ui/ButtonText';
@@ -10,6 +11,7 @@ import { Heading } from '../../ui/Heading';
 import { Row } from '../../ui/Row';
 import { Spinner } from '../../ui/Spinner';
 import { Tag } from '../../ui/Tag';
+import { useCheckOut } from '../check-in-out/checkoutHooks';
 import { BookingDataBox } from './BookingDataBox';
 import { useBookingDetail } from './bookingQueryHooks';
 
@@ -24,6 +26,7 @@ export const BookingDetail: FC = () => {
   const bookingId = params.id as string;
   const { booking, isLoadingBooking, error } = useBookingDetail({ id: bookingId });
   const moveBack = useMoveBack();
+  const { checkOut, isCheckingOut } = useCheckOut();
 
   if (isLoadingBooking) {
     return <Spinner />;
@@ -33,9 +36,11 @@ export const BookingDetail: FC = () => {
     return <span>Something went wrong, please try again later</span>;
   }
 
-  const status = 'checked-in';
+  const status: BookingStatus = 'checked-in';
 
-  const statusToTagName = {
+  const statusToTagName: {
+    [K in BookingStatus]: string;
+  } = {
     unconfirmed: 'blue',
     'checked-in': 'green',
     'checked-out': 'silver',
@@ -57,6 +62,15 @@ export const BookingDetail: FC = () => {
         <Button {...buttonDefaultProps} variation="secondary" onClick={moveBack}>
           Back
         </Button>
+        {booking.status === 'checked-in' && (
+          <Button
+            {...buttonDefaultProps}
+            disabled={isCheckingOut}
+            onClick={() => checkOut(booking.id.toString())}
+          >
+            Check-out
+          </Button>
+        )}
       </ButtonGroup>
     </>
   );

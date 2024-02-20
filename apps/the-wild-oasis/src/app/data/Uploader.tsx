@@ -84,7 +84,7 @@ const createBookings = async (): Promise<void> => {
 
   console.log(finalBookings);
 
-  const { error } = await supabase.from('bookings').insert(finalBookings);
+  const { error } = await supabase.from('bookings').insert(finalBookings as any);
   if (error) console.log(error.message);
 };
 

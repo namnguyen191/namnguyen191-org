@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  BookingRowsWithGuestAndCabin,
   BookingWithGuestInfoAndCabinName,
   FilterOperation,
   getBookingById,
@@ -8,7 +9,6 @@ import {
   PaginationOperation,
   SortOperation,
 } from '../../services/apiBookings';
-import { BookingRow } from '../../services/supabase';
 import { PAGE_SIZE } from '../../utils/global-const';
 
 const ALL_BOOKINGS_QUERY_KEY = 'bookings';
@@ -18,7 +18,7 @@ export const useBookings = (args: {
   sort?: SortOperation;
   pagination?: PaginationOperation;
 }): {
-  readonly bookings: BookingRow[] | undefined;
+  readonly bookings: BookingRowsWithGuestAndCabin | undefined;
   readonly count: number | undefined;
   readonly error: Error | null;
   readonly isLoadingBookings: boolean;
