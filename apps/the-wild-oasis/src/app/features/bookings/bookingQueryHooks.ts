@@ -1,8 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { UseMutateFunction, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 import {
   BookingRowsWithGuestAndCabin,
   BookingWithGuestInfoAndCabinName,
+  deleteBooking as deleteBookingApi,
   FilterOperation,
   getBookingById,
   getBookings,
@@ -86,25 +88,25 @@ export const useBookingDetail = (args: {
   } as const;
 };
 
-// export const useDeleteCabin = (): {
-//   readonly deleteCabin: UseMutateFunction<void, Error, number, unknown>;
-//   readonly isDeletingCabin: boolean;
-// } => {
-//   const queryClient = useQueryClient();
+export const useDeleteBooking = (): {
+  readonly deleteBooking: UseMutateFunction<void, Error, string, unknown>;
+  readonly isDeletingBooking: boolean;
+} => {
+  const queryClient = useQueryClient();
 
-//   const { mutate: deleteCabin, isPending: isDeletingCabin } = useMutation({
-//     mutationFn: deleteCabinAPI,
-//     onSuccess: () => {
-//       toast.success('Cabin successfully deleted!');
-//       queryClient.invalidateQueries({
-//         queryKey: [ALL_CABINS_QUERY_KEY],
-//       });
-//     },
-//     onError: (err) => toast.error(err.message),
-//   });
+  const { mutate: deleteBooking, isPending: isDeletingBooking } = useMutation({
+    mutationFn: deleteBookingApi,
+    onSuccess: () => {
+      toast.success('Booking successfully deleted!');
+      queryClient.invalidateQueries({
+        queryKey: [ALL_BOOKINGS_QUERY_KEY],
+      });
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
-//   return { deleteCabin, isDeletingCabin } as const;
-// };
+  return { deleteBooking, isDeletingBooking } as const;
+};
 
 // export const useCreateCabin = (): {
 //   readonly createCabin: UseMutateFunction<void, Error, CreateCabinPayload, unknown>;

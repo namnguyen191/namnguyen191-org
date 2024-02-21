@@ -7,13 +7,15 @@ import { BookingStatus } from '../../services/supabase';
 import { Button, buttonDefaultProps } from '../../ui/Button';
 import { ButtonGroup } from '../../ui/ButtonGroup';
 import { ButtonText } from '../../ui/ButtonText';
+import { ConfirmDelete } from '../../ui/ConfirmDelete';
 import { Heading } from '../../ui/Heading';
+import { Modal } from '../../ui/Modal';
 import { Row } from '../../ui/Row';
 import { Spinner } from '../../ui/Spinner';
 import { Tag } from '../../ui/Tag';
 import { useCheckOut } from '../check-in-out/checkoutHooks';
 import { BookingDataBox } from './BookingDataBox';
-import { useBookingDetail } from './bookingQueryHooks';
+import { useBookingDetail, useDeleteBooking } from './bookingQueryHooks';
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -27,6 +29,7 @@ export const BookingDetail: FC = () => {
   const { booking, isLoadingBooking, error } = useBookingDetail({ id: bookingId });
   const moveBack = useMoveBack();
   const { checkOut, isCheckingOut } = useCheckOut();
+  const { deleteBooking, isDeletingBooking } = useDeleteBooking();
 
   if (isLoadingBooking) {
     return <Spinner />;
@@ -71,6 +74,24 @@ export const BookingDetail: FC = () => {
             Check-out
           </Button>
         )}
+        <Modal>
+          <Modal.Open windowTargetId="confirmDeleteBookingModal">
+            <Button {...buttonDefaultProps} disabled={isCheckingOut} variation="danger">
+              Delete booking
+            </Button>
+          </Modal.Open>
+          <Modal.Window id="confirmDeleteBookingModal">
+            <ConfirmDelete
+              resourceName="booking"
+              disabled={isDeletingBooking}
+              onConfirm={() => {
+                deleteBooking(bookingId, {
+                  onSuccess: () => moveBack(),
+                });
+              }}
+            ></ConfirmDelete>
+          </Modal.Window>
+        </Modal>
       </ButtonGroup>
     </>
   );
