@@ -1,44 +1,53 @@
-import { FC } from 'react';
+import { FC, FormEventHandler, useState } from 'react';
+import { Form } from 'react-router-dom';
 
-// import { Button } from '../../ui/Button';
-// import { Form } from '../../ui/Form';
-// import FormRowVertical from '../../ui/FormRowVertical';
-// import Input from '../../ui/Input';
+import { Button, buttonDefaultProps } from '../../ui/Button';
+import { FormRowVertical } from '../../ui/FormRowVertical';
+import { Input } from '../../ui/Input';
+import { SpinnerMini } from '../../ui/SpinnerMini';
+import { useLogin } from './authQueryHooks';
 
 export const LoginForm: FC = () => {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login, isLogingIn } = useLogin();
 
-  // const handleSubmit = (): void => {
-  //   // TODO
-  // };
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
+    e.preventDefault();
+    login({
+      email,
+      password,
+    });
+  };
 
-  return <div>Place holder...</div>;
-
-  // return (
-  //   <Form onSubmit={handleSubmit}>
-  //     <FormRowVertical label="Email address">
-  //       <Input
-  //         type="email"
-  //         id="email"
-  //         // This makes this form better for password managers
-  //         autoComplete="username"
-  //         value={email}
-  //         onChange={(e) => setEmail(e.target.value)}
-  //       />
-  //     </FormRowVertical>
-  //     <FormRowVertical label="Password">
-  //       <Input
-  //         type="password"
-  //         id="password"
-  //         autoComplete="current-password"
-  //         value={password}
-  //         onChange={(e) => setPassword(e.target.value)}
-  //       />
-  //     </FormRowVertical>
-  //     <FormRowVertical>
-  //       <Button size="large">Login</Button>
-  //     </FormRowVertical>
-  //   </Form>
-  // );
+  return (
+    <Form onSubmit={handleSubmit}>
+      <FormRowVertical label="Email address" labelFor="email">
+        <Input
+          type="email"
+          id="email"
+          // This makes this form better for password managers
+          autoComplete="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLogingIn}
+        />
+      </FormRowVertical>
+      <FormRowVertical label="Password" labelFor="password">
+        <Input
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLogingIn}
+        />
+      </FormRowVertical>
+      <FormRowVertical>
+        <Button {...buttonDefaultProps} size="large" disabled={isLogingIn}>
+          {isLogingIn ? <SpinnerMini /> : 'Login'}
+        </Button>
+      </FormRowVertical>
+    </Form>
+  );
 };
