@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { FC } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { Account } from './pages/Account';
 import { Booking } from './pages/Booking';
@@ -15,13 +15,22 @@ import { PageNotFound } from './pages/PageNotFound';
 import { Settings } from './pages/Settings';
 import { Users } from './pages/Users';
 import { AppLayout } from './ui/AppLayout';
+import { ProtectedRoute } from './ui/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
+        element: <Navigate replace to="dashboard" />,
+      },
+      {
+        path: 'dashboard',
         element: <Dashboard />,
       },
       {
@@ -52,15 +61,15 @@ const router = createBrowserRouter([
         path: '/account',
         element: <Account />,
       },
-      {
-        path: '/login',
-        element: <Login />,
-      },
-      {
-        path: '*',
-        element: <PageNotFound />,
-      },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '*',
+    element: <PageNotFound />,
   },
 ]);
 

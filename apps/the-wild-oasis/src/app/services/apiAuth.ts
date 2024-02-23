@@ -19,3 +19,19 @@ export const login = async (params: {
 
   return data;
 };
+
+export const getCurrentUser = async (): Promise<User | null> => {
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+  if (!sessionData.session || sessionError) {
+    return null;
+  }
+
+  const { data: user, error } = await supabase.auth.getUser();
+
+  if (error || !user.user) {
+    throw new Error('Something went wrong fetching user: ' + error);
+  }
+
+  return user.user;
+};

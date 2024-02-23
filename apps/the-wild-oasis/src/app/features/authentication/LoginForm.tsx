@@ -14,10 +14,18 @@ export const LoginForm: FC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e): void => {
     e.preventDefault();
-    login({
-      email,
-      password,
-    });
+    login(
+      {
+        email,
+        password,
+      },
+      {
+        onSettled: () => {
+          setEmail('');
+          setPassword('');
+        },
+      }
+    );
   };
 
   return (
