@@ -3,7 +3,7 @@ import { UseMutateFunction, useMutation, useQuery, useQueryClient } from '@tanst
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-import { getCurrentUser, login as loginApi } from '../../services/apiAuth';
+import { getCurrentUser, login as loginApi, logout as logoutApi } from '../../services/apiAuth';
 
 const USER_KEY = 'user';
 
@@ -39,4 +39,23 @@ export const useCurrentUser = (): {
   });
 
   return { user, isGettingUser, isAuthenticated: user?.role === 'authenticated' } as const;
+};
+
+export const useLogout = (): {
+  readonly logout: UseMutateFunction<void, Error, void, unknown>;
+  readonly isLogingOut: boolean;
+} => {
+  const queryClient = useQueryClient();
+
+  const { mutate: logout, isPending: isLogingOut } = useMutation({
+    mutationFn: logoutApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
+    onError: () => {
+      toast.error('Could not log out, please try again later or manual clear your browser');
+    },
+  });
+
+  return { logout, isLogingOut } as const;
 };
