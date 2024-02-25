@@ -7,10 +7,9 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
 import express from 'express';
-import { readFile } from 'fs/promises';
 import * as path from 'path';
 
-import { resolvers } from './resolver';
+import { queryResolvers, queryTypeDef } from './schema.graphql';
 
 const start = async (): Promise<void> => {
   const app = express();
@@ -23,8 +22,7 @@ const start = async (): Promise<void> => {
     res.send({ message: 'Welcome to graphql-tutorial-server!' });
   });
 
-  const typeDefs = await readFile('./apps/graphql-tutorial-server/src/schema.graphql', 'utf8');
-  const apolloServer = new ApolloServer({ typeDefs, resolvers });
+  const apolloServer = new ApolloServer({ typeDefs: [queryTypeDef], resolvers: queryResolvers });
   await apolloServer.start();
   app.use('/graphql', expressMiddleware(apolloServer));
 
