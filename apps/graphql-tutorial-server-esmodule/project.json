@@ -1,0 +1,59 @@
+{
+  "name": "graphql-tutorial-server-esmodule",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/graphql-tutorial-server-esmodule/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/graphql-tutorial-server-esmodule",
+        "format": ["esm"],
+        "bundle": false,
+        "main": "apps/graphql-tutorial-server-esmodule/src/main.ts",
+        "tsConfig": "apps/graphql-tutorial-server-esmodule/tsconfig.app.json",
+        "assets": ["apps/graphql-tutorial-server-esmodule/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "graphql-tutorial-server-esmodule:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "graphql-tutorial-server-esmodule:build:development"
+        },
+        "production": {
+          "buildTarget": "graphql-tutorial-server-esmodule:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "tags": []
+}

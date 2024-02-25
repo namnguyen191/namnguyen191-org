@@ -1,5 +1,6 @@
 {
   "extends": ["../../.eslintrc-react.json"],
+  "ignorePatterns": ["postcss*", "tailwind*"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

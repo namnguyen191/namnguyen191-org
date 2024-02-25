@@ -2,9 +2,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { fileURLToPath, URL } from 'url';
+
+const currentDir = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
-  root: __dirname,
+  root: currentDir,
   cacheDir: '../../node_modules/.vite/apps/fast-react-pizza',
 
   server: {
@@ -46,4 +49,4 @@ export default defineConfig({
       provider: 'v8',
     },
   },
-});
+} as any);

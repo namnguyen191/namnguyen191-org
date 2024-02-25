@@ -10,7 +10,7 @@
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/fast-react-pizza",
-        "postcssConfig": "apps/fast-react-pizza/postcss.config.js"
+        "postcssConfig": "apps/fast-react-pizza/postcss.config.cjs"
       },
       "configurations": {
         "development": {
