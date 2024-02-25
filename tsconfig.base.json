@@ -10,24 +10,15 @@
     "importHelpers": true,
     "target": "ESNext",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["es2020", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@namnguyen191/types-helper": [
-        "libs/shared/types-helper/src/index.ts"
-      ]
+      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
