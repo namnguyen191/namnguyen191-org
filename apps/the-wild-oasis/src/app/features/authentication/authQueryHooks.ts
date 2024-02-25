@@ -1,9 +1,15 @@
-import { User } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { UseMutateFunction, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-import { getCurrentUser, login as loginApi, logout as logoutApi } from '../../services/apiAuth';
+import {
+  getCurrentUser,
+  login as loginApi,
+  logout as logoutApi,
+  signUp as signUpApi,
+  SignUpPayload,
+} from '../../services/apiAuth';
 
 const USER_KEY = 'user';
 
@@ -58,4 +64,29 @@ export const useLogout = (): {
   });
 
   return { logout, isLogingOut } as const;
+};
+
+export const useSignUp = (): {
+  readonly signUp: UseMutateFunction<
+    {
+      user: User;
+      session: Session;
+    },
+    Error,
+    SignUpPayload,
+    unknown
+  >;
+  readonly isSigningUp: boolean;
+} => {
+  const { mutate: signUp, isPending: isSigningUp } = useMutation({
+    mutationFn: signUpApi,
+    onSuccess: () => {
+      toast.success('User signup successfully');
+    },
+    onError: () => {
+      toast.error('Could not sign up user, please try again later');
+    },
+  });
+
+  return { signUp, isSigningUp } as const;
 };

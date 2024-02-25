@@ -34,13 +34,13 @@ const Error = styled.span`
 export type FormRowProps = {
   label?: string;
   error?: string;
-  children?: ReactElement;
+  children?: ReactElement | ReactElement[];
 };
 
 export const FormRow: FC<FormRowProps> = ({ label, error, children }) => {
   return (
     <StyledFormRow>
-      {label && <Label htmlFor={children?.props?.id}>{label}</Label>}
+      {label && <Label htmlFor={!Array.isArray(children) && children?.props?.id}>{label}</Label>}
       {children}
       {error && <Error>{error}</Error>}
     </StyledFormRow>

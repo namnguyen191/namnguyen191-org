@@ -2,6 +2,41 @@ import { Session, User, WeakPassword } from '@supabase/supabase-js';
 
 import { supabase } from './supabase';
 
+export type SignUpPayload = {
+  email: string;
+  password: string;
+  fullName: string;
+  avatar?: string;
+};
+export const signUp = async (
+  payload: SignUpPayload
+): Promise<{
+  user: User;
+  session: Session;
+}> => {
+  const { email, password, fullName, avatar } = payload;
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        fullName,
+        avatar,
+      },
+    },
+  });
+
+  if (error) {
+    throw new Error('Could not sign up: ' + error.message);
+  }
+
+  return data as {
+    user: User;
+    session: Session;
+  };
+};
+
 export const login = async (params: {
   email: string;
   password: string;

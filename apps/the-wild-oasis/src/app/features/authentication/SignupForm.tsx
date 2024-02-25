@@ -1,39 +1,97 @@
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-// import { Button } from '../../ui/Button';
-// import { Form } from '../../ui/Form';
-// import FormRow from '../../ui/FormRow';
-// import Input from '../../ui/Input';
+import { Button, buttonDefaultProps } from '../../ui/Button';
+import { Form } from '../../ui/Form';
+import { FormRow } from '../../ui/FormRow';
+import { Input } from '../../ui/Input';
+import { SpinnerMini } from '../../ui/SpinnerMini';
+import { useSignUp } from './authQueryHooks';
 
-// Email regex: /\S+@\S+\.\S+/
+const emailRegex = /\S+@\S+\.\S+/;
 
-export const SignupForm: FC = () => {
-  return <div>place holder...</div>;
-  // return (
-  //   <Form>
-  //     <FormRow label="Full name" error={''}>
-  //       <Input type="text" id="fullName" />
-  //     </FormRow>
+type FormInput = {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
-  //     <FormRow label="Email address" error={''}>
-  //       <Input type="email" id="email" />
-  //     </FormRow>
+export const SignupForm: FC = (): ReactElement => {
+  const { register, getValues, formState, handleSubmit, reset } = useForm<FormInput>();
+  const { signUp, isSigningUp } = useSignUp();
 
-  //     <FormRow label="Password (min 8 characters)" error={''}>
-  //       <Input type="password" id="password" />
-  //     </FormRow>
+  const onSubmit: SubmitHandler<FormInput> = ({ email, password, fullName }) => {
+    signUp(
+      {
+        email,
+        password,
+        fullName,
+      },
+      {
+        onSettled: () => reset(),
+      }
+    );
+  };
 
-  //     <FormRow label="Repeat password" error={''}>
-  //       <Input type="password" id="passwordConfirm" />
-  //     </FormRow>
+  return (
+    <Form type="form" onSubmit={handleSubmit(onSubmit)}>
+      <FormRow label="Full name" error={formState.errors.fullName?.message}>
+        <Input
+          {...register('fullName', { required: 'This field is required' })}
+          type="text"
+          id="fullName"
+        />
+      </FormRow>
 
-  //     <FormRow>
-  //       {/* type is an HTML attribute! */}
-  //       <Button variation="secondary" type="reset">
-  //         Cancel
-  //       </Button>
-  //       <Button>Create new user</Button>
-  //     </FormRow>
-  //   </Form>
-  // );
+      <FormRow label="Email address" error={formState.errors.email?.message}>
+        <Input
+          {...register('email', {
+            required: 'This field is required',
+            pattern: {
+              value: emailRegex,
+              message: 'Please enter a valid email',
+            },
+          })}
+          type="email"
+          id="email"
+        />
+      </FormRow>
+
+      <FormRow label="Password (min 8 characters)" error={formState.errors.password?.message}>
+        <Input
+          {...register('password', {
+            required: 'This field is required',
+            minLength: {
+              value: 8,
+              message: 'Please enter at least 8 characters',
+            },
+          })}
+          type="password"
+          id="password"
+        />
+      </FormRow>
+
+      <FormRow label="Repeat password" error={formState.errors.confirmPassword?.message}>
+        <Input
+          {...register('confirmPassword', {
+            required: 'This field is required',
+            validate: (value) =>
+              getValues().password !== value ? 'Confirm password does not match' : undefined,
+          })}
+          type="password"
+          id="passwordConfirm"
+        />
+      </FormRow>
+
+      <FormRow>
+        <Button disabled={isSigningUp} {...buttonDefaultProps} variation="secondary" type="reset">
+          Cancel
+        </Button>
+        <Button disabled={isSigningUp} {...buttonDefaultProps} type="submit">
+          {isSigningUp ? <SpinnerMini /> : 'Create new user'}
+        </Button>
+      </FormRow>
+    </Form>
+  );
 };

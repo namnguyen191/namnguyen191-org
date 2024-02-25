@@ -8,6 +8,15 @@
 
 import { FC } from 'react';
 
+import { SignupForm } from '../features/authentication/SignupForm';
+import { Heading } from '../ui/Heading';
+
 export const Users: FC = () => {
-  return <div>Users work!</div>;
+  return (
+    <>
+      <Heading as="h1">Create a new user</Heading>
+
+      <SignupForm />
+    </>
+  );
 };
