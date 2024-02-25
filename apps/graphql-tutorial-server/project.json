@@ -15,7 +15,7 @@
         "main": "apps/graphql-tutorial-server/src/main.ts",
         "tsConfig": "apps/graphql-tutorial-server/tsconfig.app.json",
         "assets": ["apps/graphql-tutorial-server/src/assets"],
-        "webpackConfig": "apps/graphql-tutorial-server/webpack.config.js"
+        "webpackConfig": "apps/graphql-tutorial-server/webpack.config.ts"
       },
       "configurations": {
         "development": {},
