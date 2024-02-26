@@ -7,10 +7,12 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
 import express from 'express';
+import { merge } from 'lodash-es';
 import * as path from 'path';
 import { fileURLToPath, URL } from 'url';
 
-import { queryResolvers, queryTypeDef } from './schema.graphql.js';
+import { jobResolvers, jobSchema } from './features/jobs/index.js';
+import { queryResolvers, querySchema } from './features/query/index.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -24,7 +26,12 @@ app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to graphql-tutorial-server-esmodule!' });
 });
 
-const apolloServer = new ApolloServer({ typeDefs: [queryTypeDef], resolvers: queryResolvers });
+const typeDefs = [querySchema, jobSchema];
+const resolvers = merge({}, queryResolvers, jobResolvers);
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
 await apolloServer.start();
 app.use('/graphql', expressMiddleware(apolloServer));
 
