@@ -1,0 +1,83 @@
+{
+  "name": "graphql-tutorial-client-esmodule",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "namnguyen191",
+  "sourceRoot": "apps/graphql-tutorial-client-esmodule/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/graphql-tutorial-client-esmodule",
+        "index": "apps/graphql-tutorial-client-esmodule/src/index.html",
+        "browser": "apps/graphql-tutorial-client-esmodule/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/graphql-tutorial-client-esmodule/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/graphql-tutorial-client-esmodule/src/favicon.ico",
+          "apps/graphql-tutorial-client-esmodule/src/assets"
+        ],
+        "styles": ["apps/graphql-tutorial-client-esmodule/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "graphql-tutorial-client-esmodule:build:production"
+        },
+        "development": {
+          "buildTarget": "graphql-tutorial-client-esmodule:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/graphql-tutorial-client-esmodule/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "graphql-tutorial-client-esmodule:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "typecheck": {
+    "executor": "nx:run-commands",
+    "options": {
+      "commands": ["tsc -p tsconfig.app.json --noEmit"],
+      "cwd": "apps/angular-patterns",
+      "forwardAllArgs": false
+    }
+  }
+}
