@@ -1,10 +1,18 @@
+# This is a regular comment, not documentation
 extend type Query {
   job: Job
   jobs: [Job!]
 }
 
+"""
+Represent a job posted to our board.
+"""
 type Job {
   id: ID!
   title: String!
   description: String!
+  """
+  The __date__ when the job was published, in ISO-8601 format. Example: '2022-12-31'
+  """
+  date: String!
 }

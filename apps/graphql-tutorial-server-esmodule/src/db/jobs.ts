@@ -6,6 +6,7 @@ export type Job = {
   companyId: string;
   title: string;
   description: string;
+  createdAt: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
