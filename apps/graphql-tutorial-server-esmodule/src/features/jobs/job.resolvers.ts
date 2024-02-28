@@ -1,3 +1,4 @@
+import { Company, getCompany } from '../../db/companies.js';
 import { getJobs, Job } from '../../db/jobs.js';
 
 const toISODate = (date: string): string => date.slice(0, 'yyyy-mm-dd'.length);
@@ -14,5 +15,6 @@ export const jobResolvers = {
 
   Job: {
     date: (job: Job): string => toISODate(job.createdAt),
+    company: (job: Job): Promise<Company | undefined> => getCompany(job.companyId),
   },
 };

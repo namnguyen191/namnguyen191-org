@@ -2,7 +2,7 @@ import DataLoader from 'dataloader';
 
 import { connection } from './connection.js';
 
-type Company = {
+export type Company = {
   id: string;
   name: string;
   description: string;
@@ -12,7 +12,7 @@ type Company = {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getCompanyTable = () => connection.table<Company>('company');
 
-export const getCompany = async (id: string): Promise<unknown> => {
+export const getCompany = async (id: string): Promise<Company | undefined> => {
   return await getCompanyTable().first().where({ id });
 };
 

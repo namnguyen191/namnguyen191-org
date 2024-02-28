@@ -15,4 +15,5 @@ type Job {
   The __date__ when the job was published, in ISO-8601 format. Example: '2022-12-31'
   """
   date: String!
+  company: Company!
 }

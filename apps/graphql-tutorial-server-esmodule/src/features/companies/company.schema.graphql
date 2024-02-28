@@ -1,0 +1,10 @@
+# This is a regular comment, not documentation
+extend type Query {
+  company: Company
+}
+
+type Company {
+  id: ID!
+  name: String!
+  description: String!
+}

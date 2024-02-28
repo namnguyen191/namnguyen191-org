@@ -11,6 +11,7 @@ import { merge } from 'lodash-es';
 import * as path from 'path';
 import { fileURLToPath, URL } from 'url';
 
+import { companyResolvers, companySchema } from './features/companies/index.js';
 import { jobResolvers, jobSchema } from './features/jobs/index.js';
 import { queryResolvers, querySchema } from './features/query/index.js';
 
@@ -26,8 +27,8 @@ app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to graphql-tutorial-server-esmodule!' });
 });
 
-const typeDefs = [querySchema, jobSchema];
-const resolvers = merge({}, queryResolvers, jobResolvers);
+const typeDefs = [querySchema, jobSchema, companySchema];
+const resolvers = merge({}, queryResolvers, jobResolvers, companyResolvers);
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
