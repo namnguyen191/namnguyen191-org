@@ -1,6 +1,7 @@
 {
   "/graphql-tutorial-server-esmodule": {
     "target": "http://localhost:3333",
-    "secure": false
+    "secure": false,
+    "pathRewrite": { "^/graphql-tutorial-server-esmodule": "" }
   }
 }

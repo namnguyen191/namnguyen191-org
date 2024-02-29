@@ -6,7 +6,6 @@ import {
   input,
   InputSignal,
   Signal,
-  ViewEncapsulation,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -30,7 +29,6 @@ export type Job = {
   templateUrl: './job-item.component.html',
   styleUrl: './job-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
 })
 export class JobItemComponent {
   job: InputSignal<Job> = input.required();
