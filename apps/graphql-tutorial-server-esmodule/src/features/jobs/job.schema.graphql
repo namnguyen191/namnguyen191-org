@@ -1,6 +1,6 @@
 # This is a regular comment, not documentation
 extend type Query {
-  job: Job
+  job(id: ID!): Job
   jobs: [Job!]
 }
 

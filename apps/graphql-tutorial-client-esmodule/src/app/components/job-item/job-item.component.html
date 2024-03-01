@@ -3,7 +3,7 @@
     {{ job().date | date }}
   </div>
   <div class="media-content">
-    <a [routerLink]="['jobs', job().id]">
+    <a [routerLink]="['/jobs', job().id]">
       {{ title() }}
     </a>
   </div>

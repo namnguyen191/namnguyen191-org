@@ -10,6 +10,7 @@ import {
 import { RouterModule } from '@angular/router';
 
 export type Company = {
+  id: string;
   name: string;
   description?: string;
 };

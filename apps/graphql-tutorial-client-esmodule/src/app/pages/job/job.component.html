@@ -1,1 +1,14 @@
-<p>job works!</p>
+<ng-container *ngIf="job$ | async as job">
+  <h1 class="title is-2">
+    {{ job.title }}
+  </h1>
+  <h2 *ngIf="job.company" class="subtitle is-4">
+    <a [routerLink]="['/companies', job.company.id]">{{ job.company.name }}</a>
+  </h2>
+  <div class="box">
+    <div class="has-text-grey block">Posted: {{ job.date | date }}</div>
+    <p class="block">
+      {{ job.description }}
+    </p>
+  </div>
+</ng-container>

@@ -22,14 +22,15 @@ import { JobListComponent } from '../../components/job-list/job-list.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompanyComponent implements OnInit {
+  apollo: Apollo = inject(Apollo);
+
   company: Company = {
+    id: '1',
     name: 'FeetTV',
     description: 'Some shitty company',
   };
 
   jobs: WritableSignal<Job[]> = signal([]);
-
-  apollo: Apollo = inject(Apollo);
 
   ngOnInit(): void {
     this.apollo
