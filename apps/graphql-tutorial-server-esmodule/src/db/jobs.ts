@@ -1,3 +1,5 @@
+import { delay } from '@namnguyen191/utils';
+
 import { connection } from './connection.js';
 import { generateId } from './ids.js';
 
@@ -33,6 +35,7 @@ export const getJobsByCompany = async (companyId: string): Promise<Job[]> => {
 };
 
 export const getJob = async (id: string): Promise<Job | undefined> => {
+  await delay(2000);
   return await getJobTable().first().where({ id });
 };
 

@@ -12,7 +12,7 @@
         "platform": "node",
         "outputPath": "dist/apps/graphql-tutorial-server-esmodule",
         "format": ["esm"],
-        "bundle": false,
+        "bundle": true,
         "main": "apps/graphql-tutorial-server-esmodule/src/main.ts",
         "tsConfig": "apps/graphql-tutorial-server-esmodule/tsconfig.app.json",
         "assets": ["apps/graphql-tutorial-server-esmodule/src/assets"],
