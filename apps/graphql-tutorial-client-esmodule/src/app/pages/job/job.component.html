@@ -1,4 +1,10 @@
-<ng-container *ngIf="job$ | async as job">
+<span *ngIf="jobLoader().isError">
+  Something went wrong loading this job, please try again later
+</span>
+
+<span *ngIf="jobLoader().isLoading"> Loading job... </span>
+
+<ng-container *ngIf="jobLoader().job as job">
   <h1 class="title is-2">
     {{ job.title }}
   </h1>
