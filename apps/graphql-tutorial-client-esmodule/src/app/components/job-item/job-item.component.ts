@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { Job } from '../../api/job.service';
+import { Job } from '../../shared/interfaces';
 
 @Component({
   selector: 'namnguyen191-job-item',

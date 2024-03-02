@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 
-import { Job } from '../../api/job.service';
+import { Job } from '../../shared/interfaces';
 import { JobItemComponent } from '../job-item/job-item.component';
 
 @Component({

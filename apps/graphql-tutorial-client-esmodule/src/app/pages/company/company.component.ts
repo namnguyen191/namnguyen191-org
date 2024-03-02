@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EnvironmentInjector,
   inject,
   OnInit,
+  runInInjectionContext,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -11,9 +13,9 @@ import { ActivatedRoute } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { Apollo, gql } from 'apollo-angular';
 
-import { Company, CompanyService } from '../../api/company.service';
-import { Job } from '../../api/job.service';
 import { JobListComponent } from '../../components/job-list/job-list.component';
+import { Company, Job } from '../../shared/interfaces';
+import { getCompanyById } from './query';
 
 type CompanyLoader = {
   isLoading: boolean;
@@ -32,7 +34,7 @@ type CompanyLoader = {
 export class CompanyComponent implements OnInit {
   apollo: Apollo = inject(Apollo);
   activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-  companyService: CompanyService = inject(CompanyService);
+  environmentInjector = inject(EnvironmentInjector);
 
   companyLoader: WritableSignal<CompanyLoader> = signal({
     isLoading: false,
@@ -66,19 +68,21 @@ export class CompanyComponent implements OnInit {
       });
   }
 
-  async #fetchCompany(): Promise<void> {
-    this.companyLoader.update((prev) => ({ ...prev, isLoading: true }));
-    const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
-    if (!companyId) {
-      this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: true }));
-      return;
-    }
+  #fetchCompany(): void {
+    runInInjectionContext(this.environmentInjector, async () => {
+      this.companyLoader.update((prev) => ({ ...prev, isLoading: true }));
+      const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
+      if (!companyId) {
+        this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: true }));
+        return;
+      }
 
-    try {
-      const company = await this.companyService.getCompanyById(companyId);
-      this.companyLoader.set({ company, isError: false, isLoading: false });
-    } catch (error) {
-      this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
-    }
+      try {
+        const company = await getCompanyById(companyId);
+        this.companyLoader.set({ company, isError: false, isLoading: false });
+      } catch (error) {
+        this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
+      }
+    });
   }
 }
