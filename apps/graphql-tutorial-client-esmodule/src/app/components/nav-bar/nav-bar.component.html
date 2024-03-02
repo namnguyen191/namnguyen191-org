@@ -1,1 +1,19 @@
-<p>nav-bar works!</p>
+<nav class="navbar">
+  <div class="navbar-start">
+    <a routerLink="/">Home</a>
+  </div>
+
+  <div *ngIf="isLoggedIn" class="navbar-end">
+    <span class="navbar-item has-text-grey">
+      {{ user.email }}
+    </span>
+
+    <a class="navbar-item" routerLink="/jobs/new"> Post Job</a>
+
+    <a class="navbar-item" onClick="{handleLogout}"> Logout </a>
+  </div>
+
+  <div *ngIf="!isLoggedIn" class="navbar-end">
+    <a routerLink="/login"> Login</a>
+  </div>
+</nav>
