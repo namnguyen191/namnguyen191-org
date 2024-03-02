@@ -1,16 +1,16 @@
-<span *ngIf="companyLoader().isError">
+<span *ngIf="companyWithJobsLoader().isError">
   Something went wrong loading this company, please try again later
 </span>
 
-<span *ngIf="companyLoader().isLoading"> Loading company... </span>
+<span *ngIf="companyWithJobsLoader().isLoading"> Loading company... </span>
 
-<ng-container *ngIf="companyLoader().company as company">
+<ng-container *ngIf="companyWithJobsLoader().companyWithJobs as companyWithJobs">
   <h1 class="title">
-    {{ company.name }}
+    {{ companyWithJobs.name }}
   </h1>
   <div class="box">
-    {{ company.description }}
+    {{ companyWithJobs.description }}
   </div>
-  <h2 class="title is-5">Jobs at {{ company.name }}</h2>
-  <namnguyen191-job-list [jobs]="jobs()"></namnguyen191-job-list>
+  <h2 class="title is-5">Jobs at {{ companyWithJobs.name }}</h2>
+  <namnguyen191-job-list [jobs]="companyWithJobs.jobs"></namnguyen191-job-list>
 </ng-container>

@@ -2,19 +2,25 @@ import { inject } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { lastValueFrom } from 'rxjs';
 
-import { Company } from '../../shared/interfaces';
+import { Company, Job } from '../../shared/interfaces';
 
-export const getCompanyById = async (id: string): Promise<Company> => {
+export type CompanyWithJobs = Company & { jobs: Job[] };
+export const getCompanyById = async (id: string): Promise<CompanyWithJobs> => {
   const apollo: Apollo = inject(Apollo);
 
   const queryResult = await lastValueFrom(
-    apollo.query<{ company: Company }>({
+    apollo.query<{ company: CompanyWithJobs }>({
       query: gql`
         query CompanyById($id: ID!) {
           company(id: $id) {
             id
             name
             description
+            jobs {
+              title
+              date
+              id
+            }
           }
         }
       `,
