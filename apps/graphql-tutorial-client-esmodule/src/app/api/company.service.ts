@@ -2,35 +2,27 @@ import { inject, Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { lastValueFrom } from 'rxjs';
 
-import { Company } from './company.service';
-
-export type Job = {
+export type Company = {
   id: string;
-  company?: Company;
-  title: string;
-  description: string;
-  date: string;
+  name: string;
+  description?: string;
 };
 
 @Injectable({
   providedIn: 'root',
 })
-export class JobService {
+export class CompanyService {
   #apollo: Apollo = inject(Apollo);
 
-  async getJobById(id: string): Promise<Job> {
+  async getCompanyById(id: string): Promise<Company> {
     const queryResult = await lastValueFrom(
-      this.#apollo.query<{ job: Job }>({
+      this.#apollo.query<{ company: Company }>({
         query: gql`
-          query JobById($id: ID!) {
-            job(id: $id) {
+          query CompanyById($id: ID!) {
+            company(id: $id) {
               id
-              title
-              company {
-                name
-              }
+              name
               description
-              date
             }
           }
         `,
@@ -42,6 +34,6 @@ export class JobService {
       throw new Error('Something went wrong fetching job by id');
     }
 
-    return queryResult.data.job;
+    return queryResult.data.company;
   }
 }

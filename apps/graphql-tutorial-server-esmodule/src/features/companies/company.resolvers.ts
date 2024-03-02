@@ -1,9 +1,8 @@
+import { Company, getCompany } from '../../db/companies';
+
 export const companyResolvers = {
   Query: {
-    company: (): unknown => ({
-      id: 'some-id',
-      name: 'FedIck',
-      description: 'Literrally modern slavery',
-    }),
+    company: async (_root: unknown, args: { id: string }): Promise<Company | undefined> =>
+      getCompany(args.id),
   },
 };

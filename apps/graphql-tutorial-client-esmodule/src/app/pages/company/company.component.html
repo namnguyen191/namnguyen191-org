@@ -1,8 +1,16 @@
-<h1 class="title">
-  {{ company.name }}
-</h1>
-<div class="box">
-  {{ company.description }}
-</div>
-<h2 class="title is-5">Jobs at {{ company.name }}</h2>
-<namnguyen191-job-list [jobs]="jobs()"></namnguyen191-job-list>
+<span *ngIf="companyLoader().isError">
+  Something went wrong loading this company, please try again later
+</span>
+
+<span *ngIf="companyLoader().isLoading"> Loading company... </span>
+
+<ng-container *ngIf="companyLoader().company as company">
+  <h1 class="title">
+    {{ company.name }}
+  </h1>
+  <div class="box">
+    {{ company.description }}
+  </div>
+  <h2 class="title is-5">Jobs at {{ company.name }}</h2>
+  <namnguyen191-job-list [jobs]="jobs()"></namnguyen191-job-list>
+</ng-container>

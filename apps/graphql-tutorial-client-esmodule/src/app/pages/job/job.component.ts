@@ -38,10 +38,10 @@ export class JobComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this._fetchJob();
+    this.#fetchJob();
   }
 
-  private async _fetchJob(): Promise<void> {
+  async #fetchJob(): Promise<void> {
     this.jobLoader.update((prev) => ({ ...prev, isLoading: true }));
     const jobId = this.activatedRoute.snapshot.paramMap.get('jobId');
     if (!jobId) {

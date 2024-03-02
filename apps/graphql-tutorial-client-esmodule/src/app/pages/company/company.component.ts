@@ -7,11 +7,19 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ApolloQueryResult } from '@apollo/client/core';
 import { Apollo, gql } from 'apollo-angular';
 
-import { Company, Job } from '../../api/job.service';
+import { Company, CompanyService } from '../../api/company.service';
+import { Job } from '../../api/job.service';
 import { JobListComponent } from '../../components/job-list/job-list.component';
+
+type CompanyLoader = {
+  isLoading: boolean;
+  isError: boolean;
+  company: Company | null;
+};
 
 @Component({
   selector: 'namnguyen191-company',
@@ -23,16 +31,20 @@ import { JobListComponent } from '../../components/job-list/job-list.component';
 })
 export class CompanyComponent implements OnInit {
   apollo: Apollo = inject(Apollo);
+  activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  companyService: CompanyService = inject(CompanyService);
 
-  company: Company = {
-    id: '1',
-    name: 'FeetTV',
-    description: 'Some shitty company',
-  };
+  companyLoader: WritableSignal<CompanyLoader> = signal({
+    isLoading: false,
+    isError: false,
+    company: null,
+  });
 
   jobs: WritableSignal<Job[]> = signal([]);
 
   ngOnInit(): void {
+    this.#fetchCompany();
+
     this.apollo
       .watchQuery<{ jobs: Job[] }>({
         query: gql`
@@ -52,5 +64,21 @@ export class CompanyComponent implements OnInit {
       .valueChanges.subscribe((result: ApolloQueryResult<{ jobs: Job[] }>) => {
         this.jobs.set(result.data.jobs);
       });
+  }
+
+  async #fetchCompany(): Promise<void> {
+    this.companyLoader.update((prev) => ({ ...prev, isLoading: true }));
+    const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
+    if (!companyId) {
+      this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: true }));
+      return;
+    }
+
+    try {
+      const company = await this.companyService.getCompanyById(companyId);
+      this.companyLoader.set({ company, isError: false, isLoading: false });
+    } catch (error) {
+      this.companyLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
+    }
   }
 }

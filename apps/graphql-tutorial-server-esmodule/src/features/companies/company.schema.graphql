@@ -1,6 +1,6 @@
 # This is a regular comment, not documentation
 extend type Query {
-  company: Company
+  company(id: ID!): Company
 }
 
 type Company {
