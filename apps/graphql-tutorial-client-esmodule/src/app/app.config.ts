@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client';
-import { APOLLO_OPTIONS } from 'apollo-angular';
+import { Apollo, APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 
 import { appRoutes } from './app.routes';
@@ -23,5 +23,6 @@ export const appConfig: ApplicationConfig = {
       },
       deps: [HttpLink],
     },
+    Apollo,
   ],
 };

@@ -8,15 +8,15 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { ApolloQueryResult } from '@apollo/client/core';
-import { Apollo, ApolloModule, gql } from 'apollo-angular';
+import { Apollo, gql } from 'apollo-angular';
 
-import { Company, Job } from '../../components/job-item/job-item.component';
+import { Company, Job } from '../../api/job.service';
 import { JobListComponent } from '../../components/job-list/job-list.component';
 
 @Component({
   selector: 'namnguyen191-company',
   standalone: true,
-  imports: [CommonModule, JobListComponent, ApolloModule],
+  imports: [CommonModule, JobListComponent],
   templateUrl: './company.component.html',
   styleUrl: './company.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

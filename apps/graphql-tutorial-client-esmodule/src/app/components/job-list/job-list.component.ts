@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 
-import { Job, JobItemComponent } from '../job-item/job-item.component';
+import { Job } from '../../api/job.service';
+import { JobItemComponent } from '../job-item/job-item.component';
 
 @Component({
   selector: 'namnguyen191-job-list',

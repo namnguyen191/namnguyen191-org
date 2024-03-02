@@ -9,19 +9,7 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-export type Company = {
-  id: string;
-  name: string;
-  description?: string;
-};
-
-export type Job = {
-  id: string;
-  company?: Company;
-  title: string;
-  description: string;
-  date: string;
-};
+import { Job } from '../../api/job.service';
 
 @Component({
   selector: 'namnguyen191-job-item',

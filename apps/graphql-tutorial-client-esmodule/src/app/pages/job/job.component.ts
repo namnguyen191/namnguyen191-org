@@ -8,10 +8,9 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Apollo, ApolloModule, gql } from 'apollo-angular';
-import { lastValueFrom } from 'rxjs';
+import { Apollo } from 'apollo-angular';
 
-import { Job } from '../../components/job-item/job-item.component';
+import { Job, JobService } from '../../api/job.service';
 
 type JobLoader = {
   isLoading: boolean;
@@ -21,9 +20,8 @@ type JobLoader = {
 
 @Component({
   selector: 'namnguyen191-job',
-
   standalone: true,
-  imports: [CommonModule, ApolloModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './job.component.html',
   styleUrl: './job.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +29,7 @@ type JobLoader = {
 export class JobComponent implements OnInit {
   activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   apollo: Apollo = inject(Apollo);
+  jobService: JobService = inject(JobService);
 
   jobLoader: WritableSignal<JobLoader> = signal({
     isLoading: false,
@@ -51,28 +50,8 @@ export class JobComponent implements OnInit {
     }
 
     try {
-      const queryResult = await lastValueFrom(
-        this.apollo.query<{ job: Job }>({
-          query: gql`
-          {
-            job(id: "${jobId}") {
-              id
-              title
-              company {
-                name
-              }
-              description
-              date
-            }
-          }
-        `,
-        })
-      );
-      if (queryResult.errors?.length) {
-        this.jobLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
-        return;
-      }
-      this.jobLoader.set({ job: queryResult.data.job, isError: false, isLoading: false });
+      const job = await this.jobService.getJobById(jobId);
+      this.jobLoader.set({ job, isError: false, isLoading: false });
     } catch (error) {
       this.jobLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
     }
