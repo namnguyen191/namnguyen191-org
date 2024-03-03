@@ -57,7 +57,7 @@ const uploadCabinImage = async (
 ): Promise<{ error?: string | null; path?: string | null }> => {
   // https://ftuinjmlmtgcuvzwlahm.supabase.co/storage/v1/object/public/cabin-images/cabin-002.jpg
   const imageName = `${Math.random()}-${file.name}`.replace(/\//g, '');
-  const imagePath = `${supabaseUrl}//storage/v1/object/public/cabin-images/${imageName}`;
+  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
   // upload image
   const { error: uploadImageError } = await supabase.storage

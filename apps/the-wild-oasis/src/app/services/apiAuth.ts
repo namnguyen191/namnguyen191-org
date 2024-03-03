@@ -1,6 +1,6 @@
-import { Session, User, WeakPassword } from '@supabase/supabase-js';
+import { Session, User, UserAttributes, WeakPassword } from '@supabase/supabase-js';
 
-import { supabase } from './supabase';
+import { supabase, supabaseUrl } from './supabase';
 
 export type SignUpPayload = {
   email: string;
@@ -77,4 +77,62 @@ export const logout = async (): Promise<void> => {
   if (error) {
     throw new Error('Could not sign out: ' + error);
   }
+};
+
+export type UpdateCurrentUserPayload = {
+  fullName?: string;
+  avatar?: File;
+  password?: string;
+};
+
+export const updateCurrentUser = async (
+  payload: UpdateCurrentUserPayload
+): Promise<
+  | {
+      user: User;
+    }
+  | undefined
+> => {
+  const { fullName, avatar, password } = payload;
+
+  let updatedUser: UserAttributes = {};
+
+  if (fullName) {
+    updatedUser = { data: { fullName } };
+  }
+
+  if (password) {
+    updatedUser = { ...updatedUser, password };
+  }
+
+  const { data, error: updateUserError } = await supabase.auth.updateUser(updatedUser);
+
+  if (updateUserError) {
+    throw new Error(updateUserError.message);
+  }
+
+  if (!avatar) {
+    return data;
+  }
+
+  const fileName = `avatar-${data.user.id}-${Math.random()}`;
+  const { error: avatarUploadError } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, avatar);
+
+  if (avatarUploadError) {
+    throw new Error(avatarUploadError.message);
+  }
+
+  const { data: userWithAvatar, error: updateUserAvatarError } = await supabase.auth.updateUser({
+    data: {
+      avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
+    },
+  });
+
+  if (updateUserAvatarError) {
+    throw new Error(updateUserAvatarError.message);
+  }
+
+  return userWithAvatar;
 };

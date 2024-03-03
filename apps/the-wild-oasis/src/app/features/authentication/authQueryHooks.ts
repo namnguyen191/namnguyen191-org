@@ -9,6 +9,8 @@ import {
   logout as logoutApi,
   signUp as signUpApi,
   SignUpPayload,
+  updateCurrentUser as updateCurrentUserApi,
+  UpdateCurrentUserPayload,
 } from '../../services/apiAuth';
 
 const USER_KEY = 'user';
@@ -89,4 +91,34 @@ export const useSignUp = (): {
   });
 
   return { signUp, isSigningUp } as const;
+};
+
+export const useUpdateCurrentUser = (): {
+  readonly updateCurrentUser: UseMutateFunction<
+    | {
+        user: User;
+      }
+    | undefined,
+    Error,
+    UpdateCurrentUserPayload,
+    unknown
+  >;
+  readonly isUpdatingUser: boolean;
+} => {
+  const queryClient = useQueryClient();
+
+  const { isPending: isUpdatingUser, mutate: updateCurrentUser } = useMutation({
+    mutationFn: updateCurrentUserApi,
+    onSuccess: () => {
+      toast.success('User updated successfully!');
+      queryClient.invalidateQueries({
+        queryKey: [USER_KEY],
+      });
+    },
+    onError: () => {
+      toast.error('Fail to update user. Please try again later');
+    },
+  });
+
+  return { updateCurrentUser, isUpdatingUser } as const;
 };
