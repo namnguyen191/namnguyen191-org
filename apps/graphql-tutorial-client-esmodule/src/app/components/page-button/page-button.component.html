@@ -1,0 +1,15 @@
+@if (page() === currentPage()) {
+  <button
+    class="pagination-link is-current"
+    aria-current="page"
+    attr.aria-label="Page {{ page() }}"
+  >
+    {{ page() }}
+  </button>
+} @else if (page() === '<' || page() === '>') {
+  <span class="pagination-ellipsis"> &hellip; </span>
+} @else {
+  <button class="pagination-link" attr.aria-label="Go to page {{ page() }}">
+    {{ page() }}
+  </button>
+}

@@ -1,1 +1,22 @@
-<p>pagination-bar works!</p>
+<nav className="pagination is-centered" role="navigation" aria-label="pagination">
+  <button className="pagination-previous" aria-label="Previous page" [disabled]="currentPage === 1">
+    &#x25C0;
+  </button>
+  <button
+    className="pagination-next"
+    arial-label="Next page"
+    [disabled]="currentPage === totalPages"
+  >
+    &#x25B6;
+  </button>
+  <ul className="pagination-list">
+    @for (page of pages; track page) {
+      <li>
+        <namnguyen191-page-button
+          [page]="page"
+          [currentPage]="currentPage.toString()"
+        ></namnguyen191-page-button>
+      </li>
+    }
+  </ul>
+</nav>

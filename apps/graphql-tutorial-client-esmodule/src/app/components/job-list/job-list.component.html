@@ -1,5 +1,7 @@
 <ul class="box">
-  <ng-container *ngFor="let job of jobs()">
+  @for (job of jobs(); track job.id) {
     <namnguyen191-job-item [job]="job"></namnguyen191-job-item>
-  </ng-container>
+  } @empty {
+    <span>There's no job available</span>
+  }
 </ul>
