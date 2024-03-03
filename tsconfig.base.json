@@ -17,6 +17,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
+      "@namnguyen191/dui": ["libs/dui/src/index.ts"],
       "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"],
       "@namnguyen191/utils": ["libs/shared/utils/src/index.ts"]
     }
