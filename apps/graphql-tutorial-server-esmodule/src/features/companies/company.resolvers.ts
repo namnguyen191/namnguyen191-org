@@ -1,5 +1,3 @@
-import { GraphQLError } from 'graphql';
-
 import { Company, getCompany } from '../../db/companies';
 import { getJobsByCompany, Job } from '../../db/jobs';
 import { notFoundError } from '../../utils/graphql-helpers';

@@ -1,16 +1,18 @@
-<span *ngIf="companyWithJobsLoader().isError">
-  Something went wrong loading this company, please try again later
-</span>
-
-<span *ngIf="companyWithJobsLoader().isLoading"> Loading company... </span>
-
-<ng-container *ngIf="companyWithJobsLoader().companyWithJobs as companyWithJobs">
-  <h1 class="title">
-    {{ companyWithJobs.name }}
-  </h1>
-  <div class="box">
-    {{ companyWithJobs.description }}
-  </div>
-  <h2 class="title is-5">Jobs at {{ companyWithJobs.name }}</h2>
-  <namnguyen191-job-list [jobs]="companyWithJobs.jobs"></namnguyen191-job-list>
+<ng-container *ngIf="companyWithJobsResource.fetchState() as companyDataState">
+  @if (companyDataState.isError) {
+    <span> Something went wrong loading this company, please try again later </span>
+  } @else if (companyDataState.isLoading) {
+    <span> Loading company... </span>
+  } @else {
+    <ng-container *ngIf="companyDataState.data as companyWithJobs">
+      <h1 class="title">
+        {{ companyWithJobs.name }}
+      </h1>
+      <div class="box">
+        {{ companyWithJobs.description }}
+      </div>
+      <h2 class="title is-5">Jobs at {{ companyWithJobs.name }}</h2>
+      <namnguyen191-job-list [jobs]="companyWithJobs.jobs"></namnguyen191-job-list>
+    </ng-container>
+  }
 </ng-container>

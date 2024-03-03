@@ -10,17 +10,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { fetchWithStatus } from '@namnguyen191/utils';
 import { Apollo } from 'apollo-angular';
 
 import { JobListComponent } from '../../components/job-list/job-list.component';
 import { Job } from '../../shared/interfaces';
 import { CompanyWithJobs, getCompanyById } from './query';
-
-type CompanyWithJobsLoader = {
-  isLoading: boolean;
-  isError: boolean;
-  companyWithJobs: CompanyWithJobs | null;
-};
 
 @Component({
   selector: 'namnguyen191-company',
@@ -35,33 +30,24 @@ export class CompanyComponent implements OnInit {
   activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   environmentInjector = inject(EnvironmentInjector);
 
-  companyWithJobsLoader: WritableSignal<CompanyWithJobsLoader> = signal({
-    isLoading: false,
-    isError: false,
-    companyWithJobs: null,
+  companyWithJobsResource = fetchWithStatus({
+    fetcher: this.#fetchCompany.bind(this),
   });
 
   jobs: WritableSignal<Job[]> = signal([]);
 
   ngOnInit(): void {
-    this.#fetchCompany();
+    runInInjectionContext(this.environmentInjector, () => {
+      this.companyWithJobsResource.startFetching();
+    });
   }
 
-  #fetchCompany(): void {
-    runInInjectionContext(this.environmentInjector, async () => {
-      this.companyWithJobsLoader.update((prev) => ({ ...prev, isLoading: true }));
-      const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
-      if (!companyId) {
-        this.companyWithJobsLoader.update((prev) => ({ ...prev, isError: true, isLoading: true }));
-        return;
-      }
+  async #fetchCompany(): Promise<CompanyWithJobs> {
+    const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
+    if (!companyId) {
+      throw new Error('Missing company id in url param');
+    }
 
-      try {
-        const companyWithJobs = await getCompanyById(companyId);
-        this.companyWithJobsLoader.set({ companyWithJobs, isError: false, isLoading: false });
-      } catch (error) {
-        this.companyWithJobsLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
-      }
-    });
+    return getCompanyById(companyId);
   }
 }
