@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DuiComponent } from '@namnguyen191/dui';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  DataFetcherUIElementComponent,
+  DuiComponent,
+  LayoutConfig,
+  UIElementFactoryService,
+  UIElementTemplatesService,
+} from '@namnguyen191/dui';
+
+import testLayout from './sample-configs/layout-1.json';
 
 @Component({
   selector: 'namnguyen191-dui-consumer',
@@ -10,4 +18,21 @@ import { DuiComponent } from '@namnguyen191/dui';
   styleUrl: './dui-consumer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DuiConsumerComponent {}
+export class DuiConsumerComponent {
+  layout = testLayout as LayoutConfig;
+
+  uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
+  uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
+
+  constructor() {
+    this.uiElementTemplatesService.registerUIElementTemplate({
+      id: 'MY_DATA_FETCHER',
+      type: DataFetcherUIElementComponent.ELEMENT_TYPE,
+    });
+
+    this.uiElementFactoryService.registerUIElement(
+      DataFetcherUIElementComponent.ELEMENT_TYPE,
+      DataFetcherUIElementComponent
+    );
+  }
+}

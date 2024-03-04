@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "strict": true,
     "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
     "paths": {
       "@namnguyen191/dui": ["libs/dui/src/index.ts"],
       "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"],

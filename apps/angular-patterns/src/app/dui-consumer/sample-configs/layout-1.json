@@ -1,0 +1,9 @@
+{
+  "id": "ASSET_DETAIL_CLIMATE_RISK",
+  "uiElementInstances": [
+    {
+      "id": "abcdefg",
+      "uiElementTemplateId": "MY_DATA_FETCHER"
+    }
+  ]
+}

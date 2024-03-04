@@ -1,0 +1,19 @@
+<ng-container *ngIf="uiElementState() as state">
+  @if (state.isLoaded) {
+    @if (!state.isError && state.uiElement) {
+      <ng-container
+        *ngComponentOutlet="
+          state.uiElement;
+          inputs: {
+            endpointConfigOption: 'https://www.boredapi.com/api/activity',
+            requestMethodConfigOption: 'GET'
+          }
+        "
+      />
+    } @else {
+      <span>Something went wrong loading this ui element</span>
+    }
+  } @else {
+    <span>Loading ui element...</span>
+  }
+</ng-container>
