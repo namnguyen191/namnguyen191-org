@@ -1,18 +1,16 @@
-import { Injectable } from '@angular/core';
-
-import { BaseUIElementComponent } from '../ui-elemements';
+import { Injectable, Type } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIElementFactoryService {
-  #uiElementsMap: Record<string, typeof BaseUIElementComponent> = {};
+  #uiElementsMap: Record<string, Type<unknown>> = {};
 
-  registerUIElement(type: string, uiElement: typeof BaseUIElementComponent): void {
+  registerUIElement(type: string, uiElement: Type<unknown>): void {
     this.#uiElementsMap[type] = uiElement;
   }
 
-  getUIElement(type: string): typeof BaseUIElementComponent {
+  getUIElement(type: string): Type<unknown> {
     const uiElement = this.#uiElementsMap[type];
 
     if (!uiElement) {

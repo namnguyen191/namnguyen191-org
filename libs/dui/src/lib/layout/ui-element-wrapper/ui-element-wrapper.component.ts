@@ -7,17 +7,17 @@ import {
   input,
   InputSignal,
   signal,
+  Type,
   WritableSignal,
 } from '@angular/core';
 
 import { UIElementInstance } from '../../interfaces';
 import { UIElementFactoryService, UIElementTemplatesService } from '../../services';
-import { BaseUIElementComponent } from '../../ui-elemements';
 
 type UIElementState = {
   isLoaded: boolean;
   isError: boolean;
-  uiElement: typeof BaseUIElementComponent | null;
+  uiElement: Type<unknown> | null;
 };
 
 @Component({

@@ -10,7 +10,6 @@ import {
 
 import { UIElementImplementation } from '../../interfaces/UIElement';
 import { DataFetchingService } from '../../services/data-fetching.service';
-import { BaseUIElementComponent } from '../base';
 
 export type HttpRequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -30,10 +29,9 @@ export type DataFetcherUIElementComponentConfigs = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataFetcherUIElementComponent
-  extends BaseUIElementComponent
   implements UIElementImplementation<DataFetcherUIElementComponentConfigs>
 {
-  static override readonly ELEMENT_TYPE = 'DATA_FETCHER';
+  static readonly ELEMENT_TYPE = 'DATA_FETCHER';
 
   endpointConfigOption: InputSignal<string> = input.required();
   requestMethodConfigOption: InputSignal<HttpRequestMethod> = input.required();
@@ -43,7 +41,6 @@ export class DataFetcherUIElementComponent
   dataFetchingService: DataFetchingService = inject(DataFetchingService);
 
   constructor() {
-    super();
     effect(() => {
       this.dataFetchingService
         .fetchData({
