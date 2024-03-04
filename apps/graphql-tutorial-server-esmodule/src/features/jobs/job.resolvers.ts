@@ -18,8 +18,11 @@ export const jobResolvers = {
     jobs: async (): Promise<Job[]> => getJobs(10, 0),
   },
   Mutation: {
-    createJob: (_root: unknown, args: { title: string; description?: string }): Promise<Job> => {
-      const { title, description = '' } = args;
+    createJob: (
+      _root: unknown,
+      args: { input: { title: string; description?: string } }
+    ): Promise<Job> => {
+      const { title, description = '' } = args.input;
       const companyId = 'FjcJCHJALA4i';
       return createJob({ title, description, companyId });
     },
