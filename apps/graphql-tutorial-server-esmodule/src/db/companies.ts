@@ -2,7 +2,7 @@ import DataLoader from 'dataloader';
 
 import { connection } from './connection.js';
 
-export type Company = {
+export type CompanyEntity = {
   id: string;
   name: string;
   description: string;
@@ -10,9 +10,9 @@ export type Company = {
 
 // certain types are not being export by knex so the only way to get access to them is by type infer
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getCompanyTable = () => connection.table<Company>('company');
+const getCompanyTable = () => connection.table<CompanyEntity>('company');
 
-export const getCompany = async (id: string): Promise<Company | undefined> => {
+export const getCompany = async (id: string): Promise<CompanyEntity | undefined> => {
   return await getCompanyTable().first().where({ id });
 };
 

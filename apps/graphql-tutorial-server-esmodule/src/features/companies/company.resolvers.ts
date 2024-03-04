@@ -1,10 +1,10 @@
-import { Company, getCompany } from '../../db/companies';
-import { getJobsByCompany, Job } from '../../db/jobs';
+import { CompanyEntity, getCompany } from '../../db/companies';
+import { getJobsByCompany, JobEntity } from '../../db/jobs';
 import { notFoundError } from '../../utils/graphql-helpers';
 
 export const companyResolvers = {
   Query: {
-    company: async (_root: unknown, args: { id: string }): Promise<Company> => {
+    company: async (_root: unknown, args: { id: string }): Promise<CompanyEntity> => {
       const { id } = args;
       const company = await getCompany(id);
       if (!company) {
@@ -15,6 +15,6 @@ export const companyResolvers = {
   },
 
   Company: {
-    jobs: (company: Company): Promise<Job[]> => getJobsByCompany(company.id),
+    jobs: (company: CompanyEntity): Promise<JobEntity[]> => getJobsByCompany(company.id),
   },
 };

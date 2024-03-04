@@ -19,7 +19,7 @@ type Job {
 }
 
 extend type Mutation {
-  createJob(input: CreateJobInput): Job
+  createJob(input: CreateJobInput!): Job
 }
 
 input CreateJobInput {

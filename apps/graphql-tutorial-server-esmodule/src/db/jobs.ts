@@ -3,7 +3,7 @@ import { delay } from '@namnguyen191/utils';
 import { connection } from './connection.js';
 import { generateId } from './ids.js';
 
-export type Job = {
+export type JobEntity = {
   id: string;
   companyId: string;
   title: string;
@@ -12,14 +12,14 @@ export type Job = {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getJobTable = () => connection.table<Job>('job');
+const getJobTable = () => connection.table<JobEntity>('job');
 
 export const countJobs = async (): Promise<number> => {
   const { count } = (await getJobTable().count({ count: '*' }).first()) as { count: number };
   return count;
 };
 
-export const getJobs = async (limit: number, offset: number): Promise<Job[]> => {
+export const getJobs = async (limit: number, offset: number): Promise<JobEntity[]> => {
   const query = getJobTable().select().orderBy('createdAt', 'desc');
   if (limit) {
     query.limit(limit);
@@ -30,11 +30,11 @@ export const getJobs = async (limit: number, offset: number): Promise<Job[]> => 
   return await query;
 };
 
-export const getJobsByCompany = async (companyId: string): Promise<Job[]> => {
+export const getJobsByCompany = async (companyId: string): Promise<JobEntity[]> => {
   return await getJobTable().select().where({ companyId });
 };
 
-export const getJob = async (id: string): Promise<Job | undefined> => {
+export const getJob = async (id: string): Promise<JobEntity | undefined> => {
   await delay(2000);
   return await getJobTable().first().where({ id });
 };
@@ -47,7 +47,7 @@ export const createJob = async ({
   companyId: string;
   title: string;
   description: string;
-}): Promise<Job> => {
+}): Promise<JobEntity> => {
   const job = {
     id: generateId(),
     companyId,
@@ -59,7 +59,7 @@ export const createJob = async ({
   return job;
 };
 
-export const deleteJob = async (id: string, companyId: string): Promise<Job | null> => {
+export const deleteJob = async (id: string, companyId: string): Promise<JobEntity | null> => {
   const job = await getJobTable().first().where({ id, companyId });
   if (!job) {
     return null;
@@ -73,7 +73,7 @@ export const updateJob = async ({
   companyId,
   title,
   description,
-}: Job): Promise<Job | null> => {
+}: JobEntity): Promise<JobEntity | null> => {
   const job = await getJobTable().first().where({ id, companyId });
   if (!job) {
     return null;
