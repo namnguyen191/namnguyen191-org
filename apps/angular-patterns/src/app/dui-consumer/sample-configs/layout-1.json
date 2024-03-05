@@ -3,7 +3,7 @@
   "uiElementInstances": [
     {
       "id": "abcdefg",
-      "uiElementTemplateId": "MY_DATA_FETCHER"
+      "uiElementTemplateId": "MY_SIMPLE_TABLE"
     }
   ]
 }

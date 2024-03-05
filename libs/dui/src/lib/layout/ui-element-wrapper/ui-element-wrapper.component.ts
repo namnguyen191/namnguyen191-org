@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   effect,
   inject,
@@ -11,13 +12,18 @@ import {
   WritableSignal,
 } from '@angular/core';
 
-import { UIElementInstance } from '../../interfaces';
-import { UIElementFactoryService, UIElementTemplatesService } from '../../services';
+import { UIElementInstance, UIElementRequiredInputs } from '../../interfaces';
+import {
+  RemoteResourceService,
+  UIElementFactoryService,
+  UIElementTemplatesService,
+} from '../../services';
 
 type UIElementState = {
   isLoaded: boolean;
   isError: boolean;
   uiElement: Type<unknown> | null;
+  inputs: Record<string, unknown> & UIElementRequiredInputs;
 };
 
 @Component({
@@ -35,10 +41,15 @@ export class UiElementWrapperComponent {
     isLoaded: false,
     isError: false,
     uiElement: null,
+    inputs: {
+      isLoadingConfigOption: false,
+    },
   });
 
   private uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   private uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
+  private remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   constructor() {
     effect(
@@ -50,11 +61,32 @@ export class UiElementWrapperComponent {
             uiElementInstance.uiElementTemplateId
           );
           const uiElement = this.uiElementFactoryService.getUIElement(uiElementTemplate.type);
+          let inputs: UIElementRequiredInputs = {
+            ...uiElementTemplate.options,
+            isLoadingConfigOption: false,
+          };
+
+          if (uiElementTemplate.remoteResourceId) {
+            this.remoteResourceService
+              .getRemoteResourceState(uiElementTemplate.remoteResourceId)
+              .subscribe((val) => {
+                this.uiElementState.update((prev) => ({
+                  ...prev,
+                  inputs: { ...prev.inputs, isLoadingConfigOption: val.isLoading },
+                }));
+              });
+
+            inputs = {
+              ...inputs,
+              isLoadingConfigOption: true,
+            };
+          }
 
           this.uiElementState.set({
             isLoaded: true,
             isError: false,
             uiElement,
+            inputs,
           });
         } catch (error) {
           console.warn(error);
@@ -62,6 +94,9 @@ export class UiElementWrapperComponent {
             isLoaded: true,
             isError: true,
             uiElement: null,
+            inputs: {
+              isLoadingConfigOption: false,
+            },
           });
         }
       },

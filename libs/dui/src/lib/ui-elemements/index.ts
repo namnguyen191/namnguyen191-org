@@ -1,1 +1,1 @@
-export * from './data-fetcher/data-fetcher.component';
+export * from './simple-table/simple-table.component';

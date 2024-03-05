@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
-  DataFetcherUIElementComponent,
   DuiComponent,
   LayoutConfig,
+  RemoteResourceService,
+  SimpleTableComponent,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
@@ -23,16 +24,31 @@ export class DuiConsumerComponent {
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
+  remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
 
   constructor() {
     this.uiElementTemplatesService.registerUIElementTemplate({
-      id: 'MY_DATA_FETCHER',
-      type: DataFetcherUIElementComponent.ELEMENT_TYPE,
+      id: 'MY_SIMPLE_TABLE',
+      type: SimpleTableComponent.ELEMENT_TYPE,
+      remoteResourceId: '123',
+      options: {
+        textConfigOption: 'Hello world',
+      },
     });
 
     this.uiElementFactoryService.registerUIElement(
-      DataFetcherUIElementComponent.ELEMENT_TYPE,
-      DataFetcherUIElementComponent
+      SimpleTableComponent.ELEMENT_TYPE,
+      SimpleTableComponent
     );
+
+    this.remoteResourceService.registerRemoteResource({
+      id: '123',
+      requests: [
+        {
+          endpoint: 'https://www.boredapi.com/api/activity',
+          method: 'GET',
+        },
+      ],
+    });
   }
 }
