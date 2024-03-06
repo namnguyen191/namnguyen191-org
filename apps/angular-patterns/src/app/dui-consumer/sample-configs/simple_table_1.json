@@ -1,0 +1,7 @@
+{
+  "id": "MY_SIMPLE_TABLE",
+  "type": "SIMPLE_TABLE",
+  "options": {
+    "text": "Welcome to my custom table"
+  }
+}

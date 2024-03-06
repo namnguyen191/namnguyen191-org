@@ -20,6 +20,6 @@ export class SimpleTableComponent
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
 
-  isLoadingConfigOption: InputSignal<boolean> = input(false);
-  textConfigOption: InputSignal<string> = input('No text');
+  isLoadingConfigOption: InputSignal<boolean> = input(false, { alias: 'isLoading' });
+  textConfigOption: InputSignal<string> = input('No text', { alias: 'text' });
 }

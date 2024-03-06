@@ -2,8 +2,12 @@
   "id": "ASSET_DETAIL_CLIMATE_RISK",
   "uiElementInstances": [
     {
-      "id": "abcdefg",
+      "id": "instance-1",
       "uiElementTemplateId": "MY_SIMPLE_TABLE"
+    },
+    {
+      "id": "instance-2",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE_2"
     }
   ]
 }

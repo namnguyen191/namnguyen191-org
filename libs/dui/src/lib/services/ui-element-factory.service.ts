@@ -6,8 +6,9 @@ import { Injectable, Type } from '@angular/core';
 export class UIElementFactoryService {
   #uiElementsMap: Record<string, Type<unknown>> = {};
 
-  registerUIElement(type: string, uiElement: Type<unknown>): void {
-    this.#uiElementsMap[type] = uiElement;
+  registerUIElement(params: { type: string; component: Type<unknown> }): void {
+    const { type, component } = params;
+    this.#uiElementsMap[type] = component;
   }
 
   getUIElement(type: string): Type<unknown> {

@@ -17,6 +17,11 @@ import {
   UIElementTemplatesService,
 } from '../../services';
 
+type ElemetToRender = {
+  component: Type<unknown>;
+  inputs: Record<string, unknown>;
+};
+
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
   standalone: true,
@@ -38,12 +43,15 @@ export class UiElementWrapperComponent {
     );
   });
 
-  uiElement: Signal<Type<unknown> | null> = computed(() => {
+  uiElement: Signal<ElemetToRender | null> = computed(() => {
     const template = this.uiElementTemplate()();
     if (!template) {
       return null;
     }
 
-    return this.uiElementFactoryService.getUIElement(template.type);
+    return {
+      component: this.uiElementFactoryService.getUIElement(template.type),
+      inputs: template.options,
+    };
   });
 }

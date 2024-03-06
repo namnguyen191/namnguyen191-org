@@ -2,14 +2,18 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   DuiComponent,
+  EventsService,
   LayoutConfig,
   RemoteResourceService,
   SimpleTableComponent,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
+import { asapScheduler } from 'rxjs';
 
 import testLayout from './sample-configs/layout-1.json';
+import simpleTable1 from './sample-configs/simple_table_1.json';
+import simpleTable2 from './sample-configs/simple_table_2.json';
 
 @Component({
   selector: 'namnguyen191-dui-consumer',
@@ -25,21 +29,16 @@ export class DuiConsumerComponent {
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+  eventsService: EventsService = inject(EventsService);
 
   constructor() {
-    this.uiElementTemplatesService.registerUIElementTemplate({
-      id: 'MY_SIMPLE_TABLE',
-      type: SimpleTableComponent.ELEMENT_TYPE,
-      remoteResourceId: '123',
-      options: {
-        textConfigOption: 'Hello world',
-      },
-    });
+    this.setupEventsListener();
+    this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
 
-    this.uiElementFactoryService.registerUIElement(
-      SimpleTableComponent.ELEMENT_TYPE,
-      SimpleTableComponent
-    );
+    this.uiElementFactoryService.registerUIElement({
+      type: SimpleTableComponent.ELEMENT_TYPE,
+      component: SimpleTableComponent,
+    });
 
     this.remoteResourceService.registerRemoteResource({
       id: '123',
@@ -49,6 +48,18 @@ export class DuiConsumerComponent {
           method: 'GET',
         },
       ],
+    });
+  }
+
+  setupEventsListener(): void {
+    this.eventsService.getEvents().subscribe((event) => {
+      console.log('Nam data is: ', event);
+      if (event.type === 'MISSING_UI_ELEMENT_TEMPLATE') {
+        asapScheduler.schedule(
+          () => this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2),
+          2000
+        );
+      }
     });
   }
 }

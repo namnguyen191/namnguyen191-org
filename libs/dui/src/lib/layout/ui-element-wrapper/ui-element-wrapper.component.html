@@ -1,13 +1,7 @@
 @if (uiElement() !== null) {
-  <ng-container
-    *ngComponentOutlet="
-      uiElement();
-      inputs: {
-        isLoadingConfigOption: false,
-        textConfigOption: 'Hello world'
-      }
-    "
-  />
+  <ng-container *ngIf="uiElement() as uiElement">
+    <ng-container *ngComponentOutlet="uiElement.component; inputs: uiElement.inputs" />
+  </ng-container>
 } @else {
   <span>Loading UI element....</span>
 }

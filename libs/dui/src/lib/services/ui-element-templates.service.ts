@@ -1,11 +1,14 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 import { UIElementTemplate } from '../interfaces';
+import { EventsService } from './events.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIElementTemplatesService {
+  #eventsService: EventsService = inject(EventsService);
+
   #uiElementTemplatesMap: Record<string, WritableSignal<UIElementTemplate | null>> = {};
 
   registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
@@ -26,6 +29,12 @@ export class UIElementTemplatesService {
     }
 
     console.warn(`${id} has not been registered as a UI Element template yet!`);
+    this.#eventsService.emitEvent({
+      type: 'MISSING_UI_ELEMENT_TEMPLATE',
+      payload: {
+        id,
+      },
+    });
     const newUIElementTemplateSignal = signal(null);
     this.#uiElementTemplatesMap[id] = newUIElementTemplateSignal;
     return newUIElementTemplateSignal.asReadonly();
