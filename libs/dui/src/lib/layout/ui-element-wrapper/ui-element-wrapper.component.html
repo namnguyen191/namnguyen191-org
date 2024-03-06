@@ -1,11 +1,13 @@
-<ng-container *ngIf="uiElementState() as state">
-  @if (state.isLoaded) {
-    @if (!state.isError && state.uiElement) {
-      <ng-container *ngComponentOutlet="state.uiElement; inputs: state.inputs" />
-    } @else {
-      <span>Something went wrong loading this ui element</span>
-    }
-  } @else {
-    <span>Loading ui element...</span>
-  }
-</ng-container>
+@if (uiElement() !== null) {
+  <ng-container
+    *ngComponentOutlet="
+      uiElement();
+      inputs: {
+        isLoadingConfigOption: false,
+        textConfigOption: 'Hello world'
+      }
+    "
+  />
+} @else {
+  <span>Loading UI element....</span>
+}
