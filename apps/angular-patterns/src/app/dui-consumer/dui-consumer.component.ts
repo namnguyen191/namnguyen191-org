@@ -34,8 +34,9 @@ export class DuiConsumerComponent {
   eventsService: EventsService = inject(EventsService);
 
   constructor() {
-    this.setupEventsListener();
     this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
+
+    this.setupEventsListener();
 
     this.uiElementFactoryService.registerUIElement({
       type: SimpleTableComponent.ELEMENT_TYPE,
@@ -56,6 +57,10 @@ export class DuiConsumerComponent {
       this.layout.set(testLayout2);
       setTimeout(() => {
         this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
+
+        setTimeout(() => {
+          this.layout.set(testLayout);
+        }, 5000);
       }, 5000);
     }, 5000);
   }

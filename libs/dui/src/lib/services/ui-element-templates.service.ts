@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { asyncScheduler, BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
 
 import { UIElementTemplate } from '../interfaces';
 import { EventsService } from './events.service';
@@ -9,49 +9,61 @@ import { EventsService } from './events.service';
 })
 export class UIElementTemplatesService {
   #eventsService: EventsService = inject(EventsService);
-  #uiElementTemplatesMap$: Record<string, BehaviorSubject<UIElementTemplate | null>> = {};
+  #uiElementTemplatesMap$: BehaviorSubject<{
+    [uiElementTemplateId: string]: UIElementTemplate;
+  }> = new BehaviorSubject({});
 
   registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
-    const uiElementTemplate$ = this.#uiElementTemplatesMap$[uiElementTemplate.id];
-    if (uiElementTemplate$) {
-      uiElementTemplate$.next(uiElementTemplate);
-      return;
+    if (this.#uiElementTemplatesMap$.value[uiElementTemplate.id]) {
+      throw new Error(
+        `UI element template with id of "${uiElementTemplate.id}" has already been register. Please update it instead`
+      );
     }
-
-    this.#uiElementTemplatesMap$[uiElementTemplate.id] =
-      new BehaviorSubject<UIElementTemplate | null>(uiElementTemplate);
+    this.#uiElementTemplatesMap$.next({
+      ...this.#uiElementTemplatesMap$.value,
+      [uiElementTemplate.id]: uiElementTemplate,
+    });
   }
 
   updateUIElementTemplate(updatedUIElementTemplate: UIElementTemplate): void {
-    const uiElementTemplate$ = this.#uiElementTemplatesMap$[updatedUIElementTemplate.id];
-    if (uiElementTemplate$) {
-      const old = uiElementTemplate$.getValue();
-      if (old) {
-        uiElementTemplate$.next(updatedUIElementTemplate);
-      }
+    const uiElementTemplateMaps = this.#uiElementTemplatesMap$.value;
+
+    if (!uiElementTemplateMaps[updatedUIElementTemplate.id]) {
+      throw new Error(
+        `UI element template with id of "${updatedUIElementTemplate.id}" has not been register. Please register it instead`
+      );
     }
+    this.#uiElementTemplatesMap$.next({
+      ...uiElementTemplateMaps,
+      [updatedUIElementTemplate.id]: updatedUIElementTemplate,
+    });
   }
 
-  getUIElementTemplate(id: string): Observable<UIElementTemplate | null> {
-    const uiElementTemplate$ = this.#uiElementTemplatesMap$[id];
-
-    if (uiElementTemplate$) {
-      return uiElementTemplate$.asObservable();
-    }
-    console.log('Nam data is: getting', id);
-    asyncScheduler.schedule(() => {
-      console.warn(`${id} has not been registered as a UI Element template yet!`);
-
-      this.#eventsService.emitEvent({
-        type: 'MISSING_UI_ELEMENT_TEMPLATE',
-        payload: {
-          id,
+  getUIElementTemplate<T extends string>(id: T): Observable<UIElementTemplate> {
+    return this.#uiElementTemplatesMap$.asObservable().pipe(
+      distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
+      tap({
+        next: (uiElementTemplatesMap) => {
+          if (!uiElementTemplatesMap[id]) {
+            this.#eventsService.emitEvent({
+              type: 'MISSING_UI_ELEMENT_TEMPLATE',
+              payload: {
+                id,
+              },
+            });
+          }
         },
-      });
-    });
-    const newUIElementTemplate$ = new BehaviorSubject<UIElementTemplate | null>(null);
-    this.#uiElementTemplatesMap$[id] = newUIElementTemplate$;
-    return newUIElementTemplate$.asObservable();
+      }),
+      filter(
+        (uiElementTemplatesMap): uiElementTemplatesMap is Record<T, UIElementTemplate> =>
+          !!uiElementTemplatesMap[id]
+      ),
+      map((uiElementTemplatesMap) => {
+        const uiElementTemplate = uiElementTemplatesMap[id];
+        return uiElementTemplate;
+      }),
+      tap((val) => console.log(`Getting ui template ${val.id}`))
+    );
   }
 
   // getUIElementOption(params: { id: string; optionName: string }): UIElementTemplate {

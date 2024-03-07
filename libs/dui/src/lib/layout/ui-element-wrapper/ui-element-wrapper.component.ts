@@ -59,7 +59,6 @@ export class UiElementWrapperComponent implements OnDestroy {
         this.uiElementTemplate()
           .pipe(takeUntil(this.#cancelTemplateSubscriptionSubject))
           .subscribe((template) => {
-            console.log('Nam data is: template', template, this.uiElementInstance());
             if (!template) {
               return;
             }
