@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import {
   DuiComponent,
   EventsService,
@@ -9,11 +9,13 @@ import {
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
-import { asapScheduler } from 'rxjs';
 
 import testLayout from './sample-configs/layout-1.json';
+import testLayout2 from './sample-configs/layout-2.json';
 import simpleTable1 from './sample-configs/simple_table_1.json';
 import simpleTable2 from './sample-configs/simple_table_2.json';
+import simpleTable2updated from './sample-configs/simple_table_2_updated.json';
+import simpleTable3 from './sample-configs/simple_table_3.json';
 
 @Component({
   selector: 'namnguyen191-dui-consumer',
@@ -24,7 +26,7 @@ import simpleTable2 from './sample-configs/simple_table_2.json';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiConsumerComponent {
-  layout = testLayout as LayoutConfig;
+  layout: WritableSignal<LayoutConfig> = signal(testLayout);
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
@@ -49,16 +51,25 @@ export class DuiConsumerComponent {
         },
       ],
     });
+
+    setTimeout(() => {
+      this.layout.set(testLayout2);
+      setTimeout(() => {
+        this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
+      }, 5000);
+    }, 5000);
   }
 
   setupEventsListener(): void {
     this.eventsService.getEvents().subscribe((event) => {
-      console.log('Nam data is: ', event);
       if (event.type === 'MISSING_UI_ELEMENT_TEMPLATE') {
-        asapScheduler.schedule(
-          () => this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2),
-          2000
-        );
+        if (event.payload.id === 'MY_SIMPLE_TABLE_2') {
+          this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2);
+        }
+
+        if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
+          this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
+        }
       }
     });
   }

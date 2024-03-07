@@ -1,4 +1,5 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { asyncScheduler, BehaviorSubject, Observable } from 'rxjs';
 
 import { UIElementTemplate } from '../interfaces';
 import { EventsService } from './events.service';
@@ -8,36 +9,49 @@ import { EventsService } from './events.service';
 })
 export class UIElementTemplatesService {
   #eventsService: EventsService = inject(EventsService);
-
-  #uiElementTemplatesMap: Record<string, WritableSignal<UIElementTemplate | null>> = {};
+  #uiElementTemplatesMap$: Record<string, BehaviorSubject<UIElementTemplate | null>> = {};
 
   registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
-    const uiElementTemplateSignal = this.#uiElementTemplatesMap[uiElementTemplate.id];
-    if (uiElementTemplateSignal) {
-      uiElementTemplateSignal.set(uiElementTemplate);
+    const uiElementTemplate$ = this.#uiElementTemplatesMap$[uiElementTemplate.id];
+    if (uiElementTemplate$) {
+      uiElementTemplate$.next(uiElementTemplate);
       return;
     }
 
-    this.#uiElementTemplatesMap[uiElementTemplate.id] = signal(uiElementTemplate);
+    this.#uiElementTemplatesMap$[uiElementTemplate.id] =
+      new BehaviorSubject<UIElementTemplate | null>(uiElementTemplate);
   }
 
-  getUIElementTemplate(id: string): Signal<UIElementTemplate | null> {
-    const uiElementTemplateSignal = this.#uiElementTemplatesMap[id];
-
-    if (uiElementTemplateSignal) {
-      return uiElementTemplateSignal.asReadonly();
+  updateUIElementTemplate(updatedUIElementTemplate: UIElementTemplate): void {
+    const uiElementTemplate$ = this.#uiElementTemplatesMap$[updatedUIElementTemplate.id];
+    if (uiElementTemplate$) {
+      const old = uiElementTemplate$.getValue();
+      if (old) {
+        uiElementTemplate$.next(updatedUIElementTemplate);
+      }
     }
+  }
 
-    console.warn(`${id} has not been registered as a UI Element template yet!`);
-    this.#eventsService.emitEvent({
-      type: 'MISSING_UI_ELEMENT_TEMPLATE',
-      payload: {
-        id,
-      },
+  getUIElementTemplate(id: string): Observable<UIElementTemplate | null> {
+    const uiElementTemplate$ = this.#uiElementTemplatesMap$[id];
+
+    if (uiElementTemplate$) {
+      return uiElementTemplate$.asObservable();
+    }
+    console.log('Nam data is: getting', id);
+    asyncScheduler.schedule(() => {
+      console.warn(`${id} has not been registered as a UI Element template yet!`);
+
+      this.#eventsService.emitEvent({
+        type: 'MISSING_UI_ELEMENT_TEMPLATE',
+        payload: {
+          id,
+        },
+      });
     });
-    const newUIElementTemplateSignal = signal(null);
-    this.#uiElementTemplatesMap[id] = newUIElementTemplateSignal;
-    return newUIElementTemplateSignal.asReadonly();
+    const newUIElementTemplate$ = new BehaviorSubject<UIElementTemplate | null>(null);
+    this.#uiElementTemplatesMap$[id] = newUIElementTemplate$;
+    return newUIElementTemplate$.asObservable();
   }
 
   // getUIElementOption(params: { id: string; optionName: string }): UIElementTemplate {

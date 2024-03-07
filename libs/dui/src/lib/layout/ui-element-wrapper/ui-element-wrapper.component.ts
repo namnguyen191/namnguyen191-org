@@ -3,12 +3,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
   InputSignal,
-  Signal,
+  OnDestroy,
+  signal,
   Type,
+  WritableSignal,
 } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 
 import { UIElementInstance } from '../../interfaces';
 import {
@@ -30,12 +34,14 @@ type ElemetToRender = {
   styleUrl: './ui-element-wrapper.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiElementWrapperComponent {
+export class UiElementWrapperComponent implements OnDestroy {
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
   private uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   private uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   private remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+
+  #cancelTemplateSubscriptionSubject = new Subject<void>();
 
   uiElementTemplate = computed(() => {
     return this.uiElementTemplatesService.getUIElementTemplate(
@@ -43,15 +49,34 @@ export class UiElementWrapperComponent {
     );
   });
 
-  uiElement: Signal<ElemetToRender | null> = computed(() => {
-    const template = this.uiElementTemplate()();
-    if (!template) {
-      return null;
-    }
+  uiElement: WritableSignal<ElemetToRender | null> = signal(null);
 
-    return {
-      component: this.uiElementFactoryService.getUIElement(template.type),
-      inputs: template.options,
-    };
-  });
+  constructor() {
+    effect(
+      () => {
+        // cancel previous subscription if any
+        this.#cancelTemplateSubscriptionSubject.next();
+        this.uiElementTemplate()
+          .pipe(takeUntil(this.#cancelTemplateSubscriptionSubject))
+          .subscribe((template) => {
+            console.log('Nam data is: template', template, this.uiElementInstance());
+            if (!template) {
+              return;
+            }
+            this.uiElement.set({
+              component: this.uiElementFactoryService.getUIElement(template.type),
+              inputs: template.options,
+            });
+          });
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.#cancelTemplateSubscriptionSubject.next();
+    this.#cancelTemplateSubscriptionSubject.complete();
+  }
 }

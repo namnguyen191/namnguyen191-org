@@ -1,5 +1,5 @@
 {
-  "id": "LAYOUT_1",
+  "id": "LAYOUT_2",
   "uiElementInstances": [
     {
       "id": "instance-1",
@@ -7,7 +7,7 @@
     },
     {
       "id": "instance-2",
-      "uiElementTemplateId": "MY_SIMPLE_TABLE_2"
+      "uiElementTemplateId": "MY_SIMPLE_TABLE_3"
     }
   ]
 }
