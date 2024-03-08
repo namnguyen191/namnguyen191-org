@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
 
 import { UIElementTemplate } from '../interfaces';
+import { logInfo } from '../utils/logging';
 import { EventsService } from './events.service';
 
 @Injectable({
@@ -62,7 +63,7 @@ export class UIElementTemplatesService {
         const uiElementTemplate = uiElementTemplatesMap[id];
         return uiElementTemplate;
       }),
-      tap((val) => console.log(`Getting ui template ${val.id}`))
+      tap((val) => logInfo(`Getting ui template ${val.id}`))
     );
   }
 
