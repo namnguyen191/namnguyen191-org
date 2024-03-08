@@ -3,3 +3,4 @@ export * from './lib/interfaces';
 export * from './lib/layout/layout.component';
 export * from './lib/services';
 export * from './lib/ui-elemements';
+export * from './lib/web-worker/js-runner.worker';

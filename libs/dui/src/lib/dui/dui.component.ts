@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
 
 import { LayoutConfig } from '../interfaces/Layout';
 import { LayoutComponent } from '../layout/layout.component';
+import { getJSRunnerWorker } from '../web-worker/worker-helpers';
 
 @Component({
   selector: 'namnguyen191-dui',
@@ -14,4 +15,12 @@ import { LayoutComponent } from '../layout/layout.component';
 })
 export class DuiComponent {
   layoutConfig: InputSignal<LayoutConfig> = input.required<LayoutConfig>();
+
+  constructor() {
+    const worker = getJSRunnerWorker();
+    worker.onmessage = ({ data }): void => {
+      console.log(`page got message ${data}`);
+    };
+    worker.postMessage('hi');
+  }
 }
