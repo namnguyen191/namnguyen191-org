@@ -49,11 +49,21 @@ export type Job = {
 export type Mutation = {
   __typename?: 'Mutation';
   createJob?: Maybe<Job>;
+  deleteJob?: Maybe<Job>;
   healthCheck?: Maybe<Scalars['String']['output']>;
+  updateJob?: Maybe<Job>;
 };
 
 export type MutationCreateJobArgs = {
   input: CreateJobInput;
+};
+
+export type MutationDeleteJobArgs = {
+  input: Scalars['ID']['input'];
+};
+
+export type MutationUpdateJobArgs = {
+  input: UpdateJobInput;
 };
 
 export type Query = {
@@ -70,6 +80,12 @@ export type QueryCompanyArgs = {
 
 export type QueryJobArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type UpdateJobInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -167,6 +183,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  UpdateJobInput: UpdateJobInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -179,6 +196,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
+  UpdateJobInput: UpdateJobInput;
 }>;
 
 export type CompanyResolvers<
@@ -214,7 +232,19 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateJobArgs, 'input'>
   >;
+  deleteJob?: Resolver<
+    Maybe<ResolversTypes['Job']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteJobArgs, 'input'>
+  >;
   healthCheck?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updateJob?: Resolver<
+    Maybe<ResolversTypes['Job']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateJobArgs, 'input'>
+  >;
 }>;
 
 export type QueryResolvers<

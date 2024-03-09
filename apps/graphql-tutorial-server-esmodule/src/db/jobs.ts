@@ -59,8 +59,8 @@ export const createJob = async ({
   return job;
 };
 
-export const deleteJob = async (id: string, companyId: string): Promise<JobEntity | null> => {
-  const job = await getJobTable().first().where({ id, companyId });
+export const deleteJob = async (id: string): Promise<JobEntity | null> => {
+  const job = await getJobTable().first().where({ id });
   if (!job) {
     return null;
   }
@@ -70,15 +70,15 @@ export const deleteJob = async (id: string, companyId: string): Promise<JobEntit
 
 export const updateJob = async ({
   id,
-  companyId,
   title,
   description,
-}: JobEntity): Promise<JobEntity | null> => {
-  const job = await getJobTable().first().where({ id, companyId });
+}: Omit<JobEntity, 'createdAt' | 'companyId' | 'description'> &
+  Partial<JobEntity>): Promise<JobEntity | null> => {
+  const job = await getJobTable().first().where({ id });
   if (!job) {
     return null;
   }
-  const updatedFields = { title, description };
+  const updatedFields = { title, description: description ?? job.description };
   await getJobTable().update(updatedFields).where({ id });
   return { ...job, ...updatedFields };
 };
