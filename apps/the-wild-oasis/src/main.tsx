@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 
 import { App } from './app/App';
+import { DarkModeContextProvider } from './app/context/DarkModeContext';
 import { GlobalStyles } from './app/styles/GlobalStyles';
 
 const rootElement: HTMLElement | null = document.getElementById('root');
@@ -13,7 +14,9 @@ if (!rootElement) {
   root.render(
     <StrictMode>
       <GlobalStyles />
-      <App />
+      <DarkModeContextProvider>
+        <App />
+      </DarkModeContextProvider>
     </StrictMode>
   );
 }
