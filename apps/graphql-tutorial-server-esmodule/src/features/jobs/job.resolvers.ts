@@ -1,3 +1,5 @@
+import { delay } from '@namnguyen191/utils';
+
 import {
   JobResolvers,
   MutationResolvers,
@@ -28,9 +30,10 @@ export const jobResolvers: JobFeatureResolvers = {
     jobs: async () => getJobs(10, 0),
   },
   Mutation: {
-    createJob: (_root, args) => {
+    createJob: async (_root, args) => {
       const { title, description } = args.input;
       const companyId = 'FjcJCHJALA4i';
+      await delay(2000);
       return createJob({ title, description: description ?? '', companyId });
     },
   },
