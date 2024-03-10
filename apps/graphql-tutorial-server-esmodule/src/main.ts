@@ -11,6 +11,8 @@ import { merge } from 'lodash-es';
 import * as path from 'path';
 import { fileURLToPath, URL } from 'url';
 
+import { authMiddleware, getUserFromRequest, handleLogin } from './auth.js';
+import { User } from './db/users.js';
 import { companyResolvers, companySchema } from './features/companies/index.js';
 import { jobResolvers, jobSchema } from './features/jobs/index.js';
 import { queryResolvers, querySchema } from './features/query/index.js';
@@ -21,20 +23,34 @@ const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-app.use(cors(), express.json());
+app.use(cors(), express.json(), authMiddleware);
+
+app.post('/login', handleLogin);
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to graphql-tutorial-server-esmodule!' });
 });
 
+export type Context = { user: User | null };
+
 const typeDefs = [querySchema, jobSchema, companySchema];
 const resolvers = merge({}, queryResolvers, jobResolvers, companyResolvers);
-const apolloServer = new ApolloServer({
+const apolloServer = new ApolloServer<Context>({
   typeDefs,
   resolvers,
 });
 await apolloServer.start();
-app.use('/graphql', expressMiddleware(apolloServer));
+app.use(
+  '/graphql',
+  expressMiddleware(apolloServer, {
+    context: async ({ req }) => {
+      const user = await getUserFromRequest(req);
+      return {
+        user,
+      };
+    },
+  })
+);
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

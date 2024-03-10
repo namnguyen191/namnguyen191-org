@@ -1,1 +1,31 @@
-<p>login works!</p>
+<form (ngSubmit)="handleSubmit()">
+  <div class="field">
+    <label class="label"> Email </label>
+    <div class="control">
+      <input class="input" type="email" required name="email" [(ngModel)]="loginFormModel.email" />
+    </div>
+  </div>
+  <div class="field">
+    <label class="label"> Password </label>
+    <div class="control">
+      <input
+        class="input"
+        type="password"
+        required
+        name="password"
+        [(ngModel)]="loginFormModel.password"
+      />
+    </div>
+  </div>
+  @if (isError()) {
+    <div class="message is-danger">
+      <p class="message-body">Login failed</p>
+    </div>
+  }
+
+  <div class="field">
+    <div class="control">
+      <button type="submit" class="button is-link" [disabled]="isLoggingIn()">Login</button>
+    </div>
+  </div>
+</form>

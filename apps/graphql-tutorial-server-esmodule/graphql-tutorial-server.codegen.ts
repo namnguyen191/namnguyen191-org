@@ -11,6 +11,7 @@ const config: CodegenConfig = {
     },
   },
   config: {
+    contextType: '../src/main#Context',
     mappers: {
       Company: '../src/db/companies#CompanyEntity',
       Job: '../src/db/jobs#JobEntity',

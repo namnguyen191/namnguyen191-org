@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { CompanyEntity } from '../src/db/companies';
 import { JobEntity } from '../src/db/jobs';
+import { Context } from '../src/main';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -200,7 +201,7 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type CompanyResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company'],
 > = ResolversObject<{
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -211,7 +212,7 @@ export type CompanyResolvers<
 }>;
 
 export type JobResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Job'] = ResolversParentTypes['Job'],
 > = ResolversObject<{
   company?: Resolver<ResolversTypes['Company'], ParentType, ContextType>;
@@ -223,7 +224,7 @@ export type JobResolvers<
 }>;
 
 export type MutationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation'],
 > = ResolversObject<{
   createJob?: Resolver<
@@ -248,7 +249,7 @@ export type MutationResolvers<
 }>;
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = ResolversObject<{
   company?: Resolver<
@@ -267,7 +268,7 @@ export type QueryResolvers<
   jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType>;
 }>;
 
-export type Resolvers<ContextType = any> = ResolversObject<{
+export type Resolvers<ContextType = Context> = ResolversObject<{
   Company?: CompanyResolvers<ContextType>;
   Job?: JobResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
