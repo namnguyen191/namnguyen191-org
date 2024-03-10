@@ -13,6 +13,7 @@ describe('DuiComponent', () => {
 
     fixture = TestBed.createComponent(DuiComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('layoutConfig', {});
     fixture.detectChanges();
   });
 

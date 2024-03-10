@@ -2,6 +2,7 @@
 export default {
   displayName: 'dui',
   preset: '../../jest.preset.mjs',
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/libs/dui',
   transform: {

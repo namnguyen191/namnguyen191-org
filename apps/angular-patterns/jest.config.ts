@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'angular-patterns',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.mjs',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/apps/angular-patterns',
   transform: {
