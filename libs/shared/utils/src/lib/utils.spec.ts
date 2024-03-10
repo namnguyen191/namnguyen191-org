@@ -1,4 +1,4 @@
-import { delay } from './utils';
+import { delay } from './time';
 vi.useFakeTimers();
 
 describe('utils', () => {
