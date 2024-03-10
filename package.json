@@ -11,6 +11,7 @@
     "typecheck:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t typecheck",
     "fix-lint": "pnpm nx affected -t lint --fix",
     "type-check:affected": "pnpm nx affected -t typecheck",
+    "build:affected": "pnpm nx affected -t build",
     "build:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t build"
   },
   "private": true,
