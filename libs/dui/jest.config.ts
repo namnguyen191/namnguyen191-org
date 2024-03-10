@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'dui',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.mjs',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/libs/dui',
   transform: {
