@@ -3,6 +3,7 @@ import { Apollo, gql } from 'apollo-angular';
 import { lastValueFrom } from 'rxjs';
 
 import { Job } from '../../shared/interfaces';
+import { JobByIdQuery, JobDetailFragment } from '../job/query';
 
 export type JobData = Pick<Job, 'id' | 'title' | 'description'>;
 export const createJob = async (newJob: {
@@ -16,13 +17,24 @@ export const createJob = async (newJob: {
       mutation: gql`
         mutation ($input: CreateJobInput!) {
           job: createJob(input: $input) {
-            title
-            description
-            id
+            ...JobDetail
           }
         }
+        ${JobDetailFragment}
       `,
       variables: { input: newJob },
+      update: (cache, { data }) => {
+        if (!data) {
+          return;
+        }
+        cache.writeQuery({
+          query: JobByIdQuery,
+          variables: {
+            id: data.job.id,
+          },
+          data,
+        });
+      },
     })
   );
 

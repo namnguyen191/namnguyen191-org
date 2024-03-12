@@ -1,4 +1,5 @@
 schema: 'apps/graphql-tutorial-server-esmodule/src/**/*.graphql'
+documents: '**/query.{graphql,js,ts,jsx,tsx}'
 extensions:
   languageService:
     cacheSchemaFileForLookup: true
