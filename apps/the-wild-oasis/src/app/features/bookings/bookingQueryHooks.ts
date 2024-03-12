@@ -13,7 +13,7 @@ import {
 } from '../../services/apiBookings';
 import { PAGE_SIZE } from '../../utils/global-const';
 
-const ALL_BOOKINGS_QUERY_KEY = 'bookings';
+export const ALL_BOOKINGS_QUERY_KEY = 'bookings';
 
 export const useBookings = (args: {
   filters?: FilterOperation[];
