@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { JS_RUNNER_WORKER, WorkerEventObject } from '../web-worker-helpers';
+import { JS_RUNNER_WORKER, JSRunnerContext, WorkerEventObject } from '../web-worker-helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +12,19 @@ export class InterpolationService {
     this.#jsRunnerWorker.onmessage = (e): void => {
       console.log('Nam data is: ', e.data);
     };
-    this.interpolate('run this js codes');
+    this.interpolate({
+      rawJS: `return Math.random()`,
+      context: { name: 'Vu Hoang Nam' },
+    });
   }
 
-  interpolate(rawJS: string): void {
+  interpolate(params: { rawJS: string; context: JSRunnerContext }): void {
+    const { rawJS, context } = params;
     const interpolateEvent: WorkerEventObject = {
       type: 'INTERPOLATE',
       payload: {
         rawJS,
+        context,
       },
     };
     this.#jsRunnerWorker.postMessage(interpolateEvent);

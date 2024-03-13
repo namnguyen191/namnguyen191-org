@@ -4,11 +4,13 @@ import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } f
 import { UIElementTemplate } from '../interfaces';
 import { logInfo } from '../utils/logging';
 import { EventsService } from './events.service';
+import { InterpolationService } from './interpolation.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIElementTemplatesService {
+  test = inject(InterpolationService);
   #eventsService: EventsService = inject(EventsService);
   #uiElementTemplatesMap$: BehaviorSubject<{
     [uiElementTemplateId: string]: UIElementTemplate;

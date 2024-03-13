@@ -5,6 +5,7 @@ export const JS_RUNNER_WORKER = new InjectionToken<Worker>('JS_RUNNER_WORKER');
 export type WorkerEvent = {
   INTERPOLATE: {
     rawJS: string;
+    context: Record<string, unknown>;
   };
   TEST: never;
 };
