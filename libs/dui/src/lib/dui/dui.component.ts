@@ -14,12 +14,4 @@ import { LayoutComponent } from '../layout/layout.component';
 })
 export class DuiComponent {
   layoutConfig: InputSignal<LayoutConfig> = input.required<LayoutConfig>();
-
-  constructor() {
-    // const worker = getJSRunnerWorker();
-    // worker.onmessage = ({ data }): void => {
-    //   console.log(`page got message ${data}`);
-    // };
-    // worker.postMessage('hi');
-  }
 }
