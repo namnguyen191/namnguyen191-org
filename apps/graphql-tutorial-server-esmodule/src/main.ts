@@ -6,12 +6,14 @@
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
+import DataLoader from 'dataloader';
 import express from 'express';
 import { merge } from 'lodash-es';
 import * as path from 'path';
 import { fileURLToPath, URL } from 'url';
 
 import { authMiddleware, getUserFromRequest, handleLogin } from './auth.js';
+import { CompanyEntity, createCompaniesLoader } from './db/companies.js';
 import { User } from './db/users.js';
 import { companyResolvers, companySchema } from './features/companies/index.js';
 import { jobResolvers, jobSchema } from './features/jobs/index.js';
@@ -31,7 +33,10 @@ app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to graphql-tutorial-server-esmodule!' });
 });
 
-export type Context = { user: User | null };
+export type Context = {
+  user: User | null;
+  companiesLoader: DataLoader<string, CompanyEntity, string>;
+};
 
 const typeDefs = [querySchema, jobSchema, companySchema];
 const resolvers = merge({}, queryResolvers, jobResolvers, companyResolvers);
@@ -45,8 +50,10 @@ app.use(
   expressMiddleware(apolloServer, {
     context: async ({ req }) => {
       const user = await getUserFromRequest(req);
+      const companiesLoader = createCompaniesLoader();
       return {
         user,
+        companiesLoader,
       };
     },
   })

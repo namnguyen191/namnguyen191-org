@@ -24,3 +24,9 @@ export const createCompanyLoader = (): DataLoader<unknown, any, unknown> => {
     return ids.map((id) => companies.find((company) => company.id === id));
   });
 };
+
+export const createCompaniesLoader = (): DataLoader<string, CompanyEntity, string> =>
+  new DataLoader(async (ids: readonly string[]): Promise<CompanyEntity[]> => {
+    const companies = await getCompanyTable().select().whereIn('id', ids);
+    return ids.map((id) => companies.find((company) => company.id === id) as CompanyEntity);
+  });

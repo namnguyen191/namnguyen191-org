@@ -5,7 +5,6 @@ import {
   MutationResolvers,
   QueryResolvers,
 } from '../../../__generated__/resolvers-types.js';
-import { getCompany } from '../../db/companies.js';
 import { createJob, deleteJob, getJob, getJobs, updateJob } from '../../db/jobs.js';
 import { notFoundError, unauthorizedError } from '../../utils/graphql-helpers.js';
 
@@ -73,13 +72,6 @@ export const jobResolvers: JobFeatureResolvers = {
   },
   Job: {
     date: (job) => toISODate(job.createdAt),
-    company: async (job) => {
-      const company = await getCompany(job.companyId);
-      if (!company) {
-        return notFoundError('Cannot find the company for this job: ' + job.id);
-      }
-
-      return company;
-    },
+    company: async (job, _args, { companiesLoader }) => companiesLoader.load(job.companyId),
   },
 };
