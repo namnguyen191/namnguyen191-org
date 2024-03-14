@@ -6,9 +6,17 @@ import { JS_RUNNER_WORKER, JSRunnerContext, WorkerEventObject } from '../web-wor
   providedIn: 'root',
 })
 export class InterpolationService {
-  #jsRunnerWorker: Worker = inject(JS_RUNNER_WORKER);
+  #jsRunnerWorker: Worker;
 
   constructor() {
+    try {
+      this.#jsRunnerWorker = inject(JS_RUNNER_WORKER);
+    } catch (error) {
+      throw new Error(
+        'You will need to provide a worker through the JS_RUNNER_WORKER token. Please refer to the docs on how to do this'
+      );
+    }
+
     this.#jsRunnerWorker.onmessage = (e): void => {
       console.log('Nam data is: ', e.data);
     };
