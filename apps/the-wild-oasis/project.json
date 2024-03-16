@@ -60,8 +60,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.app.json --noEmit"],
-        "cwd": "apps/the-wild-oasis",
-        "forwardAllArgs": false
+        "cwd": "apps/the-wild-oasis"
       }
     }
   },

@@ -74,8 +74,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.app.json --noEmit"],
-        "cwd": "apps/fast-react-pizza",
-        "forwardAllArgs": false
+        "cwd": "apps/fast-react-pizza"
       }
     }
   },

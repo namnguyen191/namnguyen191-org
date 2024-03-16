@@ -13,6 +13,7 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> =
   | T
   | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -47,6 +48,12 @@ export type Job = {
   title: Scalars['String']['output'];
 };
 
+export type JobSublist = {
+  __typename?: 'JobSublist';
+  items: Array<Job>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createJob?: Maybe<Job>;
@@ -72,7 +79,7 @@ export type Query = {
   company?: Maybe<Company>;
   healthCheck?: Maybe<Scalars['String']['output']>;
   job?: Maybe<Job>;
-  jobs?: Maybe<Array<Job>>;
+  jobs: JobSublist;
 };
 
 export type QueryCompanyArgs = {
@@ -81,6 +88,11 @@ export type QueryCompanyArgs = {
 
 export type QueryJobArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type QueryJobsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateJobInput = {
@@ -180,7 +192,11 @@ export type ResolversTypes = ResolversObject<{
   Company: ResolverTypeWrapper<CompanyEntity>;
   CreateJobInput: CreateJobInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Job: ResolverTypeWrapper<JobEntity>;
+  JobSublist: ResolverTypeWrapper<
+    Omit<JobSublist, 'items'> & { items: Array<ResolversTypes['Job']> }
+  >;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -193,7 +209,9 @@ export type ResolversParentTypes = ResolversObject<{
   Company: CompanyEntity;
   CreateJobInput: CreateJobInput;
   ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   Job: JobEntity;
+  JobSublist: Omit<JobSublist, 'items'> & { items: Array<ResolversParentTypes['Job']> };
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
@@ -220,6 +238,15 @@ export type JobResolvers<
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type JobSublistResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['JobSublist'] = ResolversParentTypes['JobSublist'],
+> = ResolversObject<{
+  items?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -265,12 +292,13 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryJobArgs, 'id'>
   >;
-  jobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType>;
+  jobs?: Resolver<ResolversTypes['JobSublist'], ParentType, ContextType, Partial<QueryJobsArgs>>;
 }>;
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
   Company?: CompanyResolvers<ContextType>;
   Job?: JobResolvers<ContextType>;
+  JobSublist?: JobSublistResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;

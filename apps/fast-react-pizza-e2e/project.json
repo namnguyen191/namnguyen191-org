@@ -31,8 +31,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.json --noEmit"],
-        "cwd": "apps/fast-react-pizza-e2e",
-        "forwardAllArgs": false
+        "cwd": "apps/fast-react-pizza-e2e"
       }
     }
   },

@@ -78,8 +78,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.app.json --noEmit"],
-        "cwd": "apps/angular-patterns",
-        "forwardAllArgs": false
+        "cwd": "apps/angular-patterns"
       }
     }
   }

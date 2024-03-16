@@ -5,7 +5,7 @@ import {
   MutationResolvers,
   QueryResolvers,
 } from '../../../__generated__/resolvers-types.js';
-import { createJob, deleteJob, getJob, getJobs, updateJob } from '../../db/jobs.js';
+import { countJobs, createJob, deleteJob, getJob, getJobs, updateJob } from '../../db/jobs.js';
 import { notFoundError, unauthorizedError } from '../../utils/graphql-helpers.js';
 
 const toISODate = (date: string): string => date.slice(0, 'yyyy-mm-dd'.length);
@@ -26,7 +26,14 @@ export const jobResolvers: JobFeatureResolvers = {
       }
       return job;
     },
-    jobs: async () => getJobs(10, 0),
+    jobs: async (_root, { limit, offset }) => {
+      const totalCount = await countJobs();
+      const jobs = await getJobs(limit ?? 10, offset ?? 0);
+      return {
+        items: jobs,
+        totalCount,
+      };
+    },
   },
   Mutation: {
     createJob: async (_root, args, ctx) => {

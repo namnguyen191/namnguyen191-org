@@ -6,23 +6,25 @@ export type FetchWithStatus<T> = {
   data: T | null;
 };
 
-export const fetchWithStatus = <T>(params: {
-  fetcher: () => Promise<T>;
+export const fetchWithStatus = <TReturn, TArgs extends unknown[]>(params: {
+  fetcher: (...args: TArgs) => Promise<TReturn>;
 }): {
-  fetchState: WritableSignal<FetchWithStatus<T>>;
-  startFetching: () => Promise<void>;
+  fetchState: WritableSignal<FetchWithStatus<TReturn>>;
+  startFetching: (...args: TArgs) => Promise<void>;
 } => {
   const { fetcher } = params;
-  const fetchWithStatusSignal: WritableSignal<FetchWithStatus<T>> = signal<FetchWithStatus<T>>({
+  const fetchWithStatusSignal: WritableSignal<FetchWithStatus<TReturn>> = signal<
+    FetchWithStatus<TReturn>
+  >({
     isLoading: false,
     isError: false,
     data: null,
   });
 
-  const fetch = async (): Promise<void> => {
+  const fetch = async (...args: TArgs): Promise<void> => {
     fetchWithStatusSignal.update((prev) => ({ ...prev, isLoading: true }));
     try {
-      const responseData = await fetcher();
+      const responseData = await fetcher(...args);
       fetchWithStatusSignal.set({ data: responseData, isError: false, isLoading: false });
     } catch (error) {
       console.warn(error);

@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   EnvironmentInjector,
   inject,
   OnInit,
@@ -28,16 +30,44 @@ import { getAllJobs } from './query';
 export class HomeComponent implements OnInit {
   apollo: Apollo = inject(Apollo);
   environmentInjector = inject(EnvironmentInjector);
+  limit = 5;
+  currentPage = signal<number>(1);
+  totalCount = signal<number>(0);
+  totalPages = computed(() => Math.ceil(this.totalCount() / this.limit));
 
   allJobsResource = fetchWithStatus({
-    fetcher: getAllJobs,
+    fetcher: (limit: number, offset: number) => getAllJobs(limit, offset),
   });
 
   jobs: WritableSignal<Job[]> = signal([]);
 
+  constructor() {
+    effect(
+      () => {
+        const totalJobsCount = this.allJobsResource.fetchState().data?.totalCount;
+        if (totalJobsCount) {
+          this.totalCount.set(totalJobsCount);
+        }
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
+  onPageSelect(newPage: number): void {
+    if (newPage === this.currentPage()) {
+      return;
+    }
+    this.currentPage.set(newPage);
+    runInInjectionContext(this.environmentInjector, () => {
+      this.allJobsResource.startFetching(this.limit, this.currentPage());
+    });
+  }
+
   ngOnInit(): void {
     runInInjectionContext(this.environmentInjector, () => {
-      this.allJobsResource.startFetching();
+      this.allJobsResource.startFetching(this.limit, this.currentPage());
     });
   }
 }

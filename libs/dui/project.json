@@ -36,8 +36,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
-        "cwd": "libs/dui",
-        "forwardAllArgs": false
+        "cwd": "libs/dui"
       }
     }
   }

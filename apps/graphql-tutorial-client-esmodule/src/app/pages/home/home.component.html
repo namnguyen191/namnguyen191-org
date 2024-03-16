@@ -1,17 +1,17 @@
 <h1 class="title">Job Board</h1>
-<namnguyen191-pagination-bar
-  currentPage="{currentPage}"
-  totalPages="{totalPages}"
-  onPageChange="{setCurrentPage}"
-/>
 <ng-container *ngIf="allJobsResource.fetchState() as jobsState">
   @if (jobsState.isError) {
     <span> Something went wrong loading jobs, please try again later </span>
   } @else if (jobsState.isLoading) {
     <span> Loading jobs... </span>
   } @else {
-    <ng-container *ngIf="jobsState.data as jobs">
-      <namnguyen191-job-list [jobs]="jobs" />
+    <ng-container *ngIf="jobsState.data as jobsData">
+      <namnguyen191-pagination-bar
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageSelect)="onPageSelect($event)"
+      />
+      <namnguyen191-job-list [jobs]="jobsData.items" />
     </ng-container>
   }
 </ng-container>

@@ -1,7 +1,12 @@
 # This is a regular comment, not documentation
 extend type Query {
   job(id: ID!): Job
-  jobs: [Job!]
+  jobs(limit: Int, offset: Int): JobSublist!
+}
+
+type JobSublist {
+  items: [Job!]!
+  totalCount: Int!
 }
 
 """

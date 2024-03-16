@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { PageButtonComponent } from '../page-button/page-button.component';
 
@@ -12,9 +12,17 @@ import { PageButtonComponent } from '../page-button/page-button.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationBarComponent {
-  currentPage = 1;
-  totalPages = 1;
-  pages = this.getVisiblePages(this.currentPage, this.totalPages);
+  currentPage = input.required<number>();
+  totalPages = input.required<number>();
+  pages = computed(() => {
+    return this.getVisiblePages(this.currentPage(), this.totalPages());
+  });
+
+  pageSelect = output<number>();
+
+  setPage(newPage: number): void {
+    this.pageSelect.emit(newPage);
+  }
 
   /**
    * Calculates a list of at most 7 pages to display.

@@ -4,21 +4,32 @@ import { lastValueFrom } from 'rxjs';
 
 import { Job } from '../../shared/interfaces';
 
-export const getAllJobs = async (): Promise<Job[]> => {
+export type GetAllJobsResult = {
+  totalCount: number;
+  items: Job[];
+};
+export const getAllJobs = async (limit: number, offset: number): Promise<GetAllJobsResult> => {
   const apollo: Apollo = inject(Apollo);
 
   const queryResult = await lastValueFrom(
-    apollo.query<{ jobs: Job[] }>({
+    apollo.query<{ jobs: GetAllJobsResult }>({
       query: gql`
-        query AllJobs {
-          jobs {
-            title
-            date
-            id
+        query AllJobs($limit: Int!, $offset: Int!) {
+          jobs(limit: $limit, offset: $offset) {
+            totalCount
+            items {
+              title
+              date
+              id
+            }
           }
         }
       `,
       fetchPolicy: 'no-cache',
+      variables: {
+        limit,
+        offset,
+      },
     })
   );
 
