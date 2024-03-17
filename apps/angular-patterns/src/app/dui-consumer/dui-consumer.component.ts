@@ -12,6 +12,7 @@ import {
 
 import testLayout from './sample-configs/layout-1.json';
 import testLayout2 from './sample-configs/layout-2.json';
+import mainLayout from './sample-configs/main-layout.json';
 import simpleTable1 from './sample-configs/simple_table_1.json';
 import simpleTable2 from './sample-configs/simple_table_2.json';
 import simpleTable2updated from './sample-configs/simple_table_2_updated.json';
@@ -26,7 +27,7 @@ import simpleTable3 from './sample-configs/simple_table_3.json';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiConsumerComponent {
-  layout: WritableSignal<LayoutConfig> = signal(testLayout);
+  layout: WritableSignal<LayoutConfig> = signal(mainLayout);
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
@@ -52,17 +53,6 @@ export class DuiConsumerComponent {
         },
       ],
     });
-
-    setTimeout(() => {
-      this.layout.set(testLayout2);
-      setTimeout(() => {
-        this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
-
-        setTimeout(() => {
-          this.layout.set(testLayout);
-        }, 5000);
-      }, 5000);
-    }, 5000);
   }
 
   setupEventsListener(): void {
@@ -77,5 +67,19 @@ export class DuiConsumerComponent {
         }
       }
     });
+  }
+
+  private _testChangingTemplateAndElement(): void {
+    this.layout.set(testLayout);
+    setTimeout(() => {
+      this.layout.set(testLayout2);
+      setTimeout(() => {
+        this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
+
+        setTimeout(() => {
+          this.layout.set(testLayout);
+        }, 5000);
+      }, 5000);
+    }, 5000);
   }
 }

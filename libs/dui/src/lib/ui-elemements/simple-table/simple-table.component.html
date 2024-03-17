@@ -1,5 +1,17 @@
 @if (isLoadingConfigOption()) {
   <span>Loading...</span>
 } @else {
-  <p>{{ textConfigOption() }}</p>
+  <h1>{{ titleConfigOption() }}</h1>
+
+  <table mat-table [dataSource]="rowsConfigOption()" class="mat-elevation-z8">
+    @for (column of columnsConfigOption(); track column) {
+      <ng-container [matColumnDef]="column.dataKey">
+        <th mat-header-cell *matHeaderCellDef>{{ column.displayedValue }}</th>
+        <td mat-cell *matCellDef="let element">{{ element[column.dataKey] }}</td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="columnsConfigOption() | pluck: 'dataKey'"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsConfigOption() | pluck: 'dataKey'"></tr>
+  </table>
 }

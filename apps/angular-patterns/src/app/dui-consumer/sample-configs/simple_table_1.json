@@ -2,6 +2,30 @@
   "id": "MY_SIMPLE_TABLE",
   "type": "SIMPLE_TABLE",
   "options": {
-    "text": "Welcome to my custom table"
+    "title": "Welcome to my custom table",
+    "columns": [
+      {
+        "dataKey": "key1",
+        "displayedValue": "Data A"
+      },
+      {
+        "dataKey": "key2",
+        "displayedValue": "Data B"
+      }
+    ],
+    "rows": [
+      {
+        "key1": "Data A1",
+        "key2": "Data B1"
+      },
+      {
+        "key1": "Data A2",
+        "key2": "Data B2"
+      },
+      {
+        "key1": "Data A3",
+        "key2": "Data B3"
+      }
+    ]
   }
 }

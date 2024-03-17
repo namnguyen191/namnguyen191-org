@@ -2,6 +2,6 @@
   "id": "MY_SIMPLE_TABLE_3",
   "type": "SIMPLE_TABLE",
   "options": {
-    "text": "Welcome to my custom table 3"
+    "title": "Welcome to my custom table 3"
   }
 }
