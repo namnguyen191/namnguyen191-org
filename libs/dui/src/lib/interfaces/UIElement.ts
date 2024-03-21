@@ -1,4 +1,4 @@
-import { InputSignal } from '@angular/core';
+import { InputSignalWithTransform } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export type UIElementTemplate = {
@@ -14,11 +14,14 @@ export type UIElementInstance = {
 };
 
 export type UIElementRequiredConfigs = {
-  isLoading: Observable<boolean>;
+  isLoading: boolean;
 };
 
 export type CreateUIElementInputOptions<TConfigs> = Required<{
-  [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]: InputSignal<TConfigs[K]>;
+  [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]: InputSignalWithTransform<
+    Observable<TConfigs[K]>,
+    TConfigs[K] | Observable<TConfigs[K]>
+  >;
 }>;
 
 export type UIElementRequiredInputOptions = CreateUIElementInputOptions<UIElementRequiredConfigs>;

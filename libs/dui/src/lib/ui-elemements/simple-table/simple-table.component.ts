@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { Observable, of } from 'rxjs';
+import { isObservable, Observable, of } from 'rxjs';
 
 import { UIElementImplementation } from '../../interfaces/UIElement';
 import { PluckPipe } from './pluck.pipe';
@@ -32,13 +32,50 @@ export class SimpleTableComponent
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
 
-  isLoadingConfigOption: InputSignal<Observable<boolean>> = input(of(false), {
+  isLoadingConfigOption: InputSignalWithTransform<
+    Observable<boolean>,
+    boolean | Observable<boolean>
+  > = input(of(false), {
     alias: 'isLoading',
+    transform: (val: boolean | Observable<boolean>) => {
+      if (!isObservable(val)) {
+        return of(val);
+      }
+      return val;
+    },
   });
-  titleConfigOption: InputSignal<string> = input('No text', { alias: 'title' });
-  columnsConfigOption: InputSignal<TableColumnObject[]> = input<TableColumnObject[]>([], {
+  titleConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
+    input(of('Default title'), {
+      alias: 'title',
+      transform: (val: string | Observable<string>) => {
+        if (!isObservable(val)) {
+          return of(val);
+        }
+        return val;
+      },
+    });
+  columnsConfigOption: InputSignalWithTransform<
+    Observable<TableColumnObject[]>,
+    TableColumnObject[] | Observable<TableColumnObject[]>
+  > = input(of([]), {
     alias: 'columns',
+    transform: (val: TableColumnObject[] | Observable<TableColumnObject[]>) => {
+      if (!isObservable(val)) {
+        return of(val);
+      }
+      return val;
+    },
   });
-
-  rowsConfigOption: InputSignal<TableRowObject[]> = input<TableRowObject[]>([], { alias: 'rows' });
+  rowsConfigOption: InputSignalWithTransform<
+    Observable<TableRowObject[]>,
+    TableRowObject[] | Observable<TableRowObject[]>
+  > = input(of([]), {
+    alias: 'rows',
+    transform: (val: TableRowObject[] | Observable<TableRowObject[]>) => {
+      if (!isObservable(val)) {
+        return of(val);
+      }
+      return val;
+    },
+  });
 }

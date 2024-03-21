@@ -9,3 +9,7 @@ export const logError = (msg: string): void => {
 export const logWarning = (msg: string): void => {
   console.warn(`[WARNING LOG] ${msg}`);
 };
+
+export const logSubscription = (msg: string): void => {
+  console.info(`[SUBSCRIPTION] ${msg}`);
+};

@@ -16,17 +16,19 @@
     </div>
   </div>
 } @else {
-  <h1>{{ titleConfigOption() }}</h1>
+  <h1>{{ titleConfigOption() | async }}</h1>
 
-  <table mat-table [dataSource]="rowsConfigOption()" class="mat-elevation-z8">
-    @for (column of columnsConfigOption(); track column) {
+  <table mat-table [dataSource]="(rowsConfigOption() | async) || []" class="mat-elevation-z8">
+    @for (column of columnsConfigOption() | async; track column) {
       <ng-container [matColumnDef]="column.dataKey">
         <th mat-header-cell *matHeaderCellDef>{{ column.displayedValue }}</th>
         <td mat-cell *matCellDef="let element">{{ element[column.dataKey] }}</td>
       </ng-container>
     }
 
-    <tr mat-header-row *matHeaderRowDef="columnsConfigOption() | pluck: 'dataKey'"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsConfigOption() | pluck: 'dataKey'"></tr>
+    <ng-container *ngIf="columnsConfigOption() | async as columns">
+      <tr mat-header-row *matHeaderRowDef="columns | pluck: 'dataKey'"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns | pluck: 'dataKey'"></tr>
+    </ng-container>
   </table>
 }

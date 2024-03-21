@@ -21,6 +21,7 @@ import {
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '../../services';
+import { logSubscription } from '../../utils/logging';
 
 type ElemetToRender = {
   component: Type<unknown>;
@@ -43,6 +44,7 @@ export class UiElementWrapperComponent implements OnDestroy {
   private remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
 
   #cancelTemplateSubscriptionSubject = new Subject<void>();
+  #destroyRef = new Subject<void>();
 
   uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
     return this.uiElementTemplatesService.getUIElementTemplate(
@@ -58,8 +60,9 @@ export class UiElementWrapperComponent implements OnDestroy {
         // cancel previous subscription if any
         this.#cancelTemplateSubscriptionSubject.next();
         this.uiElementTemplate()
-          .pipe(takeUntil(this.#cancelTemplateSubscriptionSubject))
+          .pipe(takeUntil(this.#cancelTemplateSubscriptionSubject), takeUntil(this.#destroyRef))
           .subscribe((template) => {
+            logSubscription(`Template for UI element instance ${this.uiElementInstance().id}`);
             if (!template) {
               return;
             }
@@ -82,6 +85,8 @@ export class UiElementWrapperComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.#cancelTemplateSubscriptionSubject.next();
     this.#cancelTemplateSubscriptionSubject.complete();
+    this.#destroyRef.next();
+    this.#destroyRef.complete();
   }
 
   #generateComponentInputs(params: {
