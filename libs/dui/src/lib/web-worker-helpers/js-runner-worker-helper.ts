@@ -1,4 +1,4 @@
-import { GetWorkerEvent } from './worker-interfaces';
+import { GetWorkerEvent, WorkerResponse } from './worker-interfaces';
 
 export type JSRunnerContext = Record<string, unknown>;
 
@@ -9,15 +9,22 @@ export const runRawJs = (rawJS: string, context: JSRunnerContext): unknown => {
 export const handleRunJsMessage = (e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>>): void => {
   const {
     data: {
-      payload: { rawJS, context },
+      payload: { rawJS, context, id },
     },
   } = e;
   let result: unknown;
+
   try {
     result = runRawJs(rawJS, context);
   } catch (error) {
     console.warn(error);
     result = null;
   }
-  postMessage(result);
+
+  const response: WorkerResponse = {
+    result,
+    id,
+  };
+
+  postMessage(response);
 };

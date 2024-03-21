@@ -88,6 +88,7 @@
     "@nx/web": "18.1.1",
     "@nx/webpack": "18.1.1",
     "@nx/workspace": "18.1.1",
+    "@parcel/watcher": "^2.4.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@schematics/angular": "~17.3.0",
     "@svgr/webpack": "^8.1.0",

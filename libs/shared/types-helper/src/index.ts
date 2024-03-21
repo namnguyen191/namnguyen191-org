@@ -1,1 +1,2 @@
-export * from './lib/types-helper';
+export * from './lib/brand';
+export * from './lib/object-type';

@@ -48,8 +48,18 @@ export class DuiConsumerComponent {
       id: '123',
       requests: [
         {
-          endpoint: 'https://www.boredapi.com/api/activity',
-          method: 'GET',
+          options: {
+            endpoint: 'https://www.boredapi.com/api/activity',
+            method: 'GET',
+          },
+          interpolation: '<${ return this.$current.activity }$>',
+        },
+        {
+          options: {
+            endpoint: 'https://www.boredapi.com/api/activity',
+            method: 'GET',
+          },
+          interpolation: '<${ return this.$requests[0] + " and " + this.$current.activity }$>',
         },
       ],
     });

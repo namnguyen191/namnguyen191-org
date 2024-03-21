@@ -8,13 +8,14 @@ import {
   input,
   InputSignal,
   OnDestroy,
+  Signal,
   signal,
   Type,
   WritableSignal,
 } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
-import { UIElementInstance } from '../../interfaces';
+import { UIElementInstance, UIElementTemplate } from '../../interfaces';
 import {
   RemoteResourceService,
   UIElementFactoryService,
@@ -43,7 +44,7 @@ export class UiElementWrapperComponent implements OnDestroy {
 
   #cancelTemplateSubscriptionSubject = new Subject<void>();
 
-  uiElementTemplate = computed(() => {
+  uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
     return this.uiElementTemplatesService.getUIElementTemplate(
       this.uiElementInstance().uiElementTemplateId
     );
@@ -62,9 +63,13 @@ export class UiElementWrapperComponent implements OnDestroy {
             if (!template) {
               return;
             }
+
             this.uiElement.set({
               component: this.uiElementFactoryService.getUIElement(template.type),
-              inputs: template.options,
+              inputs: this.#generateComponentInputs({
+                templateOptions: template.options,
+                remoteResourceId: template.remoteResourceId,
+              }),
             });
           });
       },
@@ -77,5 +82,19 @@ export class UiElementWrapperComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.#cancelTemplateSubscriptionSubject.next();
     this.#cancelTemplateSubscriptionSubject.complete();
+  }
+
+  #generateComponentInputs(params: {
+    templateOptions: Record<string, unknown>;
+    remoteResourceId?: string;
+  }): Record<string, unknown> {
+    const { templateOptions, remoteResourceId } = params;
+    const inputs: Record<string, unknown> = { ...templateOptions };
+    if (remoteResourceId) {
+      inputs['isLoading'] = this.remoteResourceService
+        .getRemoteResourceState('123')
+        .pipe(map((resourceState) => resourceState.isLoading));
+    }
+    return inputs;
   }
 }

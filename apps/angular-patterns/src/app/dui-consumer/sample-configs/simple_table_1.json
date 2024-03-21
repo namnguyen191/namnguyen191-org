@@ -1,6 +1,7 @@
 {
   "id": "MY_SIMPLE_TABLE",
   "type": "SIMPLE_TABLE",
+  "remoteResourceId": "123",
   "options": {
     "title": "Welcome to my custom table",
     "columns": [

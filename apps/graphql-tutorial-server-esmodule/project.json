@@ -66,8 +66,16 @@
     "graphql-codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["gql-gen --config graphql-tutorial-server.codegen.ts"],
         "cwd": "apps/graphql-tutorial-server-esmodule"
+      },
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "commands": ["gql-gen --config graphql-tutorial-server.codegen.ts --watch"]
+        },
+        "production": {
+          "commands": ["gql-gen --config graphql-tutorial-server.codegen.ts"]
+        }
       }
     }
   },

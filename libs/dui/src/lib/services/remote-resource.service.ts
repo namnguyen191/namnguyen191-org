@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, delay, forkJoin, Observable, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, Observable } from 'rxjs';
 
-import { RemoteResourceConfigs } from '../interfaces/RemoteResource';
+import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
 import { DataFetchingService } from './data-fetching.service';
+import { InterpolationService } from './interpolation.service';
 
 export type RemoteResourceState = {
   isLoading: boolean;
@@ -17,7 +18,8 @@ export class RemoteResourceService {
   #remoteResourcesMap: Record<string, RemoteResourceConfigs> = {};
   #remoteResourcesStateMap: Record<string, BehaviorSubject<RemoteResourceState>> = {};
 
-  dataFetchingService: DataFetchingService = inject(DataFetchingService);
+  #dataFetchingService: DataFetchingService = inject(DataFetchingService);
+  #interpolationService: InterpolationService = inject(InterpolationService);
 
   registerRemoteResource(remoteResource: RemoteResourceConfigs): void {
     this.#remoteResourcesMap[remoteResource.id] = remoteResource;
@@ -56,26 +58,56 @@ export class RemoteResourceService {
 
     this.#remoteResourcesStateMap[id] = newRemoteResourceState;
 
-    forkJoin(remoteResource.requests.map((request) => this.dataFetchingService.fetchData(request)))
-      .pipe(
-        delay(3000),
-        tap({
-          next: (data) =>
-            newRemoteResourceState.next({
-              isLoading: false,
-              isError: false,
-              result: data,
-            }),
-          error: () =>
-            newRemoteResourceState.next({
-              isLoading: false,
-              isError: true,
-              result: null,
-            }),
+    this.#processRequests(remoteResource.requests).then(
+      (result) =>
+        newRemoteResourceState.next({
+          isLoading: false,
+          isError: false,
+          result,
+        }),
+      () =>
+        newRemoteResourceState.next({
+          isLoading: false,
+          isError: true,
+          result: null,
         })
-      )
-      .subscribe();
+    );
 
     return newRemoteResourceState.asObservable();
+  }
+
+  async #processRequests(requests: Request[]): Promise<unknown> {
+    const requestsState: {
+      requestsResults: unknown[];
+    } = {
+      requestsResults: [],
+    };
+    for (const request of requests) {
+      const interpolatedRequestOptions = await this.#interpolationService.interpolateObject({
+        object: request.options,
+        state: requestsState,
+      });
+
+      let requestResult = await lastValueFrom(
+        this.#dataFetchingService.fetchData(interpolatedRequestOptions)
+      );
+
+      if (request.interpolation) {
+        const rawJS =
+          this.#interpolationService.extractRawJs(request.interpolation) ??
+          ('return "Invalid interpolation syntax"' as RawJsString);
+
+        requestResult = await this.#interpolationService.interpolate({
+          rawJS,
+          context: {
+            $requests: requestsState.requestsResults,
+            $current: requestResult,
+          },
+        });
+      }
+
+      requestsState.requestsResults.push(requestResult);
+    }
+    return requestsState.requestsResults[requestsState.requestsResults.length - 1];
   }
 }

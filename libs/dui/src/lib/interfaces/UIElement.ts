@@ -14,7 +14,7 @@ export type UIElementInstance = {
 };
 
 export type UIElementRequiredConfigs = {
-  isLoading: boolean;
+  isLoading: Observable<boolean>;
 };
 
 export type CreateUIElementInputOptions<TConfigs> = Required<{

@@ -1,5 +1,20 @@
-@if (isLoadingConfigOption()) {
-  <span>Loading...</span>
+@if (isLoadingConfigOption() | async) {
+  <div class="loadingio-spinner-spinner-4ojm1xe3055">
+    <div class="ldio-0u7ypmb5nngh">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
 } @else {
   <h1>{{ titleConfigOption() }}</h1>
 
