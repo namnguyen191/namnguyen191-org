@@ -1,7 +1,9 @@
 import { ReactElement } from 'react';
 import styled from 'styled-components';
 
+import { useCabins } from '../cabins/cabinQueryHooks';
 import { useRecentBookings, useRecentStays } from './recentBookingHooks';
+import { Stats } from './Stats';
 
 const StyledDashboardLayout = styled.div`
   display: grid;
@@ -12,14 +14,24 @@ const StyledDashboardLayout = styled.div`
 
 export const DashboardLayout = (): ReactElement => {
   const { recentBookings, isGettingRecentBookings } = useRecentBookings();
-  const { recentStays, isGettingRecentStays } = useRecentStays();
+  const { recentStays, isGettingRecentStays, numDays } = useRecentStays();
+  const { cabins, isLoadingCabins } = useCabins();
 
-  if (isGettingRecentBookings || isGettingRecentStays) {
+  if (isGettingRecentBookings || isGettingRecentStays || isLoadingCabins) {
     return <span>Loading...</span>;
   }
 
   console.log('Nam data is: recentBookings', recentBookings);
   console.log('Nam data is: recentStays', recentStays);
 
-  return <StyledDashboardLayout>DashboardLayout work!</StyledDashboardLayout>;
+  return (
+    <StyledDashboardLayout>
+      <Stats
+        bookings={recentBookings ?? []}
+        confirmedStays={recentStays ?? []}
+        numOfDays={numDays}
+        numOfCabins={cabins?.length ?? 0}
+      />
+    </StyledDashboardLayout>
+  );
 };

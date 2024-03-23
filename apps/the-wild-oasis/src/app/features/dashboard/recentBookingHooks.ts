@@ -31,6 +31,7 @@ export const useRecentBookings = (): {
 export const useRecentStays = (): {
   isGettingRecentStays: boolean;
   recentStays: BookingWithGuestLastName[] | undefined;
+  numDays: number;
 } => {
   const [searchParams] = useSearchParams();
 
@@ -45,5 +46,5 @@ export const useRecentStays = (): {
     (stay) => stay.status === 'checked-in' || stay.status === 'checked-out'
   );
 
-  return { isGettingRecentStays, recentStays: confirmedStays };
+  return { isGettingRecentStays, recentStays: confirmedStays, numDays };
 };

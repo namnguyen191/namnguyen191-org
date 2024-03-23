@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 const StyledStat = styled.div`
@@ -49,7 +49,13 @@ const Value = styled.p`
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Stat: FC<any> = ({ icon, title, value, color }) => {
+export type StatProps = {
+  icon: ReactElement;
+  color: string;
+  title: string;
+  value: number | string;
+};
+export const Stat = ({ icon, title, value, color }: StatProps): ReactElement => {
   return (
     <StyledStat>
       <Icon color={color}>{icon}</Icon>

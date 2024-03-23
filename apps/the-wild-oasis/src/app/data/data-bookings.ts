@@ -6,7 +6,7 @@ const fromToday = (numDays: number, withTime: boolean = false): string => {
   return date.toISOString().slice(0, -1);
 };
 
-type Booking = {
+export type Booking = {
   created_at: string;
   start_date: string;
   end_date: string;
