@@ -2,22 +2,34 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { isObservable, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { z } from 'zod';
 
 import { UIElementImplementation } from '../../interfaces/UIElement';
+import { inputObsTransform } from '../../utils/helper';
+import { zodStringOrNumberOrBoolean } from '../../utils/zod-types';
 import { PluckPipe } from './pluck.pipe';
 
-export type TableRowObject = Record<string, string | number | boolean>;
-export type TableColumnObject = {
-  dataKey: string;
-  displayedValue: string;
-};
+const ZodTableRowObject = z.record(z.string(), zodStringOrNumberOrBoolean);
+export type TableRowObject = z.infer<typeof ZodTableRowObject>;
 
-export type SimpleTableUIElementComponentConfigs = {
-  title: string;
-  columns: TableColumnObject[];
-  rows: TableRowObject[];
-};
+const ZodTableColumnObject = z.object({
+  dataKey: z.string({
+    invalid_type_error: 'dataKey must be a string',
+  }),
+  displayedValue: z.string(),
+});
+export type TableColumnObject = z.infer<typeof ZodTableColumnObject>;
+
+const ZodSimpleTableUIElementComponentConfigs = z.object({
+  title: z.string(),
+  columns: z.array(ZodTableColumnObject),
+  rows: z.array(ZodTableRowObject),
+});
+
+export type SimpleTableUIElementComponentConfigs = z.infer<
+  typeof ZodSimpleTableUIElementComponentConfigs
+>;
 
 @Component({
   selector: 'namnguyen191-simple-table',
@@ -37,45 +49,25 @@ export class SimpleTableComponent
     boolean | Observable<boolean>
   > = input(of(false), {
     alias: 'isLoading',
-    transform: (val: boolean | Observable<boolean>) => {
-      if (!isObservable(val)) {
-        return of(val);
-      }
-      return val;
-    },
+    transform: inputObsTransform(z.boolean()),
   });
   titleConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
     input(of('Default title'), {
       alias: 'title',
-      transform: (val: string | Observable<string>) => {
-        if (!isObservable(val)) {
-          return of(val);
-        }
-        return val;
-      },
+      transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.title),
     });
   columnsConfigOption: InputSignalWithTransform<
     Observable<TableColumnObject[]>,
     TableColumnObject[] | Observable<TableColumnObject[]>
   > = input(of([]), {
     alias: 'columns',
-    transform: (val: TableColumnObject[] | Observable<TableColumnObject[]>) => {
-      if (!isObservable(val)) {
-        return of(val);
-      }
-      return val;
-    },
+    transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.columns),
   });
   rowsConfigOption: InputSignalWithTransform<
     Observable<TableRowObject[]>,
     TableRowObject[] | Observable<TableRowObject[]>
   > = input(of([]), {
     alias: 'rows',
-    transform: (val: TableRowObject[] | Observable<TableRowObject[]>) => {
-      if (!isObservable(val)) {
-        return of(val);
-      }
-      return val;
-    },
+    transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.rows),
   });
 }
