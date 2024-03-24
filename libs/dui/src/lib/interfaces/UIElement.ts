@@ -1,10 +1,10 @@
 import { InputSignalWithTransform } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export type AvailableStateScopes = 'global' | 'layout' | 'local';
+
 export type StateSubscriptionConfig = {
-  global?: string[];
-  layout?: string[];
-  local?: string[];
+  [K in AvailableStateScopes]?: string[];
 };
 
 export type UIElementTemplate = {

@@ -15,18 +15,31 @@ import {
 } from '@angular/core';
 import { combineLatest, from, map, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 
-import { StateSubscriptionConfig, UIElementInstance, UIElementTemplate } from '../../interfaces';
+import {
+  AvailableStateScopes,
+  StateSubscriptionConfig,
+  UIElementInstance,
+  UIElementTemplate,
+} from '../../interfaces';
 import {
   RemoteResourceService,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '../../services';
 import { InterpolationService } from '../../services/interpolation.service';
+import { StateStoreService } from '../../services/state-store.service';
 import { logSubscription } from '../../utils/logging';
 
 type ElemetToRender = {
   component: Type<unknown>;
   inputs: Record<string, unknown>;
+};
+
+type ElementInputsInterpolationContext = {
+  data: unknown;
+  state: {
+    [K in AvailableStateScopes]: Record<string, unknown>;
+  };
 };
 
 @Component({
@@ -44,6 +57,7 @@ export class UiElementWrapperComponent implements OnDestroy {
   #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   #remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
   #interpolationService: InterpolationService = inject(InterpolationService);
+  #stateStoreService: StateStoreService = inject(StateStoreService);
 
   #cancelTemplateSubscriptionSubject = new Subject<void>();
   #destroyRef = new Subject<void>();
@@ -98,14 +112,11 @@ export class UiElementWrapperComponent implements OnDestroy {
     remoteResourceId?: string;
     stateSubscription?: StateSubscriptionConfig;
   }): Record<string, unknown> {
-    const { templateOptions, remoteResourceId } = params;
-    const remoteData: Observable<unknown | null> = remoteResourceId
-      ? this.#remoteResourceService
-          .getRemoteResourceState(remoteResourceId)
-          .pipe(map((state) => state.result))
-      : of(null);
-    const interpolationContext = combineLatest({
-      data: remoteData,
+    const { templateOptions, remoteResourceId, stateSubscription } = params;
+
+    const interpolationContext = this.#getElementInputsInterpolationContext({
+      remoteResourceId,
+      stateSubscription,
     });
     const inputs: Record<string, unknown> = {};
     for (const [optionName, optionValue] of Object.entries(templateOptions)) {
@@ -128,5 +139,48 @@ export class UiElementWrapperComponent implements OnDestroy {
     }
 
     return inputs;
+  }
+
+  #getElementInputsInterpolationContext(params: {
+    remoteResourceId?: string;
+    stateSubscription?: StateSubscriptionConfig;
+  }): Observable<ElementInputsInterpolationContext> {
+    const { remoteResourceId, stateSubscription = {} } = params;
+
+    const remoteData: Observable<unknown | null> = remoteResourceId
+      ? this.#remoteResourceService
+          .getRemoteResourceState(remoteResourceId)
+          .pipe(map((state) => state.result))
+      : of(null);
+
+    const { local, layout, global } = stateSubscription;
+
+    const localState: Observable<Record<string, unknown>> = local
+      ? this.#stateStoreService.getLocalState()
+      : of({});
+
+    const globalState: Observable<Record<string, unknown>> = global
+      ? this.#stateStoreService.getGlobalState()
+      : of({});
+
+    const layoutState: Observable<Record<string, unknown>> = layout
+      ? this.#stateStoreService.getLayoutState()
+      : of({});
+
+    return combineLatest({
+      data: remoteData,
+      globalState,
+      localState,
+      layoutState,
+    }).pipe(
+      map(({ data, globalState, localState, layoutState }) => ({
+        data,
+        state: {
+          global: globalState,
+          local: localState,
+          layout: layoutState,
+        },
+      }))
+    );
   }
 }
