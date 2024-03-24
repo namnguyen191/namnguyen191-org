@@ -16,7 +16,7 @@
     ],
     "rows": [
       {
-        "key1": "Data A1",
+        "key1": "<${ return this.data }$>",
         "key2": "Data B1"
       },
       {

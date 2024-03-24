@@ -18,17 +18,19 @@
 } @else {
   <h1>{{ titleConfigOption() | async }}</h1>
 
-  <table mat-table [dataSource]="(rowsConfigOption() | async) || []" class="mat-elevation-z8">
-    @for (column of columnsConfigOption() | async; track column) {
-      <ng-container [matColumnDef]="column.dataKey">
-        <th mat-header-cell *matHeaderCellDef>{{ column.displayedValue }}</th>
-        <td mat-cell *matCellDef="let element">{{ element[column.dataKey] }}</td>
-      </ng-container>
-    }
+  <ng-container *ngIf="rowsConfigOption() | async as rowsConfig">
+    <ng-container *ngIf="columnsConfigOption() | async as columnsConfig">
+      <table mat-table [dataSource]="rowsConfig" class="mat-elevation-z8">
+        @for (column of columnsConfig; track column) {
+          <ng-container [matColumnDef]="column.dataKey">
+            <th mat-header-cell *matHeaderCellDef>{{ column.displayedValue }}</th>
+            <td mat-cell *matCellDef="let element">{{ element[column.dataKey] }}</td>
+          </ng-container>
+        }
 
-    <ng-container *ngIf="columnsConfigOption() | async as columns">
-      <tr mat-header-row *matHeaderRowDef="columns | pluck: 'dataKey'"></tr>
-      <tr mat-row *matRowDef="let row; columns: columns | pluck: 'dataKey'"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsConfig | pluck: 'dataKey'"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsConfig | pluck: 'dataKey'"></tr>
+      </table>
     </ng-container>
-  </table>
+  </ng-container>
 }

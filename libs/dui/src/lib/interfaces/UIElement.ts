@@ -1,10 +1,17 @@
 import { InputSignalWithTransform } from '@angular/core';
 import { Observable } from 'rxjs';
 
+export type StateSubscriptionConfig = {
+  global?: string[];
+  layout?: string[];
+  local?: string[];
+};
+
 export type UIElementTemplate = {
   id: string;
   type: string;
   remoteResourceId?: string;
+  stateSubscription?: StateSubscriptionConfig;
   options: Record<string, unknown>;
 };
 

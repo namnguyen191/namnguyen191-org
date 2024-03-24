@@ -13,14 +13,15 @@ import {
   Type,
   WritableSignal,
 } from '@angular/core';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { combineLatest, from, map, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 
-import { UIElementInstance, UIElementTemplate } from '../../interfaces';
+import { StateSubscriptionConfig, UIElementInstance, UIElementTemplate } from '../../interfaces';
 import {
   RemoteResourceService,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '../../services';
+import { InterpolationService } from '../../services/interpolation.service';
 import { logSubscription } from '../../utils/logging';
 
 type ElemetToRender = {
@@ -39,15 +40,16 @@ type ElemetToRender = {
 export class UiElementWrapperComponent implements OnDestroy {
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
-  private uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
-  private uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
-  private remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+  #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
+  #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
+  #remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+  #interpolationService: InterpolationService = inject(InterpolationService);
 
   #cancelTemplateSubscriptionSubject = new Subject<void>();
   #destroyRef = new Subject<void>();
 
   uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
-    return this.uiElementTemplatesService.getUIElementTemplate(
+    return this.#uiElementTemplatesService.getUIElementTemplate(
       this.uiElementInstance().uiElementTemplateId
     );
   });
@@ -68,10 +70,12 @@ export class UiElementWrapperComponent implements OnDestroy {
             }
 
             this.uiElement.set({
-              component: this.uiElementFactoryService.getUIElement(template.type),
+              component: this.#uiElementFactoryService.getUIElement(template.type),
+
               inputs: this.#generateComponentInputs({
                 templateOptions: template.options,
                 remoteResourceId: template.remoteResourceId,
+                stateSubscription: template.stateSubscription,
               }),
             });
           });
@@ -92,14 +96,37 @@ export class UiElementWrapperComponent implements OnDestroy {
   #generateComponentInputs(params: {
     templateOptions: Record<string, unknown>;
     remoteResourceId?: string;
+    stateSubscription?: StateSubscriptionConfig;
   }): Record<string, unknown> {
     const { templateOptions, remoteResourceId } = params;
-    const inputs: Record<string, unknown> = { ...templateOptions };
+    const remoteData: Observable<unknown | null> = remoteResourceId
+      ? this.#remoteResourceService
+          .getRemoteResourceState(remoteResourceId)
+          .pipe(map((state) => state.result))
+      : of(null);
+    const interpolationContext = combineLatest({
+      data: remoteData,
+    });
+    const inputs: Record<string, unknown> = {};
+    for (const [optionName, optionValue] of Object.entries(templateOptions)) {
+      inputs[optionName] = interpolationContext.pipe(
+        switchMap((context) =>
+          from(
+            this.#interpolationService.interpolate({
+              context,
+              value: optionValue,
+            })
+          )
+        )
+      );
+    }
+
     if (remoteResourceId) {
-      inputs['isLoading'] = this.remoteResourceService
-        .getRemoteResourceState('123')
+      inputs['isLoading'] = this.#remoteResourceService
+        .getRemoteResourceState(remoteResourceId)
         .pipe(map((resourceState) => resourceState.isLoading));
     }
+
     return inputs;
   }
 }

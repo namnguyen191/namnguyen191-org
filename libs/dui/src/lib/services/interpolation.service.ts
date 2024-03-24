@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
+import { isEmpty } from 'lodash-es';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 
 import { INTERPOLATION_REGEX, RawJsString } from '../interfaces';
@@ -31,14 +32,14 @@ export class InterpolationService {
     };
   }
 
-  interpolate(params: { rawJS: RawJsString; context: JSRunnerContext }): Promise<unknown> {
+  interpolateRawJs(params: { rawJs: RawJsString; context: JSRunnerContext }): Promise<unknown> {
     const id = Math.random().toString();
-    const { rawJS, context } = params;
+    const { rawJs, context } = params;
     const interpolateEvent: WorkerEventObject = {
       type: 'INTERPOLATE',
       payload: {
         id,
-        rawJS,
+        rawJs,
         context,
       },
     };
@@ -60,10 +61,10 @@ export class InterpolationService {
   }
 
   async interpolateObject<T extends ObjectType>(params: {
-    state: Record<string, unknown>;
+    context: Record<string, unknown>;
     object: T;
   }): Promise<T> {
-    const { state, object } = params;
+    const { context, object } = params;
     const clonedObject = structuredClone(object);
     for (const [key, val] of Object.entries(clonedObject)) {
       if (!val) {
@@ -73,15 +74,15 @@ export class InterpolationService {
       if (typeof val === 'object') {
         clonedObject[key as keyof T] = (await this.interpolateObject({
           object: val as ObjectType,
-          state,
+          context,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         })) as any;
       } else if (typeof val === 'string') {
         const rawJs = this.extractRawJs(val);
         if (rawJs) {
-          clonedObject[key as keyof T] = (await this.interpolate({
-            rawJS: rawJs as RawJsString,
-            context: state,
+          clonedObject[key as keyof T] = (await this.interpolateRawJs({
+            rawJs: rawJs as RawJsString,
+            context: context,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           })) as any;
         }
@@ -89,5 +90,37 @@ export class InterpolationService {
     }
 
     return clonedObject;
+  }
+
+  async interpolate(params: {
+    value: unknown;
+    context: Record<string, unknown>;
+  }): Promise<unknown> {
+    const { value, context } = params;
+
+    if (!value || isEmpty(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string') {
+      const rawJs = this.extractRawJs(value);
+      if (rawJs) {
+        return this.interpolateRawJs({
+          rawJs,
+          context,
+        });
+      }
+
+      return value;
+    }
+
+    if (typeof value === 'object') {
+      return this.interpolateObject({
+        object: value as ObjectType,
+        context,
+      });
+    }
+
+    return value;
   }
 }

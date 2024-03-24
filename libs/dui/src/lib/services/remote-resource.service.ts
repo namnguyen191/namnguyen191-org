@@ -85,7 +85,7 @@ export class RemoteResourceService {
     for (const request of requests) {
       const interpolatedRequestOptions = await this.#interpolationService.interpolateObject({
         object: request.options,
-        state: requestsState,
+        context: requestsState,
       });
 
       let requestResult = await lastValueFrom(
@@ -93,12 +93,12 @@ export class RemoteResourceService {
       );
 
       if (request.interpolation) {
-        const rawJS =
+        const rawJs =
           this.#interpolationService.extractRawJs(request.interpolation) ??
           ('return "Invalid interpolation syntax"' as RawJsString);
 
-        requestResult = await this.#interpolationService.interpolate({
-          rawJS,
+        requestResult = await this.#interpolationService.interpolateRawJs({
+          rawJs,
           context: {
             $requests: requestsState.requestsResults,
             $current: requestResult,

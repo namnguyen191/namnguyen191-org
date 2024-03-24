@@ -8,7 +8,7 @@ export type BaseWorkerEventPayload = {
 
 export type WorkerEventPayloadMap = {
   INTERPOLATE: {
-    rawJS: string;
+    rawJs: string;
     context: Record<string, unknown>;
   };
   TEST: never;
