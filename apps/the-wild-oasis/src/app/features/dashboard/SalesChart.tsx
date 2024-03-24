@@ -66,7 +66,10 @@ export const SalesChart = (props: SalesChartProps): ReactElement => {
 
   return (
     <StyledSalesChart>
-      <Heading as="h2">Sales</Heading>
+      <Heading as="h2">
+        Sales from {format(allDates.at(0) as Date, 'MMM dd yyyy')} &mdash;{' '}
+        {format(allDates.at(-1) as Date, 'MMM dd yyyy')}
+      </Heading>
       <ResponsiveContainer>
         <AreaChart data={data}>
           <XAxis

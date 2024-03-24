@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import styled from 'styled-components';
 
 import { useCabins } from '../cabins/cabinQueryHooks';
+import { DurationChart } from './DurationChart';
 import { useRecentBookings, useRecentStays } from './recentBookingHooks';
 import { SalesChart } from './SalesChart';
 import { Stats } from './Stats';
@@ -30,6 +31,7 @@ export const DashboardLayout = (): ReactElement => {
         numOfDays={numDays}
         numOfCabins={cabins?.length ?? 0}
       />
+      <DurationChart confirmedStays={recentStays ?? []} />
       <SalesChart bookings={recentBookings ?? []} numDays={numDays} />
     </StyledDashboardLayout>
   );
