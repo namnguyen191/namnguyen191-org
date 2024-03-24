@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { useCabins } from '../cabins/cabinQueryHooks';
 import { useRecentBookings, useRecentStays } from './recentBookingHooks';
+import { SalesChart } from './SalesChart';
 import { Stats } from './Stats';
 
 const StyledDashboardLayout = styled.div`
@@ -21,9 +22,6 @@ export const DashboardLayout = (): ReactElement => {
     return <span>Loading...</span>;
   }
 
-  console.log('Nam data is: recentBookings', recentBookings);
-  console.log('Nam data is: recentStays', recentStays);
-
   return (
     <StyledDashboardLayout>
       <Stats
@@ -32,6 +30,7 @@ export const DashboardLayout = (): ReactElement => {
         numOfDays={numDays}
         numOfCabins={cabins?.length ?? 0}
       />
+      <SalesChart bookings={recentBookings ?? []} numDays={numDays} />
     </StyledDashboardLayout>
   );
 };
