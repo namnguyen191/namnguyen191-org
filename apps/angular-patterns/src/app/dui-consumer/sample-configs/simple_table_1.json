@@ -6,27 +6,18 @@
     "title": "Welcome to my custom table",
     "columns": [
       {
-        "dataKey": "key1",
-        "displayedValue": "Data A"
+        "dataKey": "activity",
+        "displayedValue": "Activity"
       },
       {
-        "dataKey": "key2",
-        "displayedValue": "Data B"
+        "dataKey": "type",
+        "displayedValue": "Type"
+      },
+      {
+        "dataKey": "price",
+        "displayedValue": "Price"
       }
     ],
-    "rows": [
-      {
-        "key1": "<${ return this.data }$>",
-        "key2": "Data B1"
-      },
-      {
-        "key1": "Data A2",
-        "key2": "Data B2"
-      },
-      {
-        "key1": "Data A3",
-        "key2": "Data B3"
-      }
-    ]
+    "rows": "<${ return this.data.map(({ activity, type, price }) => ({ activity, type, price })) }$>"
   }
 }

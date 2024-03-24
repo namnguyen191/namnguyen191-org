@@ -6,6 +6,9 @@ export type DUIEvent = {
   MISSING_UI_ELEMENT_TEMPLATE: {
     id: string;
   };
+  MISSING_REMOTE_RESOURCE: {
+    id: string;
+  };
 };
 
 export type DUIEventPayload<T extends keyof DUIEvent> = DUIEvent[T];

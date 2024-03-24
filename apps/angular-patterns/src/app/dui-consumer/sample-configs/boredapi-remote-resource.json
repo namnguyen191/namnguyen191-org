@@ -1,0 +1,26 @@
+{
+  "id": "123",
+  "requests": [
+    {
+      "options": {
+        "endpoint": "https://www.boredapi.com/api/activity",
+        "method": "GET"
+      },
+      "interpolation": "<${ return this.$current }$>"
+    },
+    {
+      "options": {
+        "endpoint": "https://www.boredapi.com/api/activity",
+        "method": "GET"
+      },
+      "interpolation": "<${ return this.$current }$>"
+    },
+    {
+      "options": {
+        "endpoint": "https://www.boredapi.com/api/activity",
+        "method": "GET"
+      },
+      "interpolation": "<${ return [...this.$requests, this.$current] }$>"
+    }
+  ]
+}

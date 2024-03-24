@@ -1,11 +1,24 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  filter,
+  from,
+  lastValueFrom,
+  map,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
+import { logInfo, logSubscription } from '../utils/logging';
 import { DataFetchingService } from './data-fetching.service';
+import { EventsService } from './events.service';
 import { InterpolationService } from './interpolation.service';
 
 export type RemoteResourceState = {
+  status: 'init' | 'completed' | 'error';
   isLoading: boolean;
   isError: boolean;
   result: unknown | null;
@@ -15,24 +28,51 @@ export type RemoteResourceState = {
   providedIn: 'root',
 })
 export class RemoteResourceService {
-  #remoteResourcesMap: Record<string, RemoteResourceConfigs> = {};
+  #remoteResourcesMap$: BehaviorSubject<Record<string, RemoteResourceConfigs>> =
+    new BehaviorSubject({});
   #remoteResourcesStateMap: Record<string, BehaviorSubject<RemoteResourceState>> = {};
 
   #dataFetchingService: DataFetchingService = inject(DataFetchingService);
   #interpolationService: InterpolationService = inject(InterpolationService);
+  #eventsService: EventsService = inject(EventsService);
 
   registerRemoteResource(remoteResource: RemoteResourceConfigs): void {
-    this.#remoteResourcesMap[remoteResource.id] = remoteResource;
+    if (this.#remoteResourcesMap$.value[remoteResource.id]) {
+      throw new Error(
+        `Remote resource with id of "${remoteResource.id}" has already been register. Please update it instead`
+      );
+    }
+    this.#remoteResourcesMap$.next({
+      ...this.#remoteResourcesMap$.value,
+      [remoteResource.id]: remoteResource,
+    });
   }
 
-  getRemoteResource(id: string): RemoteResourceConfigs | null {
-    const remoteResource = this.#remoteResourcesMap[id] ?? null;
-
-    if (!remoteResource) {
-      console.warn(`${id} has not been registered as a Remote Resource yet!`);
-    }
-
-    return remoteResource;
+  getRemoteResource<T extends string>(id: T): Observable<RemoteResourceConfigs> {
+    return this.#remoteResourcesMap$.asObservable().pipe(
+      distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
+      tap({
+        next: (remoteResourceMap) => {
+          if (!remoteResourceMap[id]) {
+            this.#eventsService.emitEvent({
+              type: 'MISSING_REMOTE_RESOURCE',
+              payload: {
+                id,
+              },
+            });
+          }
+        },
+      }),
+      filter(
+        (remoteResourceMap): remoteResourceMap is Record<T, RemoteResourceConfigs> =>
+          !!remoteResourceMap[id]
+      ),
+      map((remoteResourceMap) => {
+        const remoteResource = remoteResourceMap[id];
+        return remoteResource;
+      }),
+      tap((val) => logInfo(`Getting remote resource ${val.id}`))
+    );
   }
 
   getRemoteResourceState(id: string): Observable<RemoteResourceState> {
@@ -42,15 +82,10 @@ export class RemoteResourceService {
       return remoteResourceState.asObservable();
     }
 
-    const remoteResource = this.getRemoteResource(id);
-
-    if (!remoteResource) {
-      throw new Error(
-        `Can't trigger ${id} because it has not been registered as a Remote Resource yet!`
-      );
-    }
+    const remoteResource$ = this.getRemoteResource(id);
 
     const newRemoteResourceState = new BehaviorSubject<RemoteResourceState>({
+      status: 'init',
       isLoading: true,
       isError: false,
       result: null,
@@ -58,20 +93,27 @@ export class RemoteResourceService {
 
     this.#remoteResourcesStateMap[id] = newRemoteResourceState;
 
-    this.#processRequests(remoteResource.requests).then(
-      (result) =>
-        newRemoteResourceState.next({
-          isLoading: false,
-          isError: false,
-          result,
-        }),
-      () =>
-        newRemoteResourceState.next({
-          isLoading: false,
-          isError: true,
-          result: null,
+    remoteResource$
+      .pipe(
+        switchMap((remoteResource) => from(this.#processRequests(remoteResource.requests))),
+        tap({
+          next: (result) =>
+            newRemoteResourceState.next({
+              status: 'completed',
+              isLoading: false,
+              isError: false,
+              result,
+            }),
+          error: () =>
+            newRemoteResourceState.next({
+              status: 'error',
+              isLoading: false,
+              isError: true,
+              result: null,
+            }),
         })
-    );
+      )
+      .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
 
     return newRemoteResourceState.asObservable();
   }

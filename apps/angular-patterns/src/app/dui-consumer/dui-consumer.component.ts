@@ -10,6 +10,7 @@ import {
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
 
+import boredResource from './sample-configs/boredapi-remote-resource.json';
 import testLayout from './sample-configs/layout-1.json';
 import testLayout2 from './sample-configs/layout-2.json';
 import mainLayout from './sample-configs/main-layout.json';
@@ -44,25 +45,7 @@ export class DuiConsumerComponent {
       component: SimpleTableComponent,
     });
 
-    this.remoteResourceService.registerRemoteResource({
-      id: '123',
-      requests: [
-        {
-          options: {
-            endpoint: 'https://www.boredapi.com/api/activity',
-            method: 'GET',
-          },
-          interpolation: '<${ return this.$current.activity }$>',
-        },
-        {
-          options: {
-            endpoint: 'https://www.boredapi.com/api/activity',
-            method: 'GET',
-          },
-          interpolation: '<${ return this.$requests[0] + " and " + this.$current.activity }$>',
-        },
-      ],
-    });
+    // this._testChangingTemplateAndElement();
   }
 
   setupEventsListener(): void {
@@ -74,6 +57,12 @@ export class DuiConsumerComponent {
 
         if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
           this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
+        }
+      }
+
+      if (event.type === 'MISSING_REMOTE_RESOURCE') {
+        if (event.payload.id === '123') {
+          this.remoteResourceService.registerRemoteResource(boredResource);
         }
       }
     });

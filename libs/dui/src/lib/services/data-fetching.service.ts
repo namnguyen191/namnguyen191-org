@@ -23,6 +23,6 @@ export class DataFetchingService {
         headers,
         body,
       })
-      .pipe(delay(2000));
+      .pipe(delay(1000));
   }
 }

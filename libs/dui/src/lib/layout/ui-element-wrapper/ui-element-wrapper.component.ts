@@ -13,7 +13,17 @@ import {
   Type,
   WritableSignal,
 } from '@angular/core';
-import { combineLatest, from, map, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  from,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 
 import {
   AvailableStateScopes,
@@ -180,7 +190,8 @@ export class UiElementWrapperComponent implements OnDestroy {
           local: localState,
           layout: layoutState,
         },
-      }))
+      })),
+      shareReplay(1)
     );
   }
 }
