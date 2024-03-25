@@ -1,22 +1,7 @@
 <h1>{{ titleConfigOption() | async }}</h1>
 
 @if (isLoadingConfigOption() | async) {
-  <div class="loadingio-spinner-spinner-4ojm1xe3055">
-    <div class="ldio-0u7ypmb5nngh">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
+  <mat-spinner></mat-spinner>
 } @else {
   <ng-container *ngIf="rowsConfigOption() | async as rowsConfig">
     <ng-container *ngIf="columnsConfigOption() | async as columnsConfig">
