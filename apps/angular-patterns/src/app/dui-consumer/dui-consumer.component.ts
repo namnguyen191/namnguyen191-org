@@ -5,6 +5,7 @@ import {
   EventsService,
   LayoutConfig,
   RemoteResourceService,
+  SimpleButtonComponent,
   SimpleTableComponent,
   UIElementFactoryService,
   UIElementTemplatesService,
@@ -14,6 +15,7 @@ import boredResource from './sample-configs/boredapi-remote-resource.json';
 import testLayout from './sample-configs/layout-1.json';
 import testLayout2 from './sample-configs/layout-2.json';
 import mainLayout from './sample-configs/main-layout.json';
+import simpleButton1 from './sample-configs/simple_button_1.json';
 import simpleTable1 from './sample-configs/simple_table_1.json';
 import simpleTable2 from './sample-configs/simple_table_2.json';
 import simpleTable2updated from './sample-configs/simple_table_2_updated.json';
@@ -45,6 +47,11 @@ export class DuiConsumerComponent {
       component: SimpleTableComponent,
     });
 
+    this.uiElementFactoryService.registerUIElement({
+      type: SimpleButtonComponent.ELEMENT_TYPE,
+      component: SimpleButtonComponent,
+    });
+
     // this._testChangingTemplateAndElement();
   }
 
@@ -58,11 +65,15 @@ export class DuiConsumerComponent {
         if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
           this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
         }
+
+        if (event.payload.id === 'MY_SIMPLE_BUTTON_1') {
+          this.uiElementTemplatesService.registerUIElementTemplate(simpleButton1);
+        }
       }
 
       if (event.type === 'MISSING_REMOTE_RESOURCE') {
         if (event.payload.id === '123') {
-          this.remoteResourceService.registerRemoteResource(boredResource);
+          this.remoteResourceService.registerRemoteResource(boredResource as any);
         }
       }
     });

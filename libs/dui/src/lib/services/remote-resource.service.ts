@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -7,6 +7,7 @@ import {
   lastValueFrom,
   map,
   Observable,
+  Subject,
   switchMap,
   tap,
 } from 'rxjs';
@@ -15,6 +16,7 @@ import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/Remot
 import { logInfo, logSubscription } from '../utils/logging';
 import { DataFetchingService } from './data-fetching.service';
 import { EventsService } from './events.service';
+import { triggerMultipleUIActions } from './hooks/UIActions';
 import { InterpolationService } from './interpolation.service';
 
 export type RemoteResourceState = {
@@ -31,10 +33,13 @@ export class RemoteResourceService {
   #remoteResourcesMap$: BehaviorSubject<Record<string, RemoteResourceConfigs>> =
     new BehaviorSubject({});
   #remoteResourcesStateMap: Record<string, BehaviorSubject<RemoteResourceState>> = {};
+  #reloadControlSubject: Subject<string> = new Subject<string>();
+  #cancelSubscriptionControlSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
 
   #dataFetchingService: DataFetchingService = inject(DataFetchingService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #eventsService: EventsService = inject(EventsService);
+  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   registerRemoteResource(remoteResource: RemoteResourceConfigs): void {
     if (this.#remoteResourcesMap$.value[remoteResource.id]) {
@@ -48,6 +53,7 @@ export class RemoteResourceService {
     });
   }
 
+  // TODO: keep count of how many subscriber does a remote resource have and remove it state if it has none left
   getRemoteResource<T extends string>(id: T): Observable<RemoteResourceConfigs> {
     return this.#remoteResourcesMap$.asObservable().pipe(
       distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
@@ -82,8 +88,6 @@ export class RemoteResourceService {
       return remoteResourceState.asObservable();
     }
 
-    const remoteResource$ = this.getRemoteResource(id);
-
     const newRemoteResourceState = new BehaviorSubject<RemoteResourceState>({
       status: 'init',
       isLoading: true,
@@ -93,29 +97,13 @@ export class RemoteResourceService {
 
     this.#remoteResourcesStateMap[id] = newRemoteResourceState;
 
-    remoteResource$
-      .pipe(
-        switchMap((remoteResource) => from(this.#processRequests(remoteResource.requests))),
-        tap({
-          next: (result) =>
-            newRemoteResourceState.next({
-              status: 'completed',
-              isLoading: false,
-              isError: false,
-              result,
-            }),
-          error: () =>
-            newRemoteResourceState.next({
-              status: 'error',
-              isLoading: false,
-              isError: true,
-              result: null,
-            }),
-        })
-      )
-      .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
+    this.#triggerRemoteResourceDataFetching(id);
 
     return newRemoteResourceState.asObservable();
+  }
+
+  reloadResource(id: string): void {
+    this.#reloadControlSubject.next(id);
   }
 
   async #processRequests(requests: Request[]): Promise<unknown> {
@@ -151,5 +139,68 @@ export class RemoteResourceService {
       requestsState.requestsResults.push(requestResult);
     }
     return requestsState.requestsResults[requestsState.requestsResults.length - 1];
+  }
+
+  #triggerRemoteResourceDataFetching(id: string): void {
+    const remoteResource$ = this.getRemoteResource(id);
+
+    const remoteResourceState = this.#remoteResourcesStateMap[id];
+
+    if (!remoteResourceState) {
+      console.warn(
+        `Remote resource ${id} has not been registered or is not associated with any widget yet`
+      );
+      return;
+    }
+
+    const remoteResourceFetchFlow = remoteResource$.pipe(
+      tap({
+        next: () => {
+          const currentRemoteResourceState = remoteResourceState.getValue();
+
+          remoteResourceState.next({
+            ...currentRemoteResourceState,
+            isLoading: true,
+          });
+        },
+      }),
+      switchMap((remoteResource) =>
+        from(this.#processRequests(remoteResource.requests)).pipe(
+          map((result) => ({ result, remoteResource }))
+        )
+      ),
+      tap({
+        next: ({ result, remoteResource }) => {
+          runInInjectionContext(this.#environmentInjector, () => {
+            if (remoteResource.onSuccess?.length) {
+              triggerMultipleUIActions(remoteResource.onSuccess);
+            }
+          });
+
+          remoteResourceState.next({
+            status: 'completed',
+            isLoading: false,
+            isError: false,
+            result,
+          });
+        },
+        error: () =>
+          remoteResourceState.next({
+            status: 'error',
+            isLoading: false,
+            isError: true,
+            result: null,
+          }),
+      })
+    );
+
+    this.#reloadControlSubject
+      .pipe(
+        filter((reloadId) => reloadId === id),
+        switchMap(() => remoteResourceFetchFlow)
+      )
+      .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
+
+    this.#reloadControlSubject.next(id);
   }
 }

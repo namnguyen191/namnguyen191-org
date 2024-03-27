@@ -1,0 +1,8 @@
+<button
+  mat-raised-button
+  [color]="colorConfigOption() | async"
+  [disabled]="disabledConfigOption() | async"
+  (click)="handleButtonClick()"
+>
+  {{ textConfigOption() | async }}
+</button>

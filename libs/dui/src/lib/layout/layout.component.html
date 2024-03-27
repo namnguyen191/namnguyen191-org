@@ -1,5 +1,9 @@
-@for (uiElementInstance of layoutConfig().uiElementInstances; track uiElementInstance.id) {
-  <namnguyen191-ui-element-wrapper
-    [uiElementInstance]="uiElementInstance"
-  ></namnguyen191-ui-element-wrapper>
-}
+<mat-grid-list cols="16" gutterSize="1rem" rowHeight="4">
+  @for (uiElementInstance of layoutConfig().uiElementInstances; track uiElementInstance.id) {
+    <mat-grid-tile colspan="4" rowspan="20">
+      <namnguyen191-ui-element-wrapper
+        [uiElementInstance]="uiElementInstance"
+      ></namnguyen191-ui-element-wrapper>
+    </mat-grid-tile>
+  }
+</mat-grid-list>

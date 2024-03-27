@@ -4,6 +4,10 @@
     {
       "id": "instance-1",
       "uiElementTemplateId": "MY_SIMPLE_TABLE"
+    },
+    {
+      "id": "instance-2",
+      "uiElementTemplateId": "MY_SIMPLE_BUTTON_1"
     }
   ]
 }

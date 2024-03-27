@@ -22,5 +22,6 @@
       },
       "interpolation": "<${ return [...this.$requests, this.$current] }$>"
     }
-  ]
+  ],
+  "onSuccess": [{ "type": "testAction" }]
 }

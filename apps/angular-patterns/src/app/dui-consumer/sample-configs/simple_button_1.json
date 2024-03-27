@@ -1,0 +1,16 @@
+{
+  "id": "MY_SIMPLE_BUTTON_1",
+  "type": "SIMPLE_BUTTON",
+  "options": {
+    "text": "My button",
+    "color": "accent",
+    "onClick": [
+      {
+        "type": "triggerRemoteResource",
+        "payload": {
+          "remoteResourceId": "123"
+        }
+      }
+    ]
+  }
+}
