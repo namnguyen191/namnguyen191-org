@@ -61,6 +61,7 @@ export const getBookings = async (args: {
     throw new Error('Booking not found');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return { bookings: bookings as any, count: count ?? 0 };
 };
 
@@ -118,7 +119,7 @@ export const getStaysAfterDate = async (date: string): Promise<BookingWithGuestL
 };
 
 // Activity means that there is a check in or a check out today
-export const getStaysTodayActivity = async (): Promise<BookingRow[]> => {
+export const getStaysTodayActivity = async (): Promise<BookingWithGuestInfoAndCabinName[]> => {
   const { data, error } = await supabase
     .from('bookings')
     .select('*, guests(full_name, nationality, country_flag)')
@@ -135,7 +136,8 @@ export const getStaysTodayActivity = async (): Promise<BookingRow[]> => {
     console.error(error);
     throw new Error('Bookings could not get loaded');
   }
-  return data;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data as any;
 };
 
 export const updateBooking = async (id: string, obj: Partial<BookingRow>): Promise<BookingRow> => {
