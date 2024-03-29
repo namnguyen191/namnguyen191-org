@@ -7,10 +7,10 @@ import { z } from 'zod';
 
 import { UIElementImplementation } from '../../interfaces/UIElement';
 import { inputObsTransform } from '../../utils/helper';
-import { zodIsLoading, zodStringOrNumberOrBoolean } from '../../utils/zod-types';
+import { ZodIsLoading, ZodStringOrNumberOrBoolean } from '../../utils/zod-types';
 import { PluckPipe } from './pluck.pipe';
 
-const ZodTableRowObject = z.record(z.string(), zodStringOrNumberOrBoolean);
+const ZodTableRowObject = z.record(z.string(), ZodStringOrNumberOrBoolean);
 export type TableRowObject = z.infer<typeof ZodTableRowObject>;
 
 const ZodTableColumnObject = z.object({
@@ -49,7 +49,7 @@ export class SimpleTableComponent
     boolean | Observable<boolean>
   > = input(of(false), {
     alias: 'isLoading',
-    transform: inputObsTransform(zodIsLoading),
+    transform: inputObsTransform(ZodIsLoading),
   });
   titleConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
     input(of('Default title'), {

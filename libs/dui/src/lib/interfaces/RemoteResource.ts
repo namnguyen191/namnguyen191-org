@@ -6,12 +6,14 @@ import { UICommAction } from './UICommunication';
 export type RawJsString = Brand<string, 'RawJsString'>;
 
 export type Request = {
-  options: FetchDataParams;
+  configs: FetchDataParams;
   interpolation?: string;
 };
 
 export type RemoteResourceConfigs = {
   id: string;
-  requests: Request[];
-  onSuccess?: UICommAction[];
+  options: {
+    requests: Request[];
+    onSuccess?: UICommAction[];
+  };
 };

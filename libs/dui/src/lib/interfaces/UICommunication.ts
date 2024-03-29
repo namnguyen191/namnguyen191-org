@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const ZodUICommActionType = z.enum(['testAction', 'triggerRemoteResource']);
+import { ZodAvailableStateScope } from '../services/state-store.service';
+import { ZodObjectType } from '../utils/zod-types';
+
+export const ZodUICommActionType = z.enum(['testAction', 'triggerRemoteResource', 'addToState']);
 
 export const ZodTestAction = z.object({
   type: z.literal(ZodUICommActionType.enum.testAction),
@@ -23,9 +26,27 @@ export const ZodTriggerRemoteResourceAction = z.object(
 );
 export type TriggerRemoteResourceAction = z.infer<typeof ZodTriggerRemoteResourceAction>;
 
+export const ZodAddToStateAction = z.object(
+  {
+    type: z.literal(ZodUICommActionType.enum.addToState),
+    payload: z.object({
+      scope: ZodAvailableStateScope,
+      data: ZodObjectType,
+    }),
+  },
+  {
+    errorMap: () => ({
+      message:
+        'Invalid AddToStateAction, example: { "type": "addToState", "payload": { "scope": "global", data: "{ "some": "data" }" }  } ',
+    }),
+  }
+);
+export type AddToStateAction = z.infer<typeof ZodAddToStateAction>;
+
 export const ZodUICommAction = z.discriminatedUnion('type', [
   ZodTestAction,
   ZodTriggerRemoteResourceAction,
+  ZodAddToStateAction,
 ]);
 
 export type UICommAction = z.infer<typeof ZodUICommAction>;

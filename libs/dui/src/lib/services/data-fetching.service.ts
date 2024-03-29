@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { delay, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export type FetchDataParams = {
   endpoint: string;
@@ -18,11 +18,9 @@ export class DataFetchingService {
   fetchData(params: FetchDataParams): Observable<unknown> {
     const { endpoint, method, headers, body } = params;
 
-    return this.httpClient
-      .request(method, endpoint, {
-        headers,
-        body,
-      })
-      .pipe(delay(1000));
+    return this.httpClient.request(method, endpoint, {
+      headers,
+      body,
+    });
   }
 }

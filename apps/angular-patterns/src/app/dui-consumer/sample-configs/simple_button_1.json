@@ -2,7 +2,7 @@
   "id": "MY_SIMPLE_BUTTON_1",
   "type": "SIMPLE_BUTTON",
   "options": {
-    "text": "My button",
+    "text": "Fetch more activities",
     "color": "accent",
     "onClick": [
       {

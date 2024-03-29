@@ -1,27 +1,39 @@
 {
   "id": "123",
-  "requests": [
-    {
-      "options": {
-        "endpoint": "https://www.boredapi.com/api/activity",
-        "method": "GET"
+  "options": {
+    "requests": [
+      {
+        "configs": {
+          "endpoint": "https://www.boredapi.com/api/activity",
+          "method": "GET"
+        },
+        "interpolation": "<${ return this.$current }$>"
       },
-      "interpolation": "<${ return this.$current }$>"
-    },
-    {
-      "options": {
-        "endpoint": "https://www.boredapi.com/api/activity",
-        "method": "GET"
+      {
+        "configs": {
+          "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
+          "method": "GET"
+        },
+        "interpolation": "<${ return this.$current }$>"
       },
-      "interpolation": "<${ return this.$current }$>"
-    },
-    {
-      "options": {
-        "endpoint": "https://www.boredapi.com/api/activity",
-        "method": "GET"
-      },
-      "interpolation": "<${ return [...this.$requests, this.$current] }$>"
-    }
-  ],
-  "onSuccess": [{ "type": "testAction" }]
+      {
+        "configs": {
+          "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
+          "method": "GET"
+        },
+        "interpolation": "<${ return [...this.$requests, this.$current] }$>"
+      }
+    ],
+    "onSuccess": [
+      {
+        "type": "addToState",
+        "payload": {
+          "scope": "global",
+          "data": {
+            "activities": "<${ return [...this.state.global.activities ?? [], ...this.$result] }$> "
+          }
+        }
+      }
+    ]
+  }
 }

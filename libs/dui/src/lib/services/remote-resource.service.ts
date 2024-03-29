@@ -3,6 +3,7 @@ import {
   BehaviorSubject,
   distinctUntilChanged,
   filter,
+  firstValueFrom,
   from,
   lastValueFrom,
   map,
@@ -12,10 +13,16 @@ import {
   tap,
 } from 'rxjs';
 
+import { UICommAction } from '../interfaces';
 import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
 import { logInfo, logSubscription } from '../utils/logging';
 import { DataFetchingService } from './data-fetching.service';
 import { EventsService } from './events.service';
+import {
+  getResourceRequestConfigInterpolationContext,
+  getResourceRequestHooksInterpolationContext,
+  getResourceRequestTransformationInterpolationContext,
+} from './hooks/InterpolationContext';
 import { triggerMultipleUIActions } from './hooks/UIActions';
 import { InterpolationService } from './interpolation.service';
 
@@ -107,15 +114,16 @@ export class RemoteResourceService {
   }
 
   async #processRequests(requests: Request[]): Promise<unknown> {
-    const requestsState: {
-      requestsResults: unknown[];
-    } = {
-      requestsResults: [],
-    };
+    const accumulatedRequestsResults: unknown[] = [];
     for (const request of requests) {
+      const requestConfigInterpolationContext = await firstValueFrom(
+        runInInjectionContext(this.#environmentInjector, () =>
+          getResourceRequestConfigInterpolationContext(accumulatedRequestsResults)
+        )
+      );
       const interpolatedRequestOptions = await this.#interpolationService.interpolateObject({
-        object: request.options,
-        context: requestsState,
+        object: request.configs,
+        context: requestConfigInterpolationContext,
       });
 
       let requestResult = await lastValueFrom(
@@ -126,19 +134,24 @@ export class RemoteResourceService {
         const rawJs =
           this.#interpolationService.extractRawJs(request.interpolation) ??
           ('return "Invalid interpolation syntax"' as RawJsString);
+        const requestTransformationContext = await firstValueFrom(
+          runInInjectionContext(this.#environmentInjector, () =>
+            getResourceRequestTransformationInterpolationContext({
+              accumulatedRequestsResults,
+              currentRequestResult: requestResult,
+            })
+          )
+        );
 
         requestResult = await this.#interpolationService.interpolateRawJs({
           rawJs,
-          context: {
-            $requests: requestsState.requestsResults,
-            $current: requestResult,
-          },
+          context: requestTransformationContext,
         });
       }
 
-      requestsState.requestsResults.push(requestResult);
+      accumulatedRequestsResults.push(requestResult);
     }
-    return requestsState.requestsResults[requestsState.requestsResults.length - 1];
+    return accumulatedRequestsResults[accumulatedRequestsResults.length - 1];
   }
 
   #triggerRemoteResourceDataFetching(id: string): void {
@@ -165,16 +178,24 @@ export class RemoteResourceService {
         },
       }),
       switchMap((remoteResource) =>
-        from(this.#processRequests(remoteResource.requests)).pipe(
+        from(this.#processRequests(remoteResource.options.requests)).pipe(
           map((result) => ({ result, remoteResource }))
         )
       ),
+      switchMap(({ result, remoteResource }) =>
+        from(
+          this.#interpolateResourceHooks({ resourceConfig: remoteResource, resourceResult: result })
+        ).pipe(
+          map((interpolatedHooks) => ({
+            interpolatedHooks,
+            result,
+          }))
+        )
+      ),
       tap({
-        next: ({ result, remoteResource }) => {
+        next: ({ result, interpolatedHooks }) => {
           runInInjectionContext(this.#environmentInjector, () => {
-            if (remoteResource.onSuccess?.length) {
-              triggerMultipleUIActions(remoteResource.onSuccess);
-            }
+            triggerMultipleUIActions(interpolatedHooks);
           });
 
           remoteResourceState.next({
@@ -202,5 +223,25 @@ export class RemoteResourceService {
       .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
 
     this.#reloadControlSubject.next(id);
+  }
+
+  async #interpolateResourceHooks(params: {
+    resourceConfig: RemoteResourceConfigs;
+    resourceResult: unknown;
+  }): Promise<UICommAction[]> {
+    const { resourceConfig, resourceResult } = params;
+
+    if (!resourceConfig.options.onSuccess?.length) {
+      return Promise.resolve([]);
+    }
+
+    const resourceHooksInterpolationContext = await runInInjectionContext(
+      this.#environmentInjector,
+      () => firstValueFrom(getResourceRequestHooksInterpolationContext(resourceResult))
+    );
+    return this.#interpolationService.interpolate({
+      value: resourceConfig.options.onSuccess,
+      context: resourceHooksInterpolationContext,
+    }) as Promise<UICommAction[]>;
   }
 }

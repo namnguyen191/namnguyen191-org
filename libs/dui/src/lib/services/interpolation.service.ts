@@ -60,6 +60,24 @@ export class InterpolationService {
     return null;
   }
 
+  async interpolateString(params: {
+    stringContent: string;
+    context: Record<string, unknown>;
+  }): Promise<unknown> {
+    const { context, stringContent } = params;
+    const trimmedStringContent = stringContent.trim();
+    const rawJs = this.extractRawJs(trimmedStringContent);
+
+    if (rawJs) {
+      return await this.interpolateRawJs({
+        rawJs: rawJs as RawJsString,
+        context: context,
+      });
+    }
+
+    return stringContent;
+  }
+
   async interpolateObject<T extends ObjectType>(params: {
     context: Record<string, unknown>;
     object: T;
@@ -67,29 +85,32 @@ export class InterpolationService {
     const { context, object } = params;
     const clonedObject = structuredClone(object);
     for (const [key, val] of Object.entries(clonedObject)) {
-      if (!val) {
-        continue;
-      }
-
-      if (typeof val === 'object') {
-        clonedObject[key as keyof T] = (await this.interpolateObject({
-          object: val as ObjectType,
-          context,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        })) as any;
-      } else if (typeof val === 'string') {
-        const rawJs = this.extractRawJs(val);
-        if (rawJs) {
-          clonedObject[key as keyof T] = (await this.interpolateRawJs({
-            rawJs: rawJs as RawJsString,
-            context: context,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          })) as any;
-        }
-      }
+      clonedObject[key as keyof T] = (await this.interpolate({
+        value: val,
+        context: context,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any;
     }
 
     return clonedObject;
+  }
+
+  async interpolateArray<T extends unknown[]>(params: {
+    context: Record<string, unknown>;
+    array: T;
+  }): Promise<T> {
+    const { context, array } = params;
+    const clonedArray = structuredClone(array);
+    for (let i = 0; i < clonedArray.length; i++) {
+      const val = clonedArray[i];
+      clonedArray[i] = (await this.interpolate({
+        value: val,
+        context: context,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any;
+    }
+
+    return clonedArray;
   }
 
   async interpolate(params: {
@@ -103,18 +124,20 @@ export class InterpolationService {
     }
 
     if (typeof value === 'string') {
-      const rawJs = this.extractRawJs(value);
-      if (rawJs) {
-        return this.interpolateRawJs({
-          rawJs,
+      return this.interpolateString({
+        stringContent: value,
+        context,
+      });
+    }
+
+    if (typeof value === 'object') {
+      if (Array.isArray(value)) {
+        return this.interpolateArray({
+          array: value,
           context,
         });
       }
 
-      return value;
-    }
-
-    if (typeof value === 'object') {
       return this.interpolateObject({
         object: value as ObjectType,
         context,

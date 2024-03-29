@@ -2,6 +2,9 @@
   "id": "MY_SIMPLE_TABLE",
   "type": "SIMPLE_TABLE",
   "remoteResourceId": "123",
+  "stateSubscription": {
+    "global": ["activities1", "activities", "activities1"]
+  },
   "options": {
     "title": "Welcome to my custom table",
     "columns": [
@@ -18,6 +21,6 @@
         "displayedValue": "Price"
       }
     ],
-    "rows": "<${ return this.data.map(({ activity, type, price }) => ({ activity, type, price })) }$>"
+    "rows": "<${ return this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) }$>"
   }
 }
