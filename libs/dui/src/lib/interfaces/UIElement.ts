@@ -18,6 +18,8 @@ export type UIElementTemplate = {
 export type UIElementInstance = {
   id: string;
   uiElementTemplateId: string;
+  rowSpan?: number;
+  colSpan?: number;
 };
 
 export type UIElementRequiredConfigs = {

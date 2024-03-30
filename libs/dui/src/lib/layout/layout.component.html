@@ -1,10 +1,23 @@
-<mat-grid-list cols="16" gutterSize="1rem" rowHeight="4">
+<!-- <mat-grid-list cols="16" gutterSize="1rem" rowHeight="4">
   @for (uiElementInstance of layoutConfig().uiElementInstances; track uiElementInstance.id) {
-    <mat-grid-tile colspan="4" rowspan="20">
+    <mat-grid-tile
+      [colspan]="uiElementInstance.colSpan ?? DEFAULT_COLSPAN"
+      [rowspan]="uiElementInstance.rowSpan ?? DEFAULT_ROWSPAN"
+    >
       <namnguyen191-ui-element-wrapper
         class="ui-element"
         [uiElementInstance]="uiElementInstance"
       ></namnguyen191-ui-element-wrapper>
     </mat-grid-tile>
   }
-</mat-grid-list>
+</mat-grid-list> -->
+
+<gridster [options]="options" style="flex: 1 1 auto">
+  @for (item of gridItems(); track item.id) {
+    <gridster-item [item]="item">
+      <namnguyen191-ui-element-wrapper
+        [uiElementInstance]="item.elementInstance"
+      ></namnguyen191-ui-element-wrapper>
+    </gridster-item>
+  }
+</gridster>
