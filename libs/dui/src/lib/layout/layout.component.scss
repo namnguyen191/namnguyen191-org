@@ -1,7 +1,16 @@
 :host {
   display: block;
 
-  .ui-element {
-    height: 100%;
+  .drag-area {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    opacity: 0;
+    transition: opacity ease-in-out 200ms;
+    cursor: grab;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }

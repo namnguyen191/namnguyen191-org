@@ -11,10 +11,16 @@
     </mat-grid-tile>
   }
 </mat-grid-list> -->
-
-<gridster [options]="options" style="flex: 1 1 auto">
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+/>
+<gridster [options]="layoutGridConfigs">
   @for (item of gridItems(); track item.id) {
     <gridster-item [item]="item">
+      <span *ngIf="item.dragEnabled" class="material-symbols-outlined drag-area">
+        drag_indicator
+      </span>
       <namnguyen191-ui-element-wrapper
         [uiElementInstance]="item.elementInstance"
       ></namnguyen191-ui-element-wrapper>

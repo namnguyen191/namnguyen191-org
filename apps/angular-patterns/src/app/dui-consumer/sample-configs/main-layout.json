@@ -7,7 +7,14 @@
     },
     {
       "id": "instance-2",
-      "uiElementTemplateId": "MY_SIMPLE_BUTTON_1"
+      "uiElementTemplateId": "MY_SIMPLE_BUTTON_1",
+      "positionAndSize": {
+        "x": 14,
+        "rows": 5,
+        "cols": 2,
+        "resizeEnabled": false,
+        "dragEnabled": false
+      }
     }
   ]
 }

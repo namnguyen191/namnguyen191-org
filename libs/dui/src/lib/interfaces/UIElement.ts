@@ -18,8 +18,14 @@ export type UIElementTemplate = {
 export type UIElementInstance = {
   id: string;
   uiElementTemplateId: string;
-  rowSpan?: number;
-  colSpan?: number;
+  positionAndSize?: {
+    x?: number;
+    y?: number;
+    cols?: number;
+    rows?: number;
+    resizeEnabled?: boolean;
+    dragEnabled?: boolean;
+  };
 };
 
 export type UIElementRequiredConfigs = {
