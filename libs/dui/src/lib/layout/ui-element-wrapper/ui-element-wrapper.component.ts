@@ -124,7 +124,8 @@ export class UiElementWrapperComponent implements OnDestroy {
       );
     }
 
-    if (remoteResourceId) {
+    // automatically assign isLoading if it is not provided the user
+    if (remoteResourceId && templateOptions['isLoading'] === undefined) {
       inputs['isLoading'] = this.#remoteResourceService
         .getRemoteResourceState(remoteResourceId)
         .pipe(map((resourceState) => resourceState.isLoading));

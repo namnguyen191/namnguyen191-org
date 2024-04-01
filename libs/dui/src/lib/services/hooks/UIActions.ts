@@ -1,12 +1,13 @@
 import { inject } from '@angular/core';
 
-import { AddToStateAction, TriggerRemoteResourceAction, UICommAction } from '../../interfaces';
+import {
+  AddToStateAction,
+  TriggerRemoteResourceAction,
+  UICommAction,
+  UICommActionHandlers,
+} from '../../interfaces';
 import { RemoteResourceService } from '../remote-resource.service';
 import { StateStoreService } from '../state-store.service';
-
-export const handleTestAction = (action: { type: 'testAction' }): void => {
-  console.log('Nam data is: handling', action);
-};
 
 export const handleTriggerRemoteResource = (action: TriggerRemoteResourceAction): void => {
   const {
@@ -19,16 +20,18 @@ export const handleAddToState = (action: AddToStateAction): void => {
   inject(StateStoreService).addToState(action.payload);
 };
 
+export const actionsHandlersMap: UICommActionHandlers = {
+  handleAddToState,
+  handleTriggerRemoteResource,
+};
+
 export const triggerUIAction = (action: UICommAction): void => {
   switch (action.type) {
-    case 'testAction':
-      handleTestAction(action);
-      break;
     case 'triggerRemoteResource':
-      handleTriggerRemoteResource(action);
+      actionsHandlersMap.handleTriggerRemoteResource(action);
       break;
     case 'addToState':
-      handleAddToState(action);
+      actionsHandlersMap.handleAddToState(action);
       break;
     default:
       console.warn('Unknown action: ', action);

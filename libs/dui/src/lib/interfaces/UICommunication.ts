@@ -3,12 +3,7 @@ import { z } from 'zod';
 import { ZodAvailableStateScope } from '../services/state-store.service';
 import { ZodObjectType } from '../utils/zod-types';
 
-export const ZodUICommActionType = z.enum(['testAction', 'triggerRemoteResource', 'addToState']);
-
-export const ZodTestAction = z.object({
-  type: z.literal(ZodUICommActionType.enum.testAction),
-});
-export type TestAction = z.infer<typeof ZodTestAction>;
+export const ZodUICommActionType = z.enum(['triggerRemoteResource', 'addToState']);
 
 export const ZodTriggerRemoteResourceAction = z.object(
   {
@@ -44,7 +39,6 @@ export const ZodAddToStateAction = z.object(
 export type AddToStateAction = z.infer<typeof ZodAddToStateAction>;
 
 export const ZodUICommAction = z.discriminatedUnion('type', [
-  ZodTestAction,
   ZodTriggerRemoteResourceAction,
   ZodAddToStateAction,
 ]);

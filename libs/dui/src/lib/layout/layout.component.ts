@@ -28,7 +28,7 @@ export type LayoutGridItem = GridsterItem & {
 };
 
 export const GRID_COLS = 16; // 16 columns layout
-export const GRID_ROW_HEIGHT = 4; // 4px per row
+export const GRID_ROW_HEIGHT = 16; // 16px per row
 export const DEFAULT_UI_ELEMENT_COLSPAN = 4;
 export const DEFAULT_UI_ELEMENT_ROWSPAN = 20;
 export const DEFAULT_UI_ELEMENT_X = 0;
