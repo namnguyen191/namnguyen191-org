@@ -76,6 +76,10 @@ export class DuiConsumerComponent {
           this.remoteResourceService.registerRemoteResource(boredResource as any);
         }
       }
+
+      if (event.type === 'UI_ELEMENT_REPOSITION') {
+        console.log(event);
+      }
     });
   }
 

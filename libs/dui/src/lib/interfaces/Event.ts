@@ -1,3 +1,5 @@
+import { UIElementPositionAndSize } from './UIElement';
+
 export type DUIEvent = {
   GENERIC: never;
   MISSING_UI_ELEMENT: {
@@ -8,6 +10,10 @@ export type DUIEvent = {
   };
   MISSING_REMOTE_RESOURCE: {
     id: string;
+  };
+  UI_ELEMENT_REPOSITION: {
+    id: string;
+    newPositionAndSize: UIElementPositionAndSize;
   };
 };
 

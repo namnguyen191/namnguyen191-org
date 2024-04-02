@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   InputSignal,
   Signal,
@@ -20,6 +21,7 @@ import {
 
 import { UIElementInstance } from '../interfaces';
 import { LayoutConfig } from '../interfaces/Layout';
+import { EventsService } from '../services';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 export type LayoutGridItem = GridsterItem & {
@@ -101,6 +103,8 @@ export class LayoutComponent {
     itemChangeCallback: this.#handleGridItemChanged.bind(this),
   };
 
+  #eventService: EventsService = inject(EventsService);
+
   #createGridItems(layoutConfig: LayoutConfig): LayoutGridItem[] {
     return layoutConfig.uiElementInstances.map((eI) => {
       const { positionAndSize } = eI;
@@ -116,11 +120,18 @@ export class LayoutComponent {
   #handleGridItemChanged(item: GridsterItem): void {
     if (isLayoutGridItem(item)) {
       const { id, x, y, rows, cols } = item;
-      console.log('Nam data is: id', id);
-      console.log('Nam data is: x', x);
-      console.log('Nam data is: y', y);
-      console.log('Nam data is: rows', rows);
-      console.log('Nam data is: cols', cols);
+      this.#eventService.emitEvent({
+        type: 'UI_ELEMENT_REPOSITION',
+        payload: {
+          id,
+          newPositionAndSize: {
+            x,
+            y,
+            rows,
+            cols,
+          },
+        },
+      });
     }
   }
 }

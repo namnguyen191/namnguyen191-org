@@ -15,14 +15,17 @@ export type UIElementTemplate = {
   options: Record<string, unknown>;
 };
 
+export type UIElementPositionAndSize = {
+  x: number;
+  y: number;
+  cols: number;
+  rows: number;
+};
+
 export type UIElementInstance = {
   id: string;
   uiElementTemplateId: string;
-  positionAndSize?: {
-    x?: number;
-    y?: number;
-    cols?: number;
-    rows?: number;
+  positionAndSize?: Partial<UIElementPositionAndSize> & {
     resizeEnabled?: boolean;
     dragEnabled?: boolean;
   };
