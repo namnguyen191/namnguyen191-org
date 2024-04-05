@@ -2,12 +2,15 @@ import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '
 import {
   BehaviorSubject,
   distinctUntilChanged,
+  EMPTY,
+  expand,
   filter,
   firstValueFrom,
   from,
-  lastValueFrom,
+  last,
   map,
   Observable,
+  of,
   Subject,
   switchMap,
   tap,
@@ -16,7 +19,7 @@ import {
 import { UICommAction } from '../interfaces';
 import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
 import { logInfo, logSubscription } from '../utils/logging';
-import { DataFetchingService } from './data-fetching.service';
+import { DataFetchingService, FetchDataParams } from './data-fetching.service';
 import { EventsService } from './events.service';
 import {
   getResourceRequestConfigInterpolationContext,
@@ -113,45 +116,33 @@ export class RemoteResourceService {
     this.#reloadControlSubject.next(id);
   }
 
-  async #processRequests(requests: Request[]): Promise<unknown> {
-    const accumulatedRequestsResults: unknown[] = [];
-    for (const request of requests) {
-      const requestConfigInterpolationContext = await firstValueFrom(
-        runInInjectionContext(this.#environmentInjector, () =>
-          getResourceRequestConfigInterpolationContext(accumulatedRequestsResults)
-        )
-      );
-      const interpolatedRequestOptions = await this.#interpolationService.interpolateObject({
-        object: request.configs,
-        context: requestConfigInterpolationContext,
-      });
+  #processRequests(requests: Request[]): Observable<unknown> {
+    let currentRequestIndex = 0;
 
-      let requestResult = await lastValueFrom(
-        this.#dataFetchingService.fetchData(interpolatedRequestOptions)
-      );
-
-      if (request.interpolation) {
-        const rawJs =
-          this.#interpolationService.extractRawJs(request.interpolation) ??
-          ('return "Invalid interpolation syntax"' as RawJsString);
-        const requestTransformationContext = await firstValueFrom(
-          runInInjectionContext(this.#environmentInjector, () =>
-            getResourceRequestTransformationInterpolationContext({
-              accumulatedRequestsResults,
-              currentRequestResult: requestResult,
-            })
-          )
+    return of([]).pipe(
+      expand((accumulatedRequestsResults) => {
+        if (currentRequestIndex >= requests.length) {
+          return EMPTY;
+        }
+        const curReq = requests[currentRequestIndex] as Request;
+        currentRequestIndex++;
+        return from(this.#interpolateRequestOptions(curReq, accumulatedRequestsResults)).pipe(
+          switchMap((interpolatedRequestOptions) =>
+            this.#dataFetchingService.fetchData(interpolatedRequestOptions)
+          ),
+          switchMap((requestResult) =>
+            from(this.#interpolateRequestResult(curReq, requestResult, accumulatedRequestsResults))
+          ),
+          map((interpolatedRequestResult) => [
+            ...accumulatedRequestsResults,
+            interpolatedRequestResult,
+          ])
         );
-
-        requestResult = await this.#interpolationService.interpolateRawJs({
-          rawJs,
-          context: requestTransformationContext,
-        });
-      }
-
-      accumulatedRequestsResults.push(requestResult);
-    }
-    return accumulatedRequestsResults[accumulatedRequestsResults.length - 1];
+      }),
+      last(),
+      // The last request result will be used as the final result for the remote resource
+      map((accumulatedRequestsResults) => accumulatedRequestsResults[requests.length - 1])
+    );
   }
 
   #triggerRemoteResourceDataFetching(id: string): void {
@@ -168,20 +159,13 @@ export class RemoteResourceService {
 
     const remoteResourceFetchFlow = remoteResource$.pipe(
       tap({
-        next: () => {
-          const currentRemoteResourceState = remoteResourceState.getValue();
-
-          remoteResourceState.next({
-            ...currentRemoteResourceState,
-            isLoading: true,
-          });
-        },
+        next: () => this.#setLoadingState(remoteResourceState),
       }),
-      switchMap((remoteResource) =>
-        from(this.#processRequests(remoteResource.options.requests)).pipe(
+      switchMap((remoteResource) => {
+        return this.#processRequests(remoteResource.options.requests).pipe(
           map((result) => ({ result, remoteResource }))
-        )
-      ),
+        );
+      }),
       switchMap(({ result, remoteResource }) =>
         from(
           this.#interpolateResourceHooks({ resourceConfig: remoteResource, resourceResult: result })
@@ -198,20 +182,9 @@ export class RemoteResourceService {
             triggerMultipleUIActions(interpolatedHooks);
           });
 
-          remoteResourceState.next({
-            status: 'completed',
-            isLoading: false,
-            isError: false,
-            result,
-          });
+          this.#setCompleteState(remoteResourceState, result);
         },
-        error: () =>
-          remoteResourceState.next({
-            status: 'error',
-            isLoading: false,
-            isError: true,
-            result: null,
-          }),
+        error: () => this.#setErrorState(remoteResourceState),
       })
     );
 
@@ -243,5 +216,76 @@ export class RemoteResourceService {
       value: resourceConfig.options.onSuccess,
       context: resourceHooksInterpolationContext,
     }) as Promise<UICommAction[]>;
+  }
+
+  async #interpolateRequestOptions(
+    req: Request,
+    accumulatedRequestsResults: unknown[]
+  ): Promise<FetchDataParams> {
+    const requestConfigInterpolationContext = await firstValueFrom(
+      runInInjectionContext(this.#environmentInjector, () =>
+        getResourceRequestConfigInterpolationContext(accumulatedRequestsResults)
+      )
+    );
+    return this.#interpolationService.interpolateObject({
+      object: req.configs,
+      context: requestConfigInterpolationContext,
+    });
+  }
+
+  async #interpolateRequestResult(
+    req: Request,
+    requestResult: unknown,
+    accumulatedRequestsResults: unknown[]
+  ): Promise<unknown> {
+    if (req.interpolation) {
+      const rawJs =
+        this.#interpolationService.extractRawJs(req.interpolation) ??
+        ('return "Invalid interpolation syntax"' as RawJsString);
+      const requestTransformationContext = await firstValueFrom(
+        runInInjectionContext(this.#environmentInjector, () =>
+          getResourceRequestTransformationInterpolationContext({
+            accumulatedRequestsResults,
+            currentRequestResult: requestResult,
+          })
+        )
+      );
+
+      requestResult = await this.#interpolationService.interpolateRawJs({
+        rawJs,
+        context: requestTransformationContext,
+      });
+    }
+
+    return requestResult;
+  }
+
+  #setLoadingState(remoteResourceState: BehaviorSubject<RemoteResourceState>): void {
+    const currentRemoteResourceState = remoteResourceState.getValue();
+    remoteResourceState.next({
+      ...currentRemoteResourceState,
+      isLoading: true,
+    });
+  }
+
+  #setErrorState(remoteResourceState: BehaviorSubject<RemoteResourceState>): void {
+    remoteResourceState.next({
+      status: 'error',
+      isLoading: false,
+      isError: true,
+      result: null,
+    });
+  }
+
+  #setCompleteState(
+    remoteResourceState: BehaviorSubject<RemoteResourceState>,
+    result: unknown
+  ): void {
+    remoteResourceState.next({
+      status: 'completed',
+      isLoading: false,
+      isError: false,
+      result,
+    });
   }
 }
