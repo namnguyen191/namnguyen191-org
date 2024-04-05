@@ -2,6 +2,8 @@
 
 @if (isLoadingConfigOption() | async) {
   <mat-spinner></mat-spinner>
+} @else if (isErrorConfigOption() | async) {
+  <span>Something went wrong fetching data</span>
 } @else {
   <ng-container *ngIf="rowsConfigOption() | async as rowsConfig">
     <ng-container *ngIf="columnsConfigOption() | async as columnsConfig">

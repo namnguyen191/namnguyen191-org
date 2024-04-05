@@ -17,7 +17,12 @@ import {
 } from '@angular/core';
 import { from, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
-import { StateSubscriptionConfig, UIElementInstance, UIElementTemplate } from '../../interfaces';
+import {
+  StateSubscriptionConfig,
+  UIElementInstance,
+  UIElementTemplate,
+  UIElementTemplateOptions,
+} from '../../interfaces';
 import {
   RemoteResourceService,
   UIElementFactoryService,
@@ -99,7 +104,7 @@ export class UiElementWrapperComponent implements OnDestroy {
   }
 
   #generateComponentInputs(params: {
-    templateOptions: Record<string, unknown>;
+    templateOptions: UIElementTemplateOptions;
     remoteResourceId?: string;
     stateSubscription?: StateSubscriptionConfig;
   }): Record<string, unknown> {
@@ -125,10 +130,17 @@ export class UiElementWrapperComponent implements OnDestroy {
     }
 
     // automatically assign isLoading if it is not provided the user
-    if (remoteResourceId && templateOptions['isLoading'] === undefined) {
+    if (remoteResourceId && templateOptions.isLoading === undefined) {
       inputs['isLoading'] = this.#remoteResourceService
         .getRemoteResourceState(remoteResourceId)
         .pipe(map((resourceState) => resourceState.isLoading));
+    }
+
+    // automatically assign isError if it is not provided the user
+    if (remoteResourceId && templateOptions.isError === undefined) {
+      inputs['isError'] = this.#remoteResourceService
+        .getRemoteResourceState(remoteResourceId)
+        .pipe(map((resourceState) => resourceState.isError));
     }
 
     return inputs;

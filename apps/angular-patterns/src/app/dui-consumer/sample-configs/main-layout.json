@@ -7,6 +7,14 @@
     },
     {
       "id": "instance-2",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE"
+    },
+    {
+      "id": "instance-3",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE_V2"
+    },
+    {
+      "id": "instance-4",
       "uiElementTemplateId": "MY_SIMPLE_BUTTON_1",
       "positionAndSize": {
         "x": 14,

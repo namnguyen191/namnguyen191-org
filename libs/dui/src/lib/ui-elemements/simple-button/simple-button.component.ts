@@ -17,7 +17,7 @@ import { UICommAction, ZodUICommAction } from '../../interfaces';
 import { UIElementImplementation } from '../../interfaces/UIElement';
 import { triggerMultipleUIActions } from '../../services/hooks/UIActions';
 import { inputObsTransform } from '../../utils/helper';
-import { ZodIsLoading } from '../../utils/zod-types';
+import { ZodIsError, ZodIsLoading } from '../../utils/zod-types';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {
   errorMap: () => {
@@ -51,6 +51,14 @@ export class SimpleButtonComponent
   implements UIElementImplementation<SimpleButtonUIElementComponentConfigs>
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_BUTTON';
+
+  isErrorConfigOption: InputSignalWithTransform<
+    Observable<boolean>,
+    boolean | Observable<boolean>
+  > = input(of(false), {
+    alias: 'isError',
+    transform: inputObsTransform(ZodIsError),
+  });
 
   isLoadingConfigOption: InputSignalWithTransform<
     Observable<boolean>,

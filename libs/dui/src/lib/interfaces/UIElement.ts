@@ -7,12 +7,23 @@ export type StateSubscriptionConfig = {
   [K in AvailableStateScope]?: string[];
 };
 
-export type UIElementTemplate = {
+export type UIElementRequiredConfigs = {
+  isLoading: boolean;
+  isError: boolean;
+};
+
+export type EmptyObject = Record<string, never>;
+export type RecordObject = Record<string, unknown>;
+
+export type UIElementTemplateOptions<T extends RecordObject = EmptyObject> =
+  Partial<UIElementRequiredConfigs> & T;
+
+export type UIElementTemplate<T extends RecordObject = EmptyObject> = {
   id: string;
   type: string;
   remoteResourceId?: string;
   stateSubscription?: StateSubscriptionConfig;
-  options: Record<string, unknown>;
+  options: UIElementTemplateOptions<T>;
 };
 
 export type UIElementPositionAndSize = {
@@ -29,10 +40,6 @@ export type UIElementInstance = {
     resizeEnabled?: boolean;
     dragEnabled?: boolean;
   };
-};
-
-export type UIElementRequiredConfigs = {
-  isLoading: boolean;
 };
 
 export type CreateUIElementInputOptions<TConfigs> = Required<{

@@ -1,6 +1,7 @@
 import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import {
   BehaviorSubject,
+  catchError,
   distinctUntilChanged,
   EMPTY,
   expand,
@@ -157,7 +158,7 @@ export class RemoteResourceService {
       return;
     }
 
-    const remoteResourceFetchFlow = remoteResource$.pipe(
+    const remoteResourceFetchFlow: Observable<void> = remoteResource$.pipe(
       tap({
         next: () => this.#setLoadingState(remoteResourceState),
       }),
@@ -176,15 +177,16 @@ export class RemoteResourceService {
           }))
         )
       ),
-      tap({
-        next: ({ result, interpolatedHooks }) => {
-          runInInjectionContext(this.#environmentInjector, () => {
-            triggerMultipleUIActions(interpolatedHooks);
-          });
+      map(({ result, interpolatedHooks }) => {
+        runInInjectionContext(this.#environmentInjector, () => {
+          triggerMultipleUIActions(interpolatedHooks);
+        });
 
-          this.#setCompleteState(remoteResourceState, result);
-        },
-        error: () => this.#setErrorState(remoteResourceState),
+        this.#setCompleteState(remoteResourceState, result);
+      }),
+      catchError(() => {
+        this.#setErrorState(remoteResourceState);
+        return of();
       })
     );
 

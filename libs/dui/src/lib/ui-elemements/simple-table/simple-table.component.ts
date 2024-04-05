@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { UIElementImplementation } from '../../interfaces/UIElement';
 import { inputObsTransform } from '../../utils/helper';
-import { ZodIsLoading, ZodStringOrNumberOrBoolean } from '../../utils/zod-types';
+import { ZodIsError, ZodIsLoading, ZodStringOrNumberOrBoolean } from '../../utils/zod-types';
 import { PluckPipe } from './pluck.pipe';
 
 const ZodTableRowObject = z.record(z.string(), ZodStringOrNumberOrBoolean);
@@ -44,6 +44,14 @@ export class SimpleTableComponent
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
 
+  isErrorConfigOption: InputSignalWithTransform<
+    Observable<boolean>,
+    boolean | Observable<boolean>
+  > = input(of(false), {
+    alias: 'isError',
+    transform: inputObsTransform(ZodIsError),
+  });
+
   isLoadingConfigOption: InputSignalWithTransform<
     Observable<boolean>,
     boolean | Observable<boolean>
@@ -51,11 +59,13 @@ export class SimpleTableComponent
     alias: 'isLoading',
     transform: inputObsTransform(ZodIsLoading),
   });
+
   titleConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
     input(of('Default title'), {
       alias: 'title',
       transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.title),
     });
+
   columnsConfigOption: InputSignalWithTransform<
     Observable<TableColumnObject[]>,
     TableColumnObject[] | Observable<TableColumnObject[]>
@@ -63,6 +73,7 @@ export class SimpleTableComponent
     alias: 'columns',
     transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.columns),
   });
+
   rowsConfigOption: InputSignalWithTransform<
     Observable<TableRowObject[]>,
     TableRowObject[] | Observable<TableRowObject[]>

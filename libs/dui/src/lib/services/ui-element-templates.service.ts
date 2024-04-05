@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
 
-import { UIElementTemplate } from '../interfaces';
+import { EmptyObject, RecordObject, UIElementTemplate } from '../interfaces';
 import { logInfo } from '../utils/logging';
 import { EventsService } from './events.service';
 import { InterpolationService } from './interpolation.service';
@@ -13,10 +13,12 @@ export class UIElementTemplatesService {
   test = inject(InterpolationService);
   #eventsService: EventsService = inject(EventsService);
   #uiElementTemplatesMap$: BehaviorSubject<{
-    [uiElementTemplateId: string]: UIElementTemplate;
+    [uiElementTemplateId: string]: UIElementTemplate<RecordObject>;
   }> = new BehaviorSubject({});
 
-  registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
+  registerUIElementTemplate<T extends RecordObject = EmptyObject>(
+    uiElementTemplate: UIElementTemplate<T>
+  ): void {
     if (this.#uiElementTemplatesMap$.value[uiElementTemplate.id]) {
       throw new Error(
         `UI element template with id of "${uiElementTemplate.id}" has already been register. Please update it instead`
@@ -28,7 +30,9 @@ export class UIElementTemplatesService {
     });
   }
 
-  updateUIElementTemplate(updatedUIElementTemplate: UIElementTemplate): void {
+  updateUIElementTemplate<T extends RecordObject = EmptyObject>(
+    updatedUIElementTemplate: UIElementTemplate<T>
+  ): void {
     const uiElementTemplateMaps = this.#uiElementTemplatesMap$.value;
 
     if (!uiElementTemplateMaps[updatedUIElementTemplate.id]) {
@@ -68,15 +72,4 @@ export class UIElementTemplatesService {
       tap((val) => logInfo(`Getting ui template ${val.id}`))
     );
   }
-
-  // getUIElementOption(params: { id: string; optionName: string }): UIElementTemplate {
-  //   const { id, optionName } = params;
-  //   const uiElementTemplate = this.#uiElementTemplatesMap[id];
-
-  //   if (!uiElementTemplate) {
-  //     throw new Error(`${id} has not been registered as a UI Element template yet!`);
-  //   }
-
-  //   return uiElementTemplate;
-  // }
 }

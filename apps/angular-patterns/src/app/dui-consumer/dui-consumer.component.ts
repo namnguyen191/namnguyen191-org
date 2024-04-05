@@ -15,6 +15,7 @@ import boredResource from './sample-configs/boredapi-remote-resource.json';
 import testLayout from './sample-configs/layout-1.json';
 import testLayout2 from './sample-configs/layout-2.json';
 import mainLayout from './sample-configs/main-layout.json';
+import simpleTableV2 from './sample-configs/my_simple_table_v2.json';
 import simpleButton1 from './sample-configs/simple_button_1.json';
 import simpleTable1 from './sample-configs/simple_table_1.json';
 import simpleTable2 from './sample-configs/simple_table_2.json';
@@ -60,6 +61,10 @@ export class DuiConsumerComponent {
       if (event.type === 'MISSING_UI_ELEMENT_TEMPLATE') {
         if (event.payload.id === 'MY_SIMPLE_TABLE_2') {
           this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2);
+        }
+
+        if (event.payload.id === 'MY_SIMPLE_TABLE_V2') {
+          this.uiElementTemplatesService.registerUIElementTemplate(simpleTableV2);
         }
 
         if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
