@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
 
-import { EmptyObject, RecordObject, UIElementTemplate } from '../interfaces';
+import { EmptyObject, UIElementTemplate } from '../interfaces';
 import { logInfo } from '../utils/logging';
 import { EventsService } from './events.service';
 import { InterpolationService } from './interpolation.service';
@@ -13,10 +14,10 @@ export class UIElementTemplatesService {
   test = inject(InterpolationService);
   #eventsService: EventsService = inject(EventsService);
   #uiElementTemplatesMap$: BehaviorSubject<{
-    [uiElementTemplateId: string]: UIElementTemplate<RecordObject>;
+    [uiElementTemplateId: string]: UIElementTemplate<ObjectType>;
   }> = new BehaviorSubject({});
 
-  registerUIElementTemplate<T extends RecordObject = EmptyObject>(
+  registerUIElementTemplate<T extends ObjectType = EmptyObject>(
     uiElementTemplate: UIElementTemplate<T>
   ): void {
     if (this.#uiElementTemplatesMap$.value[uiElementTemplate.id]) {
@@ -30,7 +31,7 @@ export class UIElementTemplatesService {
     });
   }
 
-  updateUIElementTemplate<T extends RecordObject = EmptyObject>(
+  updateUIElementTemplate<T extends ObjectType = EmptyObject>(
     updatedUIElementTemplate: UIElementTemplate<T>
   ): void {
     const uiElementTemplateMaps = this.#uiElementTemplatesMap$.value;

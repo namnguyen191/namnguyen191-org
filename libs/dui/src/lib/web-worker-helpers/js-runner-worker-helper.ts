@@ -1,6 +1,8 @@
+import { ObjectType } from '@namnguyen191/types-helper';
+
 import { GetWorkerEvent, WorkerResponse } from './worker-interfaces';
 
-export type JSRunnerContext = Record<string, unknown>;
+export type JSRunnerContext = ObjectType;
 
 export const runRawJs = (rawJs: string, context: JSRunnerContext): unknown => {
   return new Function(rawJs).bind(context).call();

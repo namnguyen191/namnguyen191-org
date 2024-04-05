@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { combineLatest, Observable, of, shareReplay } from 'rxjs';
 
 import { StateSubscriptionConfig } from '../../interfaces';
-import { ObjectType } from '../../utils/zod-types';
 import { RemoteResourceService, RemoteResourceState } from '../remote-resource.service';
 import { AvailableStateScope, StateStoreService } from '../state-store.service';
 
@@ -34,11 +34,11 @@ export type RequestHooksInterpolationContext = {
 export const getStatesAsContext = (): Observable<StateMap> => {
   const stateStoreService = inject(StateStoreService);
 
-  const local: Observable<Record<string, unknown>> = stateStoreService.getLocalState();
+  const local: Observable<ObjectType> = stateStoreService.getLocalState();
 
-  const global: Observable<Record<string, unknown>> = stateStoreService.getGlobalState();
+  const global: Observable<ObjectType> = stateStoreService.getGlobalState();
 
-  const layout: Observable<Record<string, unknown>> = stateStoreService.getLayoutState();
+  const layout: Observable<ObjectType> = stateStoreService.getLayoutState();
 
   return combineLatest({
     global,
@@ -57,15 +57,15 @@ export const getStatesSubscriptionAsContext = (
   } = stateSubscription;
   const stateStoreService = inject(StateStoreService);
 
-  const local: Observable<Record<string, unknown>> = localSubscription
+  const local: Observable<ObjectType> = localSubscription
     ? stateStoreService.getLocalStateByPaths(localSubscription)
     : of({});
 
-  const global: Observable<Record<string, unknown>> = globalSubscription
+  const global: Observable<ObjectType> = globalSubscription
     ? stateStoreService.getGlobalStateByPaths(globalSubscription)
     : of({});
 
-  const layout: Observable<Record<string, unknown>> = layoutSubscription
+  const layout: Observable<ObjectType> = layoutSubscription
     ? stateStoreService.getLayoutStateByPaths(layoutSubscription)
     : of({});
 

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { get, isEqual, set } from 'lodash-es';
 import { BehaviorSubject, distinctUntilChanged, map, Observable, pipe, UnaryFunction } from 'rxjs';
 import { z } from 'zod';
-
-import { ObjectType } from '../utils/zod-types';
 
 export const ZodAvailableStateScope = z.enum(['global', 'local', 'layout']);
 export type AvailableStateScope = z.infer<typeof ZodAvailableStateScope>;

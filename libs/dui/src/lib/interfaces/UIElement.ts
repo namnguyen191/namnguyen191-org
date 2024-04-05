@@ -1,4 +1,5 @@
 import { InputSignalWithTransform } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 
 import { AvailableStateScope } from '../services/state-store.service';
@@ -13,12 +14,11 @@ export type UIElementRequiredConfigs = {
 };
 
 export type EmptyObject = Record<string, never>;
-export type RecordObject = Record<string, unknown>;
 
-export type UIElementTemplateOptions<T extends RecordObject = EmptyObject> =
+export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
   Partial<UIElementRequiredConfigs> & T;
 
-export type UIElementTemplate<T extends RecordObject = EmptyObject> = {
+export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
   id: string;
   type: string;
   remoteResourceId?: string;
@@ -57,5 +57,5 @@ export type UIElementRequiredInputs = {
     | Observable<UIElementRequiredConfigs[K]>;
 };
 
-export type UIElementImplementation<TConfigs extends Record<string, unknown>> =
-  UIElementRequiredInputOptions & CreateUIElementInputOptions<TConfigs>;
+export type UIElementImplementation<TConfigs extends ObjectType> = UIElementRequiredInputOptions &
+  CreateUIElementInputOptions<TConfigs>;

@@ -62,7 +62,7 @@ export class InterpolationService {
 
   async interpolateString(params: {
     stringContent: string;
-    context: Record<string, unknown>;
+    context: ObjectType;
   }): Promise<unknown> {
     const { context, stringContent } = params;
     const trimmedStringContent = stringContent.trim();
@@ -79,7 +79,7 @@ export class InterpolationService {
   }
 
   async interpolateObject<T extends ObjectType>(params: {
-    context: Record<string, unknown>;
+    context: ObjectType;
     object: T;
   }): Promise<T> {
     const { context, object } = params;
@@ -96,7 +96,7 @@ export class InterpolationService {
   }
 
   async interpolateArray<T extends unknown[]>(params: {
-    context: Record<string, unknown>;
+    context: ObjectType;
     array: T;
   }): Promise<T> {
     const { context, array } = params;
@@ -113,10 +113,7 @@ export class InterpolationService {
     return clonedArray;
   }
 
-  async interpolate(params: {
-    value: unknown;
-    context: Record<string, unknown>;
-  }): Promise<unknown> {
+  async interpolate(params: { value: unknown; context: ObjectType }): Promise<unknown> {
     const { value, context } = params;
 
     if (!value || isEmpty(value)) {

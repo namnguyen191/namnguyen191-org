@@ -15,6 +15,7 @@ import {
   Type,
   WritableSignal,
 } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { from, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import {
@@ -34,7 +35,7 @@ import { logSubscription } from '../../utils/logging';
 
 type ElemetToRender = {
   component: Type<unknown>;
-  inputs: Record<string, unknown>;
+  inputs: ObjectType;
 };
 
 @Component({
@@ -107,7 +108,7 @@ export class UiElementWrapperComponent implements OnDestroy {
     templateOptions: UIElementTemplateOptions;
     remoteResourceId?: string;
     stateSubscription?: StateSubscriptionConfig;
-  }): Record<string, unknown> {
+  }): ObjectType {
     const { templateOptions, remoteResourceId, stateSubscription } = params;
 
     const interpolationContext = getElementInputsInterpolationContext({
@@ -115,7 +116,7 @@ export class UiElementWrapperComponent implements OnDestroy {
       stateSubscription,
     });
 
-    const inputs: Record<string, unknown> = {};
+    const inputs: ObjectType = {};
     for (const [optionName, optionValue] of Object.entries(templateOptions)) {
       inputs[optionName] = interpolationContext.pipe(
         switchMap((context) =>

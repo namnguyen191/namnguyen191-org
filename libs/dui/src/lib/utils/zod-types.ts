@@ -13,5 +13,3 @@ export const ZodIsError = z.boolean({
 export const ZodObjectType = z.record(z.string(), z.any(), {
   invalid_type_error: 'must be an object with key-value',
 });
-
-export type ObjectType = z.infer<typeof ZodObjectType>;
