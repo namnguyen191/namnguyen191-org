@@ -1,1 +1,5 @@
-<namnguyen191-layout [layoutConfig]="layoutConfig()"></namnguyen191-layout>
+@if (layoutConfig() | async; as layoutConfig) {
+  <namnguyen191-layout [layoutConfig]="layoutConfig"></namnguyen191-layout>
+} @else {
+  <span>Waiting for layout config to load...</span>
+}

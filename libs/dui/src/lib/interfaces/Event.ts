@@ -5,6 +5,9 @@ export type DUIEvent = {
   MISSING_UI_ELEMENT: {
     type: string;
   };
+  MISSING_LAYOUT: {
+    id: string;
+  };
   MISSING_UI_ELEMENT_TEMPLATE: {
     id: string;
   };

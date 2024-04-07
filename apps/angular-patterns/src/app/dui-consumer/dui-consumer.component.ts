@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } fr
 import {
   DuiComponent,
   EventsService,
-  LayoutConfig,
+  LayoutService,
   RemoteResourceService,
   SimpleButtonComponent,
   SimpleTableComponent,
@@ -31,12 +31,13 @@ import simpleTable3 from './sample-configs/simple_table_3.json';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiConsumerComponent {
-  layout: WritableSignal<LayoutConfig> = signal(mainLayout);
+  layoutId: WritableSignal<string> = signal(mainLayout.id);
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
   eventsService: EventsService = inject(EventsService);
+  layoutService: LayoutService = inject(LayoutService);
 
   constructor() {
     this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
@@ -53,7 +54,27 @@ export class DuiConsumerComponent {
       component: SimpleButtonComponent,
     });
 
-    // this._testChangingTemplateAndElement();
+    // setTimeout(() => {
+    //   const updatedMainLayout = {
+    //     ...mainLayout,
+    //     uiElementInstances: [
+    //       {
+    //         id: 'instance-3',
+    //         uiElementTemplateId: 'MY_SIMPLE_TABLE_V2',
+    //         positionAndSize: {
+    //           x: 8,
+    //           rows: 10,
+    //           cols: 4,
+    //           resizeEnabled: false,
+    //         },
+    //       },
+    //     ],
+    //   };
+    //   this.layoutService.updateLayout(updatedMainLayout);
+    // }, 5000);
+    // setTimeout(() => {
+    //   this._testChangingTemplateAndElement();
+    // }, 5000);
   }
 
   setupEventsListener(): void {
@@ -78,6 +99,7 @@ export class DuiConsumerComponent {
 
       if (event.type === 'MISSING_REMOTE_RESOURCE') {
         if (event.payload.id === '123') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           this.remoteResourceService.registerRemoteResource(boredResource as any);
         }
       }
@@ -85,18 +107,50 @@ export class DuiConsumerComponent {
       if (event.type === 'UI_ELEMENT_REPOSITION') {
         console.log(event);
       }
+
+      if (event.type === 'MISSING_LAYOUT') {
+        const missingLayoutId = event.payload.id;
+        switch (missingLayoutId) {
+          case mainLayout.id: {
+            this.layoutService.registerLayout(mainLayout);
+            break;
+          }
+          case testLayout.id: {
+            this.layoutService.registerLayout(testLayout);
+            break;
+          }
+          case testLayout2.id: {
+            this.layoutService.registerLayout(testLayout2);
+            break;
+          }
+          default:
+            console.error('Unknown layout with id: ', missingLayoutId);
+        }
+      }
     });
   }
 
   private _testChangingTemplateAndElement(): void {
-    this.layout.set(testLayout);
+    console.log(
+      `------------------- Before setting layout to: ${testLayout.id} -------------------`
+    );
+    this.layoutId.set(testLayout.id);
     setTimeout(() => {
-      this.layout.set(testLayout2);
+      console.log(
+        `------------------- Before setting layout to: ${testLayout2.id} -------------------`
+      );
+      this.layoutId.set(testLayout2.id);
       setTimeout(() => {
+        console.log(
+          `------------------- Before update ui element for: ${simpleTable2updated.id} -------------------`
+        );
         this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
 
         setTimeout(() => {
-          this.layout.set(testLayout);
+          console.log(
+            `------------------- Before setting layout to: ${testLayout.id} -------------------`
+          );
+          this.layoutId.set(testLayout.id);
         }, 5000);
       }, 5000);
     }, 5000);

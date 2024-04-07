@@ -26,6 +26,7 @@ import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapp
 
 export type LayoutGridItem = GridsterItem & {
   id: string;
+  trackById: string;
   elementInstance: UIElementInstance;
 };
 
@@ -111,6 +112,7 @@ export class LayoutComponent {
       return {
         id: eI.id,
         elementInstance: eI,
+        trackById: `LAYOUT: ${layoutConfig.id} - ELEMENT: ${eI.id}`,
         ...DEFAULT_POSITION_AND_SIZE,
         ...positionAndSize,
       };

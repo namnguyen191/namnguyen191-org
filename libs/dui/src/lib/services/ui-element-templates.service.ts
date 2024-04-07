@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { ObjectType } from '@namnguyen191/types-helper';
+import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
 
-import { EmptyObject, UIElementTemplate } from '../interfaces';
+import { UIElementTemplate } from '../interfaces';
 import { logInfo } from '../utils/logging';
 import { EventsService } from './events.service';
 import { InterpolationService } from './interpolation.service';

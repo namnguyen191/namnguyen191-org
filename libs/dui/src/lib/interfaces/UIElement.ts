@@ -1,5 +1,5 @@
 import { InputSignalWithTransform } from '@angular/core';
-import { ObjectType } from '@namnguyen191/types-helper';
+import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 
 import { AvailableStateScope } from '../services/state-store.service';
@@ -12,8 +12,6 @@ export type UIElementRequiredConfigs = {
   isLoading: boolean;
   isError: boolean;
 };
-
-export type EmptyObject = Record<string, never>;
 
 export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
   Partial<UIElementRequiredConfigs> & T;
