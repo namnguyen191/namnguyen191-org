@@ -1,16 +1,20 @@
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-/>
-<gridster [options]="layoutGridConfigs">
-  @for (item of gridItems(); track item.trackById) {
-    <gridster-item [item]="item">
-      <span *ngIf="item.dragEnabled" class="material-symbols-outlined drag-area">
-        drag_indicator
-      </span>
-      <namnguyen191-ui-element-wrapper
-        [uiElementInstance]="item.elementInstance"
-      ></namnguyen191-ui-element-wrapper>
-    </gridster-item>
-  }
-</gridster>
+@if (!isInfinite()) {
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+  />
+  <gridster [options]="layoutGridConfigs">
+    @for (item of gridItems(); track item.trackById) {
+      <gridster-item [item]="item">
+        <span *ngIf="item.dragEnabled" class="material-symbols-outlined drag-area">
+          drag_indicator
+        </span>
+        <namnguyen191-ui-element-wrapper
+          [uiElementInstance]="item.elementInstance"
+        ></namnguyen191-ui-element-wrapper>
+      </gridster-item>
+    }
+  </gridster>
+} @else {
+  <span>Infinte loop in rendering layout detected</span>
+}

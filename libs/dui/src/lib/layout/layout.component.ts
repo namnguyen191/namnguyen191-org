@@ -3,10 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  InjectionToken,
   input,
   InputSignal,
-  Signal,
+  OnDestroy,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,10 +22,11 @@ import {
   GridsterItemComponent,
   GridType,
 } from 'angular-gridster2';
+import { Subject, takeUntil } from 'rxjs';
 
 import { UIElementInstance } from '../interfaces';
 import { LayoutConfig } from '../interfaces/Layout';
-import { EventsService } from '../services';
+import { EventsService, LayoutService } from '../services';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 export type LayoutGridItem = GridsterItem & {
@@ -75,6 +80,8 @@ const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
   return typeof item['id'] === 'string' && item['elementInstance'];
 };
 
+export const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN');
+
 @Component({
   selector: 'namnguyen191-layout',
   standalone: true,
@@ -86,18 +93,43 @@ const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
     GridsterItemComponent,
     MatIconModule,
   ],
+  providers: [
+    {
+      provide: LAYOUTS_CHAIN_TOKEN,
+      useFactory: (): Set<string> => {
+        const existingToken = inject(LAYOUTS_CHAIN_TOKEN, { optional: true, skipSelf: true });
+
+        return existingToken ? structuredClone(existingToken) : new Set();
+      },
+    },
+  ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LayoutComponent {
-  layoutConfigSig: InputSignal<LayoutConfig> = input.required<LayoutConfig>({
-    alias: 'layoutConfig',
+export class LayoutComponent implements OnDestroy {
+  #layoutService: LayoutService = inject(LayoutService);
+  #layoutsChain: Set<string> = inject(LAYOUTS_CHAIN_TOKEN);
+
+  #cancelLayoutSubscriptionSubject = new Subject<void>();
+  #destroyRef = new Subject<void>();
+
+  layoutId: InputSignal<string> = input.required<string>();
+  layoutConfig = computed(() => {
+    // Cancel previous layout subscription
+    this.#cancelLayoutSubscriptionSubject.next();
+    const layoutId = this.layoutId();
+    const layoutConfigObs = this.#layoutService.getLayout(layoutId);
+
+    return layoutConfigObs.pipe(
+      takeUntil(this.#cancelLayoutSubscriptionSubject),
+      takeUntil(this.#destroyRef)
+    );
   });
-  gridItems: Signal<LayoutGridItem[]> = computed(() => {
-    const layoutConfig = this.layoutConfigSig();
-    return this.#createGridItems(layoutConfig);
-  });
+
+  gridItems: WritableSignal<LayoutGridItem[]> = signal<LayoutGridItem[]>([]);
+
+  isInfinite: WritableSignal<boolean> = signal<boolean>(false);
 
   layoutGridConfigs: GridsterConfig = {
     ...GRID_CONFIG,
@@ -105,6 +137,37 @@ export class LayoutComponent {
   };
 
   #eventService: EventsService = inject(EventsService);
+
+  constructor() {
+    effect(
+      () => {
+        const layoutConfig$ = this.layoutConfig();
+        layoutConfig$.subscribe((layoutConfig) => {
+          const gridItems = this.#createGridItems(layoutConfig);
+          this.gridItems.set(gridItems);
+
+          const isInfinite = this.#layoutsChain.has(layoutConfig.id);
+
+          if (isInfinite) {
+            console.error(`Layout with id ${layoutConfig.id} has already existed in parents`);
+          }
+
+          this.#layoutsChain.add(layoutConfig.id);
+          this.isInfinite.set(isInfinite);
+        });
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.#cancelLayoutSubscriptionSubject.next();
+    this.#cancelLayoutSubscriptionSubject.complete();
+    this.#destroyRef.next();
+    this.#destroyRef.complete();
+  }
 
   #createGridItems(layoutConfig: LayoutConfig): LayoutGridItem[] {
     return layoutConfig.uiElementInstances.map((eI) => {

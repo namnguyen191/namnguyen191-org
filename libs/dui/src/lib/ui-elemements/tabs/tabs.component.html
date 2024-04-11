@@ -1,0 +1,13 @@
+<ng-container *ngIf="tabsConfigOption() | async as tabs">
+  @if (!tabs.length) {
+    <span>There's no tabs to be displayed</span>
+  } @else {
+    <mat-tab-group>
+      <mat-tab *ngFor="let tab of tabs" [label]="tab.tabName">
+        <ng-template matTabContent>
+          <namnguyen191-layout [layoutId]="tab.layoutId"></namnguyen191-layout>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</ng-container>

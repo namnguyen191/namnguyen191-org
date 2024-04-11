@@ -7,6 +7,7 @@ import {
   RemoteResourceService,
   SimpleButtonComponent,
   SimpleTableComponent,
+  TabsComponent,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
@@ -17,6 +18,8 @@ import testLayout2 from './sample-configs/layout-2.json';
 import mainLayout from './sample-configs/main-layout.json';
 import simpleTableV2 from './sample-configs/my_simple_table_v2.json';
 import simpleButton1 from './sample-configs/simple_button_1.json';
+import tabs1 from './sample-configs/simple_tab_1.json';
+import tabs2 from './sample-configs/simple_tab_2.json';
 import simpleTable1 from './sample-configs/simple_table_1.json';
 import simpleTable2 from './sample-configs/simple_table_2.json';
 import simpleTable2updated from './sample-configs/simple_table_2_updated.json';
@@ -47,6 +50,11 @@ export class DuiConsumerComponent {
     this.uiElementFactoryService.registerUIElement({
       type: SimpleTableComponent.ELEMENT_TYPE,
       component: SimpleTableComponent,
+    });
+
+    this.uiElementFactoryService.registerUIElement({
+      type: TabsComponent.ELEMENT_TYPE,
+      component: TabsComponent,
     });
 
     this.uiElementFactoryService.registerUIElement({
@@ -94,6 +102,14 @@ export class DuiConsumerComponent {
 
         if (event.payload.id === 'MY_SIMPLE_BUTTON_1') {
           this.uiElementTemplatesService.registerUIElementTemplate(simpleButton1);
+        }
+
+        if (event.payload.id === 'MY_SIMPLE_TAB_1') {
+          this.uiElementTemplatesService.registerUIElementTemplate(tabs1);
+        }
+
+        if (event.payload.id === 'MY_SIMPLE_TAB_2') {
+          this.uiElementTemplatesService.registerUIElementTemplate(tabs2);
         }
       }
 

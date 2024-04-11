@@ -1,0 +1,16 @@
+{
+  "id": "MY_SIMPLE_TAB_1",
+  "type": "TABS",
+  "options": {
+    "tabs": [
+      {
+        "tabName": "My first tab",
+        "layoutId": "LAYOUT_1"
+      },
+      {
+        "tabName": "My second tab",
+        "layoutId": "LAYOUT_1"
+      }
+    ]
+  }
+}
