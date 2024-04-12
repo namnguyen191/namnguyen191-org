@@ -11,10 +11,10 @@ import { ZodIsError, ZodIsLoading } from '../../utils/zod-types';
 
 const ZodTabConfigObject = z.object({
   layoutId: z.string({
-    invalid_type_error: 'layout id must be a string',
+    errorMap: () => ({ message: 'layoutId must be a string' }),
   }),
   tabName: z.string({
-    invalid_type_error: 'tab name must be a string',
+    errorMap: () => ({ message: 'tabName must be a string' }),
   }),
 });
 
