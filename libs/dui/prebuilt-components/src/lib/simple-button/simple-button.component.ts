@@ -10,14 +10,17 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+  inputObsTransform,
+  triggerMultipleUIActions,
+  UICommAction,
+  UIElementImplementation,
+  ZodIsError,
+  ZodIsLoading,
+  ZodUICommAction,
+} from '@namnguyen191/dui';
 import { first, Observable, of } from 'rxjs';
 import { z } from 'zod';
-
-import { UICommAction, ZodUICommAction } from '../../interfaces';
-import { UIElementImplementation } from '../../interfaces/UIElement';
-import { triggerMultipleUIActions } from '../../services/hooks/UIActions';
-import { inputObsTransform } from '../../utils/helper';
-import { ZodIsError, ZodIsLoading } from '../../utils/zod-types';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {
   errorMap: () => {

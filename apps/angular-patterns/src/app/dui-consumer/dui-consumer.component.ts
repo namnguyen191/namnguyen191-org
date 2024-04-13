@@ -5,12 +5,14 @@ import {
   EventsService,
   LayoutService,
   RemoteResourceService,
-  SimpleButtonComponent,
-  SimpleTableComponent,
-  TabsComponent,
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
+import {
+  SimpleButtonComponent,
+  SimpleTableComponent,
+  TabsComponent,
+} from '@namnguyen191/dui/prebuilt-components';
 
 import boredResource from './sample-configs/boredapi-remote-resource.json';
 import testLayout from './sample-configs/layout-1.json';

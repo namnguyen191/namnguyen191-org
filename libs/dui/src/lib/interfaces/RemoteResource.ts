@@ -1,6 +1,6 @@
 import { Brand } from '@namnguyen191/types-helper';
 
-import { FetchDataParams } from '../services';
+import { FetchDataParams } from '../services/data-fetching.service';
 import { UICommAction } from './UICommunication';
 
 export type RawJsString = Brand<string, 'RawJsString'>;

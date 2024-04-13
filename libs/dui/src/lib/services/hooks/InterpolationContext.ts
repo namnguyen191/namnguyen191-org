@@ -6,7 +6,7 @@ import { StateSubscriptionConfig } from '../../interfaces';
 import { RemoteResourceService, RemoteResourceState } from '../remote-resource.service';
 import { AvailableStateScope, StateStoreService } from '../state-store.service';
 
-export type StateMap = {
+type StateMap = {
   [K in AvailableStateScope]: ObjectType;
 };
 
@@ -15,7 +15,7 @@ export type ElementInputsInterpolationContext = {
   state: StateMap;
 };
 
-export type AccumulatedRequestsResults = unknown[];
+type AccumulatedRequestsResults = unknown[];
 
 export type RequestConfigsInterpolationContext = {
   state: StateMap;
@@ -31,7 +31,7 @@ export type RequestHooksInterpolationContext = {
   $result: unknown;
 };
 
-export const getStatesAsContext = (): Observable<StateMap> => {
+const getStatesAsContext = (): Observable<StateMap> => {
   const stateStoreService = inject(StateStoreService);
 
   const local: Observable<ObjectType> = stateStoreService.getLocalState();
@@ -47,7 +47,7 @@ export const getStatesAsContext = (): Observable<StateMap> => {
   });
 };
 
-export const getStatesSubscriptionAsContext = (
+const getStatesSubscriptionAsContext = (
   stateSubscription: StateSubscriptionConfig
 ): Observable<StateMap> => {
   const {
@@ -76,7 +76,7 @@ export const getStatesSubscriptionAsContext = (
   });
 };
 
-export const getRemoteResourceStateAsContext = (
+const getRemoteResourceStateAsContext = (
   remoteResourceId: string
 ): Observable<RemoteResourceState> => {
   const remoteResourceService = inject(RemoteResourceService);

@@ -2,12 +2,16 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import {
+  inputObsTransform,
+  UIElementImplementation,
+  ZodIsError,
+  ZodIsLoading,
+  ZodStringOrNumberOrBoolean,
+} from '@namnguyen191/dui';
 import { Observable, of } from 'rxjs';
 import { z } from 'zod';
 
-import { UIElementImplementation } from '../../interfaces/UIElement';
-import { inputObsTransform } from '../../utils/helper';
-import { ZodIsError, ZodIsLoading, ZodStringOrNumberOrBoolean } from '../../utils/zod-types';
 import { PluckPipe } from './pluck.pipe';
 
 const ZodTableRowObject = z.record(z.string(), ZodStringOrNumberOrBoolean);

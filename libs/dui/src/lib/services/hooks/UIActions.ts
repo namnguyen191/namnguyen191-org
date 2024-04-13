@@ -9,18 +9,18 @@ import {
 import { RemoteResourceService } from '../remote-resource.service';
 import { StateStoreService } from '../state-store.service';
 
-export const handleTriggerRemoteResource = (action: TriggerRemoteResourceAction): void => {
+const handleTriggerRemoteResource = (action: TriggerRemoteResourceAction): void => {
   const {
     payload: { remoteResourceId },
   } = action;
   inject(RemoteResourceService).reloadResource(remoteResourceId);
 };
 
-export const handleAddToState = (action: AddToStateAction): void => {
+const handleAddToState = (action: AddToStateAction): void => {
   inject(StateStoreService).addToState(action.payload);
 };
 
-export const actionsHandlersMap: UICommActionHandlers = {
+const actionsHandlersMap: UICommActionHandlers = {
   handleAddToState,
   handleTriggerRemoteResource,
 };

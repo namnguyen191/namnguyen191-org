@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
+import {
+  inputObsTransform,
+  LayoutComponent,
+  UIElementImplementation,
+  ZodIsError,
+  ZodIsLoading,
+} from '@namnguyen191/dui';
 import { Observable, of } from 'rxjs';
 import { z } from 'zod';
-
-import { UIElementImplementation } from '../../interfaces/UIElement';
-import { LayoutComponent } from '../../layout/layout.component';
-import { inputObsTransform } from '../../utils/helper';
-import { ZodIsError, ZodIsLoading } from '../../utils/zod-types';
 
 const ZodTabConfigObject = z.object({
   layoutId: z.string({
