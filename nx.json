@@ -77,7 +77,7 @@
       "!{projectRoot}/src/test-setup.[jt]s",
       "!{projectRoot}/test-setup.[jt]s"
     ],
-    "sharedGlobals": []
+    "sharedGlobals": ["{workspaceRoot}/go.work"]
   },
   "generators": {
     "@nx/react": {
@@ -112,5 +112,6 @@
       "displayBlock": true,
       "skipTests": true
     }
-  }
+  },
+  "plugins": ["@nx-go/nx-go"]
 }

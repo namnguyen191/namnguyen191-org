@@ -196,6 +196,9 @@ devDependencies:
   '@graphql-eslint/eslint-plugin':
     specifier: ^3.20.1
     version: 3.20.1(@babel/core@7.24.0)(@types/node@20.11.28)(graphql@16.8.1)
+  '@nx-go/nx-go':
+    specifier: ^3.0.0
+    version: 3.0.0(nx@18.1.1)
   '@nx/angular':
     specifier: 18.1.1
     version: 18.1.1(@angular-devkit/build-angular@17.3.0)(@angular-devkit/core@17.3.0)(@angular-devkit/schematics@17.3.0)(@schematics/angular@17.3.0)(@swc-node/register@1.9.0)(@swc/core@1.4.8)(@types/node@20.11.28)(esbuild@0.20.2)(eslint@8.57.0)(nx@18.1.1)(rxjs@7.8.1)(typescript@5.4.2)
@@ -5644,6 +5647,15 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+    dev: true
+
+  /@nx-go/nx-go@3.0.0(nx@18.1.1):
+    resolution: {integrity: sha512-lzptNDUltTEJtNmMh0NtKMBshVXQ18TVjM/FQNyRyS/695QYr9MyhHQr8zasMtCy7Egkymi6KGZspjv2819wnA==}
+    dependencies:
+      '@nx/devkit': 18.1.1(nx@18.1.1)
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - nx
     dev: true
 
   /@nx/angular@18.1.1(@angular-devkit/build-angular@17.3.0)(@angular-devkit/core@17.3.0)(@angular-devkit/schematics@17.3.0)(@schematics/angular@17.3.0)(@swc-node/register@1.9.0)(@swc/core@1.4.8)(@types/node@20.11.28)(esbuild@0.20.2)(eslint@8.57.0)(nx@18.1.1)(rxjs@7.8.1)(typescript@5.4.2):
