@@ -1,0 +1,17 @@
+{
+  "id": "LAYOUT_2",
+  "uiElementInstances": [
+    {
+      "id": "instance-1",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE"
+    },
+    {
+      "id": "instance-2",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE_2"
+    },
+    {
+      "id": "instance-3",
+      "uiElementTemplateId": "MY_SIMPLE_TABLE_3"
+    }
+  ]
+}

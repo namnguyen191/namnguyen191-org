@@ -1,0 +1,39 @@
+{
+  "id": "123",
+  "options": {
+    "requests": [
+      {
+        "configs": {
+          "endpoint": "https://www.boredapi.com/api/activity",
+          "method": "GET"
+        },
+        "interpolation": "<${ return this.$current }$>"
+      },
+      {
+        "configs": {
+          "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
+          "method": "GET"
+        },
+        "interpolation": "<${ return this.$current }$>"
+      },
+      {
+        "configs": {
+          "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
+          "method": "GET"
+        },
+        "interpolation": "<${ return [...this.$requests, this.$current] }$>"
+      }
+    ],
+    "onSuccess": [
+      {
+        "type": "addToState",
+        "payload": {
+          "scope": "global",
+          "data": {
+            "activities": "<${ return [...this.state.global.activities ?? [], ...this.$result] }$> "
+          }
+        }
+      }
+    ]
+  }
+}

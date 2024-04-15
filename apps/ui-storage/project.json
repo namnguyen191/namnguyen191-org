@@ -12,9 +12,10 @@
       }
     },
     "serve": {
-      "executor": "@nx-go/nx-go:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go"
+        "cwd": "apps/ui-storage",
+        "command": "air -c .air.toml"
       }
     },
     "test": {
