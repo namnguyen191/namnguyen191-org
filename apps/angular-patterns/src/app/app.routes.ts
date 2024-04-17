@@ -13,5 +13,12 @@ export const appRoutes: Route[] = [
         (m) => m.InjectorFunctionComponent
       ),
   },
+  {
+    path: 'lazy-loaded-service',
+    loadComponent: () =>
+      import('./lazy-loaded-service/lazy-loaded-service.component').then(
+        (m) => m.LazyLoadedServiceComponent
+      ),
+  },
   { path: '**', redirectTo: 'dui' },
 ];
