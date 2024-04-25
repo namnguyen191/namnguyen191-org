@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
-import { isEmpty } from 'lodash-es';
+import { has, isEmpty } from 'lodash-es';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 
 import { INTERPOLATION_REGEX, RawJsString } from '../interfaces';
@@ -33,8 +33,9 @@ export class InterpolationService {
   }
 
   interpolateRawJs(params: { rawJs: RawJsString; context: JSRunnerContext }): Promise<unknown> {
-    const id = Math.random().toString();
     const { rawJs, context } = params;
+
+    const id = Math.random().toString();
     const interpolateEvent: WorkerEventObject = {
       type: 'INTERPOLATE',
       payload: {
@@ -67,8 +68,11 @@ export class InterpolationService {
     const { context, stringContent } = params;
     const trimmedStringContent = stringContent.trim();
     const rawJs = this.extractRawJs(trimmedStringContent);
-
     if (rawJs) {
+      if (this._isMissingContext(rawJs, context)) {
+        return Promise.resolve(stringContent);
+      }
+
       return await this.interpolateRawJs({
         rawJs: rawJs as RawJsString,
         context: context,
@@ -109,13 +113,11 @@ export class InterpolationService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       })) as any;
     }
-
     return clonedArray;
   }
 
   async interpolate(params: { value: unknown; context: ObjectType }): Promise<unknown> {
     const { value, context } = params;
-
     if (!value || isEmpty(value)) {
       return value;
     }
@@ -142,5 +144,18 @@ export class InterpolationService {
     }
 
     return value;
+  }
+
+  private _isMissingContext(rawJs: string, context: ObjectType): boolean {
+    const contextRegex = /this.(\$(\S*)Context)/g;
+    let match = contextRegex.exec(rawJs);
+    while (match && match[1]) {
+      if (!has(context, match[1])) {
+        return true;
+      }
+      match = contextRegex.exec(rawJs);
+    }
+
+    return false;
   }
 }

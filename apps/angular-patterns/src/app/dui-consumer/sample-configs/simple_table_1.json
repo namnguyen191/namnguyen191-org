@@ -21,6 +21,19 @@
         "displayedValue": "Price"
       }
     ],
-    "rows": "<${ return this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) }$>"
+    "rows": "<${ return this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) }$>",
+    "pagination": {
+      "onPageChange": [
+        {
+          "type": "addToState",
+          "payload": {
+            "scope": "global",
+            "data": {
+              "page": "<${ return this.$paginationContext }$>"
+            }
+          }
+        }
+      ]
+    }
   }
 }

@@ -57,3 +57,11 @@ export type UIElementRequiredInputs = {
 
 export type UIElementImplementation<TConfigs extends ObjectType> = UIElementRequiredInputOptions &
   CreateUIElementInputOptions<TConfigs>;
+
+export const ComponentContextPropertyKey = '$context$';
+export type ContextBasedElement = {
+  [ComponentContextPropertyKey]: InputSignalWithTransform<
+    Observable<ObjectType>,
+    ObjectType | Observable<ObjectType>
+  >;
+};
