@@ -2,11 +2,7 @@ import { InputSignalWithTransform } from '@angular/core';
 import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 
-import { AvailableStateScope } from '../services/state-store.service';
-
-export type StateSubscriptionConfig = {
-  [K in AvailableStateScope]?: string[];
-};
+import { StateSubscriptionConfig } from './Global';
 
 export type UIElementRequiredConfigs = {
   isLoading: boolean;

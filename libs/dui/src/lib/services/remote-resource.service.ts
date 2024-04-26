@@ -14,6 +14,7 @@ import {
   of,
   Subject,
   switchMap,
+  takeUntil,
   tap,
 } from 'rxjs';
 
@@ -26,6 +27,7 @@ import {
   getResourceRequestConfigInterpolationContext,
   getResourceRequestHooksInterpolationContext,
   getResourceRequestTransformationInterpolationContext,
+  getStatesSubscriptionAsContext,
 } from './hooks/InterpolationContext';
 import { triggerMultipleUIActions } from './hooks/UIActions';
 import { InterpolationService } from './interpolation.service';
@@ -45,7 +47,9 @@ export class RemoteResourceService {
     new BehaviorSubject({});
   #remoteResourcesStateMap: Record<string, BehaviorSubject<RemoteResourceState>> = {};
   #reloadControlSubject: Subject<string> = new Subject<string>();
-  #cancelSubscriptionControlSubject: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
+  #cancelSubscriptionControlSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null);
 
   #dataFetchingService: DataFetchingService = inject(DataFetchingService);
   #interpolationService: InterpolationService = inject(InterpolationService);
@@ -163,8 +167,17 @@ export class RemoteResourceService {
         next: () => this.#setLoadingState(remoteResourceState),
       }),
       switchMap((remoteResource) => {
-        return this.#processRequests(remoteResource.options.requests).pipe(
-          map((result) => ({ result, remoteResource }))
+        const stateSubscription = remoteResource.options.stateSubscription;
+        const state: Observable<unknown> = stateSubscription
+          ? getStatesSubscriptionAsContext(stateSubscription)
+          : of(EMPTY);
+
+        return state.pipe(
+          switchMap(() =>
+            this.#processRequests(remoteResource.options.requests).pipe(
+              map((result) => ({ result, remoteResource }))
+            )
+          )
         );
       }),
       switchMap(({ result, remoteResource }) =>
@@ -187,13 +200,19 @@ export class RemoteResourceService {
       catchError(() => {
         this.#setErrorState(remoteResourceState);
         return of();
-      })
+      }),
+      takeUntil(
+        this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
+      )
     );
 
     this.#reloadControlSubject
       .pipe(
         filter((reloadId) => reloadId === id),
-        switchMap(() => remoteResourceFetchFlow)
+        switchMap(() => remoteResourceFetchFlow),
+        takeUntil(
+          this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
+        )
       )
       .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
 

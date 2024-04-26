@@ -6,7 +6,7 @@ import { StateSubscriptionConfig } from '../../interfaces';
 import { RemoteResourceService, RemoteResourceState } from '../remote-resource.service';
 import { AvailableStateScope, StateStoreService } from '../state-store.service';
 
-type StateMap = {
+export type StateMap = {
   [K in AvailableStateScope]: ObjectType;
 };
 
@@ -47,7 +47,7 @@ const getStatesAsContext = (): Observable<StateMap> => {
   });
 };
 
-const getStatesSubscriptionAsContext = (
+export const getStatesSubscriptionAsContext = (
   stateSubscription: StateSubscriptionConfig
 ): Observable<StateMap> => {
   const {
