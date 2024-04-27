@@ -166,20 +166,11 @@ export class RemoteResourceService {
       tap({
         next: () => this.#setLoadingState(remoteResourceState),
       }),
-      switchMap((remoteResource) => {
-        const stateSubscription = remoteResource.options.stateSubscription;
-        const state: Observable<unknown> = stateSubscription
-          ? getStatesSubscriptionAsContext(stateSubscription)
-          : of(EMPTY);
-
-        return state.pipe(
-          switchMap(() =>
-            this.#processRequests(remoteResource.options.requests).pipe(
-              map((result) => ({ result, remoteResource }))
-            )
-          )
-        );
-      }),
+      switchMap((remoteResource) =>
+        this.#processRequests(remoteResource.options.requests).pipe(
+          map((result) => ({ result, remoteResource }))
+        )
+      ),
       switchMap(({ result, remoteResource }) =>
         from(
           this.#interpolateResourceHooks({ resourceConfig: remoteResource, resourceResult: result })
@@ -216,7 +207,22 @@ export class RemoteResourceService {
       )
       .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
 
-    this.#reloadControlSubject.next(id);
+    const remoteResourceSubscribable = remoteResource$.pipe(
+      switchMap((remoteResource) => {
+        const stateSubscription = remoteResource.stateSubscription;
+        return stateSubscription ? getStatesSubscriptionAsContext(stateSubscription) : of(EMPTY);
+      }),
+      tap(() => this.#reloadControlSubject.next(id)),
+      takeUntil(
+        this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
+      )
+    );
+
+    // since there's always an initial value for state, this will always trigger when we subscribe
+    // therefore initialize the fetch data workflow
+    remoteResourceSubscribable.subscribe(() =>
+      logSubscription(`Subscribing to states for remote resource ${id}`)
+    );
   }
 
   async #interpolateResourceHooks(params: {

@@ -13,9 +13,9 @@ export type Request = {
 
 export type RemoteResourceConfigs = {
   id: string;
+  stateSubscription?: StateSubscriptionConfig;
   options: {
     requests: Request[];
     onSuccess?: UICommAction[];
-    stateSubscription?: StateSubscriptionConfig;
   };
 };
