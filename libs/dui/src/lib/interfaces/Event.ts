@@ -1,4 +1,4 @@
-import { UIElementPositionAndSize } from './UIElement';
+import { UIElementPositionAndSize } from './Layout';
 
 export type DUIEvent = {
   GENERIC: never;

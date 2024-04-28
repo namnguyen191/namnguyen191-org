@@ -20,22 +20,6 @@ export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
   options: UIElementTemplateOptions<T>;
 };
 
-export type UIElementPositionAndSize = {
-  x: number;
-  y: number;
-  cols: number;
-  rows: number;
-};
-
-export type UIElementInstance = {
-  id: string;
-  uiElementTemplateId: string;
-  positionAndSize?: Partial<UIElementPositionAndSize> & {
-    resizeEnabled?: boolean;
-    dragEnabled?: boolean;
-  };
-};
-
 export type CreateUIElementInputOptions<TConfigs> = Required<{
   [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]: InputSignalWithTransform<
     Observable<TConfigs[K]>,
