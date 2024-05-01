@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"namnguyen191/uistorage/db"
 	"net/http"
 	"os"
 
@@ -9,6 +10,9 @@ import (
 )
 
 func main() {
+	db.InitDB()
+	defer db.CloseDB()
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		dat, err := os.ReadFile("./assets/remote-resources/boredapi-remote-resource.json")
