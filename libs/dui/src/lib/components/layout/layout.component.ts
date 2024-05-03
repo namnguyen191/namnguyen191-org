@@ -24,9 +24,9 @@ import {
 } from 'angular-gridster2';
 import { Subject, takeUntil } from 'rxjs';
 
-import { UIElementInstance } from '../interfaces';
-import { LayoutConfig } from '../interfaces/Layout';
-import { EventsService, LayoutService } from '../services';
+import { UIElementInstance } from '../../interfaces';
+import { LayoutConfig } from '../../interfaces/Layout';
+import { EventsService, LayoutService } from '../../services';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 export type LayoutGridItem = GridsterItem & {

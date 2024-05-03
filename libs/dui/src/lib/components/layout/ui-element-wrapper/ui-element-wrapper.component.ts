@@ -24,15 +24,15 @@ import {
   UIElementInstance,
   UIElementTemplate,
   UIElementTemplateOptions,
-} from '../../interfaces';
+} from '../../../interfaces';
 import {
   RemoteResourceService,
   UIElementFactoryService,
   UIElementTemplatesService,
-} from '../../services';
-import { getElementInputsInterpolationContext } from '../../services/hooks/InterpolationContext';
-import { InterpolationService } from '../../services/interpolation.service';
-import { logSubscription } from '../../utils/logging';
+} from '../../../services';
+import { getElementInputsInterpolationContext } from '../../../services/hooks/InterpolationContext';
+import { InterpolationService } from '../../../services/interpolation.service';
+import { logSubscription } from '../../../utils/logging';
 
 type ElemetToRender = {
   component: Type<unknown>;
