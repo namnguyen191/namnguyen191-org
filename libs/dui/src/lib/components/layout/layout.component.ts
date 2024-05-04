@@ -127,7 +127,7 @@ export class LayoutComponent implements OnDestroy {
     );
   });
 
-  gridItems: WritableSignal<LayoutGridItem[]> = signal<LayoutGridItem[]>([]);
+  gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
 
   isInfinite: WritableSignal<boolean> = signal<boolean>(false);
 

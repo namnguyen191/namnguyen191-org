@@ -12,7 +12,8 @@ import {
   Type,
 } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
-import { map, Observable, switchMap } from 'rxjs';
+import { isEqual } from 'lodash-es';
+import { combineLatest, distinctUntilChanged, from, map, Observable, switchMap } from 'rxjs';
 
 import {
   ComponentContextPropertyKey,
@@ -56,7 +57,7 @@ export class UiElementWrapperComponent {
     return this.uiElementTemplate().pipe(
       switchMap((template) =>
         runInInjectionContext(this.#environmentInjector, () =>
-          this.#generateComponentInputsV2({
+          this.#generateComponentInputs({
             templateOptions: template.options,
             remoteResourceId: template.remoteResourceId,
             stateSubscription: template.stateSubscription,
@@ -67,8 +68,8 @@ export class UiElementWrapperComponent {
     );
   });
 
-  #generateComponentInputsV2(params: {
-    templateOptions: UIElementTemplateOptions;
+  #generateComponentInputs(params: {
+    templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
     remoteResourceId?: string;
     stateSubscription?: StateSubscriptionConfig;
     component: Type<unknown>;
@@ -80,30 +81,41 @@ export class UiElementWrapperComponent {
       stateSubscription,
     });
 
-    return interpolationContext.pipe(
-      switchMap((context) => {
-        const template = { ...templateOptions };
-        if (this.#isContextBased(component)) {
-          (template[ComponentContextPropertyKey] as unknown) = context;
-        }
+    const inputsObservableMap: Record<string, Observable<unknown>> = {};
+    for (const [key, val] of Object.entries(templateOptions)) {
+      inputsObservableMap[key] = interpolationContext.pipe(
+        switchMap((context) =>
+          from(
+            this.#interpolationService.interpolate({
+              context,
+              value: val,
+            })
+          )
+        ),
+        distinctUntilChanged(isEqual)
+      );
+    }
 
-        if (remoteResourceId) {
-          // Only automatically set isLoading and isError if the user does not provide any override for them
-          if (templateOptions.isLoading === undefined) {
-            template.isLoading = context.remoteResourceState?.isLoading;
-          }
+    if (this.#isContextBased(component)) {
+      (inputsObservableMap[ComponentContextPropertyKey] as unknown) = interpolationContext;
+    }
 
-          if (templateOptions.isError === undefined) {
-            template.isError = context.remoteResourceState?.isError;
-          }
-        }
+    if (remoteResourceId) {
+      // Only automatically set isLoading and isError if the user does not provide any override for them
+      if (templateOptions.isLoading === undefined) {
+        inputsObservableMap['isLoading'] = interpolationContext.pipe(
+          map((context) => context.remoteResourceState?.isLoading)
+        );
+      }
 
-        return this.#interpolationService.interpolate({
-          context,
-          value: template,
-        }) as Promise<ObjectType>;
-      })
-    );
+      if (templateOptions.isError === undefined) {
+        inputsObservableMap['isError'] = interpolationContext.pipe(
+          map((context) => context.remoteResourceState?.isError)
+        );
+      }
+    }
+
+    return combineLatest(inputsObservableMap);
   }
 
   #isContextBased(component: Type<unknown>): boolean {
