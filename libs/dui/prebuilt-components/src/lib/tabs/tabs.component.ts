@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, InputSignalWithTransform } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import {
-  inputObsTransform,
+  BaseUIElementComponent,
   LayoutComponent,
   UIElementImplementation,
-  ZodIsError,
-  ZodIsLoading,
 } from '@namnguyen191/dui';
-import { Observable, of } from 'rxjs';
 import { z } from 'zod';
 
 const ZodTabConfigObject = z.object({
@@ -40,30 +37,14 @@ export type TabsUIElementComponentConfigs = z.infer<typeof ZodTabsUIElementCompo
   styleUrl: './tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabsComponent implements UIElementImplementation<TabsUIElementComponentConfigs> {
+export class TabsComponent
+  extends BaseUIElementComponent
+  implements UIElementImplementation<TabsUIElementComponentConfigs>
+{
   static readonly ELEMENT_TYPE = 'TABS';
 
-  isErrorConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isError',
-    transform: inputObsTransform(ZodIsError),
-  });
-
-  isLoadingConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isLoading',
-    transform: inputObsTransform(ZodIsLoading),
-  });
-
-  tabsConfigOption: InputSignalWithTransform<
-    Observable<TabsConfig>,
-    TabsConfig | Observable<TabsConfig>
-  > = input(of([]), {
+  tabsConfigOption: InputSignal<TabsConfig> = input([], {
     alias: 'tabs',
-    transform: inputObsTransform(ZodTabsConfig),
+    transform: (val) => ZodTabsConfig.parse(val),
   });
 }

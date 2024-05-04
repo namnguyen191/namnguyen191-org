@@ -3,20 +3,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   EnvironmentInjector,
   inject,
   input,
   InputSignal,
-  OnDestroy,
   runInInjectionContext,
   Signal,
-  signal,
   Type,
-  WritableSignal,
 } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
-import { from, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 
 import {
   ComponentContextPropertyKey,
@@ -25,19 +21,9 @@ import {
   UIElementTemplate,
   UIElementTemplateOptions,
 } from '../../../interfaces';
-import {
-  RemoteResourceService,
-  UIElementFactoryService,
-  UIElementTemplatesService,
-} from '../../../services';
+import { UIElementFactoryService, UIElementTemplatesService } from '../../../services';
 import { getElementInputsInterpolationContext } from '../../../services/hooks/InterpolationContext';
 import { InterpolationService } from '../../../services/interpolation.service';
-import { logSubscription } from '../../../utils/logging';
-
-type ElemetToRender = {
-  component: Type<unknown>;
-  inputs: ObjectType;
-};
 
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
@@ -46,17 +32,13 @@ type ElemetToRender = {
   templateUrl: './ui-element-wrapper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiElementWrapperComponent implements OnDestroy {
+export class UiElementWrapperComponent {
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
   #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
-  #remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
-
-  #cancelTemplateSubscriptionSubject = new Subject<void>();
-  #destroyRef = new Subject<void>();
 
   uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
     return this.#uiElementTemplatesService.getUIElementTemplate(
@@ -64,55 +46,33 @@ export class UiElementWrapperComponent implements OnDestroy {
     );
   });
 
-  uiElement: WritableSignal<ElemetToRender | null> = signal(null);
-
-  constructor() {
-    effect(
-      () => {
-        // cancel previous subscription if any
-        this.#cancelTemplateSubscriptionSubject.next();
-        this.uiElementTemplate()
-          .pipe(takeUntil(this.#cancelTemplateSubscriptionSubject), takeUntil(this.#destroyRef))
-          .subscribe((template) => {
-            logSubscription(`Template for UI element instance ${this.uiElementInstance().id}`);
-            if (!template) {
-              return;
-            }
-
-            const component = this.#uiElementFactoryService.getUIElement(template.type);
-
-            return runInInjectionContext(this.#environmentInjector, () => {
-              this.uiElement.set({
-                component,
-                inputs: this.#generateComponentInputs({
-                  templateOptions: template.options,
-                  remoteResourceId: template.remoteResourceId,
-                  stateSubscription: template.stateSubscription,
-                  component,
-                }),
-              });
-            });
-          });
-      },
-      {
-        allowSignalWrites: true,
-      }
+  uiElementComponent: Signal<Observable<Type<unknown>>> = computed(() => {
+    return this.uiElementTemplate().pipe(
+      map((template) => this.#uiElementFactoryService.getUIElement(template.type))
     );
-  }
+  });
 
-  ngOnDestroy(): void {
-    this.#cancelTemplateSubscriptionSubject.next();
-    this.#cancelTemplateSubscriptionSubject.complete();
-    this.#destroyRef.next();
-    this.#destroyRef.complete();
-  }
+  uiElementInputs: Signal<Observable<ObjectType>> = computed(() => {
+    return this.uiElementTemplate().pipe(
+      switchMap((template) =>
+        runInInjectionContext(this.#environmentInjector, () =>
+          this.#generateComponentInputsV2({
+            templateOptions: template.options,
+            remoteResourceId: template.remoteResourceId,
+            stateSubscription: template.stateSubscription,
+            component: this.#uiElementFactoryService.getUIElement(template.type),
+          })
+        )
+      )
+    );
+  });
 
-  #generateComponentInputs(params: {
+  #generateComponentInputsV2(params: {
     templateOptions: UIElementTemplateOptions;
     remoteResourceId?: string;
     stateSubscription?: StateSubscriptionConfig;
     component: Type<unknown>;
-  }): ObjectType {
+  }): Observable<ObjectType> {
     const { templateOptions, remoteResourceId, stateSubscription, component } = params;
 
     const interpolationContext = getElementInputsInterpolationContext({
@@ -120,44 +80,33 @@ export class UiElementWrapperComponent implements OnDestroy {
       stateSubscription,
     });
 
-    const inputs: ObjectType = {};
-    for (const [optionName, optionValue] of Object.entries(templateOptions)) {
-      inputs[optionName] = interpolationContext.pipe(
-        switchMap((context) => {
-          return from(
-            this.#interpolationService.interpolate({
-              context,
-              value: optionValue,
-            })
-          );
-        })
-      );
-    }
+    return interpolationContext.pipe(
+      switchMap((context) => {
+        const template = { ...templateOptions };
+        if (this.#isContextBased(component)) {
+          (template[ComponentContextPropertyKey] as unknown) = context;
+        }
 
-    // automatically assign isLoading if it is not provided the user
-    if (remoteResourceId && templateOptions.isLoading === undefined) {
-      inputs['isLoading'] = this.#remoteResourceService
-        .getRemoteResourceState(remoteResourceId)
-        .pipe(map((resourceState) => resourceState.isLoading));
-    }
+        if (remoteResourceId) {
+          // Only automatically set isLoading and isError if the user does not provide any override for them
+          if (templateOptions.isLoading === undefined) {
+            template.isLoading = context.remoteResourceState?.isLoading;
+          }
 
-    // automatically assign isError if it is not provided the user
-    if (remoteResourceId && templateOptions.isError === undefined) {
-      inputs['isError'] = this.#remoteResourceService
-        .getRemoteResourceState(remoteResourceId)
-        .pipe(map((resourceState) => resourceState.isError));
-    }
+          if (templateOptions.isError === undefined) {
+            template.isError = context.remoteResourceState?.isError;
+          }
+        }
 
-    // Pass down interpolation context
-    if (this.#isContextBased(component)) {
-      inputs[ComponentContextPropertyKey] = interpolationContext;
-    }
-
-    return inputs;
+        return this.#interpolationService.interpolate({
+          context,
+          value: template,
+        }) as Promise<ObjectType>;
+      })
+    );
   }
 
   #isContextBased(component: Type<unknown>): boolean {
-    const allProperties = Object.getOwnPropertyNames(new component());
-    return allProperties.includes(ComponentContextPropertyKey);
+    return !!(component as unknown as { NEED_CONTEXT?: true })['NEED_CONTEXT'];
   }
 }

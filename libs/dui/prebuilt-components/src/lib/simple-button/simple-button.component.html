@@ -1,8 +1,8 @@
 <button
   mat-raised-button
-  [color]="colorConfigOption() | async"
-  [disabled]="disabledConfigOption() | async"
+  [color]="colorConfigOption()"
+  [disabled]="disabledConfigOption()"
   (click)="handleButtonClick()"
 >
-  {{ textConfigOption() | async }}
+  {{ textConfigOption() }}
 </button>

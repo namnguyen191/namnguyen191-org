@@ -1,4 +1,4 @@
-<ng-container *ngIf="tabsConfigOption() | async as tabs">
+<ng-container *ngIf="tabsConfigOption() as tabs">
   @if (!tabs.length) {
     <span>There's no tabs to be displayed</span>
   } @else {

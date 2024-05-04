@@ -1,12 +1,12 @@
-<h1>{{ titleConfigOption() | async }}</h1>
+<h1>{{ titleConfigOption() }}</h1>
 
-@if (isLoadingConfigOption() | async) {
+@if (isLoadingConfigOption()) {
   <mat-spinner></mat-spinner>
-} @else if (isErrorConfigOption() | async) {
+} @else if (isErrorConfigOption()) {
   <span>Something went wrong fetching data</span>
 } @else {
-  <ng-container *ngIf="rowsConfigOption() | async as rowsConfig">
-    <ng-container *ngIf="columnsConfigOption() | async as columnsConfig">
+  <ng-container *ngIf="rowsConfigOption() as rowsConfig">
+    <ng-container *ngIf="columnsConfigOption() as columnsConfig">
       <table mat-table [dataSource]="rowsConfig" class="mat-elevation-z8">
         @for (column of columnsConfig; track column) {
           <ng-container [matColumnDef]="column.dataKey">
@@ -18,17 +18,18 @@
         <tr mat-header-row *matHeaderRowDef="columnsConfig | pluck: 'dataKey'"></tr>
         <tr mat-row *matRowDef="let row; columns: columnsConfig | pluck: 'dataKey'"></tr>
       </table>
-
-      <ng-container *ngIf="shouldDisplayPagination() | async">
-        <mat-paginator
-          *ngIf="paginationConfigOption() | async as paginationConfig"
-          [pageSizeOptions]="paginationConfig.pageSizes ?? DEFAULT_PAGINATION_PAGE_SIZES"
-          showFirstLastButtons
-          aria-label="Select page of periodic elements"
-          (page)="onPageChange($event)"
-        >
-        </mat-paginator>
-      </ng-container>
     </ng-container>
   </ng-container>
 }
+
+<ng-container *ngIf="shouldDisplayPagination()">
+  <mat-paginator
+    *ngIf="paginationConfigOption() as paginationConfig"
+    [pageSizeOptions]="paginationConfig.pageSizes ?? DEFAULT_PAGINATION_PAGE_SIZES"
+    [pageSize]="paginationConfig.pageSizes?.[0] ?? DEFAULT_PAGINATION_PAGE_SIZES[0]"
+    showFirstLastButtons
+    aria-label="Select page of periodic elements"
+    (page)="onPageChange($event)"
+  >
+  </mat-paginator>
+</ng-container>

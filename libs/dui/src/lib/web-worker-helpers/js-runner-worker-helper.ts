@@ -19,7 +19,7 @@ export const handleRunJsMessage = (e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>
   try {
     result = runRawJs(rawJs, context);
   } catch (error) {
-    console.warn(error);
+    console.warn(`Getting error: ${error}. \nFrom running: ${rawJs}`);
     result = null;
   }
 

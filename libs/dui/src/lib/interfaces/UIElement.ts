@@ -1,4 +1,4 @@
-import { InputSignalWithTransform } from '@angular/core';
+import { InputSignal, InputSignalWithTransform } from '@angular/core';
 import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 
@@ -21,10 +21,9 @@ export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
 };
 
 export type CreateUIElementInputOptions<TConfigs> = Required<{
-  [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]: InputSignalWithTransform<
-    Observable<TConfigs[K]>,
-    TConfigs[K] | Observable<TConfigs[K]>
-  >;
+  [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]:
+    | InputSignal<TConfigs[K]>
+    | InputSignalWithTransform<TConfigs[K], unknown>;
 }>;
 
 export type UIElementRequiredInputOptions = CreateUIElementInputOptions<UIElementRequiredConfigs>;
@@ -35,13 +34,12 @@ export type UIElementRequiredInputs = {
     | Observable<UIElementRequiredConfigs[K]>;
 };
 
-export type UIElementImplementation<TConfigs extends ObjectType> = UIElementRequiredInputOptions &
-  CreateUIElementInputOptions<TConfigs>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type UIElementImplementation<TConfigs extends ObjectType = {}> =
+  UIElementRequiredInputOptions & CreateUIElementInputOptions<TConfigs>;
 
 export const ComponentContextPropertyKey = '$context$';
+
 export type ContextBasedElement = {
-  [ComponentContextPropertyKey]: InputSignalWithTransform<
-    Observable<ObjectType>,
-    ObjectType | Observable<ObjectType>
-  >;
+  [ComponentContextPropertyKey]: InputSignal<ObjectType>;
 };

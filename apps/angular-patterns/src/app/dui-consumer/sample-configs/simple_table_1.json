@@ -21,8 +21,9 @@
         "displayedValue": "Price"
       }
     ],
-    "rows": "<${ return this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) }$>",
+    "rows": "<${ return this.state?.global?.activities?.map(({ activity, type, price }) => ({ activity, type, price })) ?? [] }$>",
     "pagination": {
+      "pageSizes": [10, 20, 50, 100],
       "onPageChange": [
         {
           "type": "addToState",

@@ -6,28 +6,24 @@ import {
   EnvironmentInjector,
   inject,
   input,
-  InputSignalWithTransform,
+  InputSignal,
   runInInjectionContext,
 } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
+  BaseUIElementComponent,
   ContextBasedElement,
-  inputObsTransform,
   triggerMultipleUIActions,
   UICommAction,
   UIElementImplementation,
-  ZodIsError,
-  ZodIsLoading,
-  ZodObjectType,
   ZodStringOrNumberOrBoolean,
   ZodUICommAction,
 } from '@namnguyen191/dui';
 import { InterpolationService } from '@namnguyen191/dui';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEmpty } from 'lodash-es';
-import { first, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
 import { z } from 'zod';
 
 import { PluckPipe } from './pluck.pipe';
@@ -52,7 +48,9 @@ export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
 const ZodSimpleTableUIElementComponentConfigs = z.object({
   title: z.string(),
   columns: z.array(ZodTableColumnObject),
-  rows: z.array(ZodTableRowObject),
+  rows: z.array(ZodTableRowObject, {
+    errorMap: () => ({ message: 'Invalid config for table rows' }),
+  }),
   pagination: ZodTablePaginationConfigs,
 });
 
@@ -69,93 +67,55 @@ export type SimpleTableUIElementComponentConfigs = z.infer<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleTableComponent
+  extends BaseUIElementComponent
   implements UIElementImplementation<SimpleTableUIElementComponentConfigs>, ContextBasedElement
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
+  static readonly NEED_CONTEXT = true;
 
-  isErrorConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isError',
-    transform: inputObsTransform(ZodIsError),
+  titleConfigOption: InputSignal<string> = input('Default title', {
+    alias: 'title',
+    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.title.parse(val),
   });
 
-  isLoadingConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isLoading',
-    transform: inputObsTransform(ZodIsLoading),
-  });
-
-  titleConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
-    input(of('Default title'), {
-      alias: 'title',
-      transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.title),
-    });
-
-  columnsConfigOption: InputSignalWithTransform<
-    Observable<TableColumnObject[]>,
-    TableColumnObject[] | Observable<TableColumnObject[]>
-  > = input(of([]), {
+  columnsConfigOption: InputSignal<TableColumnObject[]> = input([], {
     alias: 'columns',
-    transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.columns),
+    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.columns.parse(val),
   });
 
-  rowsConfigOption: InputSignalWithTransform<
-    Observable<TableRowObject[]>,
-    TableRowObject[] | Observable<TableRowObject[]>
-  > = input(of([]), {
+  rowsConfigOption: InputSignal<TableRowObject[]> = input([], {
     alias: 'rows',
-    transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.rows),
+    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.rows.parse(val),
   });
 
   readonly DEFAULT_PAGINATION_PAGE_SIZES = [5, 10, 20];
-  paginationConfigOption: InputSignalWithTransform<
-    Observable<TablePaginationConfigs>,
-    TablePaginationConfigs | Observable<TablePaginationConfigs>
-  > = input(of({}), {
-    alias: 'pagination',
-    transform: inputObsTransform(ZodSimpleTableUIElementComponentConfigs.shape.pagination),
-  });
-  shouldDisplayPagination = computed(() => {
-    const paginationConfig = this.paginationConfigOption();
-    return paginationConfig.pipe(map((config) => !isEmpty(config)));
-  });
+  paginationConfigOption: InputSignal<TablePaginationConfigs> = input(
+    {},
+    {
+      alias: 'pagination',
+    }
+  );
+  shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
 
   // Cannot use [ComponentContextPropertyKey] otherwise Angular won't detect it as an input
-  $context$: InputSignalWithTransform<Observable<ObjectType>, ObjectType | Observable<ObjectType>> =
-    input(of({}), {
-      transform: inputObsTransform(ZodObjectType),
-    });
+  $context$: InputSignal<ObjectType> = input<ObjectType>({});
 
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
-  onPageChange(event: PageEvent): void {
+  async onPageChange(event: PageEvent): Promise<void> {
     const { pageSize, pageIndex: currentPage } = event;
-    this.paginationConfigOption()
-      .pipe(
-        withLatestFrom(this.$context$()),
-        switchMap(([{ onPageChange }, context]) => {
-          if (!onPageChange) {
-            return of([]);
-          }
+    const onPageChange: UICommAction[] | undefined = this.paginationConfigOption().onPageChange;
+    if (!onPageChange || onPageChange.length === 0) {
+      return;
+    }
 
-          return from(
-            this.#interpolationService.interpolate({
-              context: { ...context, $paginationContext: { pageSize, currentPage } },
-              value: onPageChange,
-            }) as Promise<UICommAction[]>
-          );
-        }),
-        first()
-      )
-      .subscribe((dispatchableActions) => {
-        runInInjectionContext(this.#environmentInjector, () =>
-          triggerMultipleUIActions(dispatchableActions)
-        );
-      });
+    const context = this.$context$();
+    const actions = (await this.#interpolationService.interpolate({
+      context: { ...context, $paginationContext: { pageSize, currentPage } },
+      value: onPageChange,
+    })) as UICommAction[];
+
+    runInInjectionContext(this.#environmentInjector, () => triggerMultipleUIActions(actions));
   }
 }

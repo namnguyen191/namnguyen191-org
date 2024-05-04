@@ -1,7 +1,5 @@
-@if (uiElement() !== null) {
-  <ng-container *ngIf="uiElement() as uiElement">
-    <ng-container *ngComponentOutlet="uiElement.component; inputs: uiElement.inputs" />
-  </ng-container>
+@if (uiElementComponent() | async; as component) {
+  <ng-container *ngComponentOutlet="component; inputs: (uiElementInputs() | async) ?? undefined" />
 } @else {
   <span>Loading UI element....</span>
 }

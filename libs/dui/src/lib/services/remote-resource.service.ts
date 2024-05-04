@@ -12,6 +12,7 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   Subject,
   switchMap,
   takeUntil,
@@ -92,7 +93,8 @@ export class RemoteResourceService {
         const remoteResource = remoteResourceMap[id];
         return remoteResource;
       }),
-      tap((val) => logInfo(`Getting remote resource ${val.id}`))
+      tap((val) => logInfo(`Getting remote resource ${val.id}`)),
+      shareReplay(1)
     );
   }
 
@@ -205,7 +207,7 @@ export class RemoteResourceService {
           this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
         )
       )
-      .subscribe(() => logSubscription(`Subscribing to remote resource ${id}`));
+      .subscribe(() => logSubscription(`Subscribing to remote resource ${id} flow`));
 
     const remoteResourceSubscribable = remoteResource$.pipe(
       switchMap((remoteResource) => {
@@ -221,7 +223,7 @@ export class RemoteResourceService {
     // since there's always an initial value for state, this will always trigger when we subscribe
     // therefore initialize the fetch data workflow
     remoteResourceSubscribable.subscribe(() =>
-      logSubscription(`Subscribing to states for remote resource ${id}`)
+      logSubscription(`Remote resource ${id} trigger due to state change`)
     );
   }
 

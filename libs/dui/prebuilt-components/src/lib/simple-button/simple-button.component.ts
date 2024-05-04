@@ -5,21 +5,18 @@ import {
   EnvironmentInjector,
   inject,
   input,
-  InputSignalWithTransform,
+  InputSignal,
   runInInjectionContext,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
-  inputObsTransform,
+  BaseUIElementComponent,
   triggerMultipleUIActions,
   UICommAction,
   UIElementImplementation,
-  ZodIsError,
-  ZodIsLoading,
   ZodUICommAction,
 } from '@namnguyen191/dui';
-import { first, Observable, of } from 'rxjs';
 import { z } from 'zod';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {
@@ -51,65 +48,39 @@ export type SimpleButtonUIElementComponentConfigs = z.infer<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleButtonComponent
+  extends BaseUIElementComponent
   implements UIElementImplementation<SimpleButtonUIElementComponentConfigs>
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_BUTTON';
 
-  isErrorConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isError',
-    transform: inputObsTransform(ZodIsError),
+  textConfigOption: InputSignal<string> = input('Default button text', {
+    alias: 'text',
+    transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.text.parse(val),
   });
 
-  isLoadingConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
-    alias: 'isLoading',
-    transform: inputObsTransform(ZodIsLoading),
-  });
-
-  textConfigOption: InputSignalWithTransform<Observable<string>, string | Observable<string>> =
-    input(of('Default button text'), {
-      alias: 'text',
-      transform: inputObsTransform(ZodSimpleButtonUIElementComponentConfigs.shape.text),
-    });
-
-  disabledConfigOption: InputSignalWithTransform<
-    Observable<boolean>,
-    boolean | Observable<boolean>
-  > = input(of(false), {
+  disabledConfigOption: InputSignal<boolean> = input(false, {
     alias: 'disabled',
-    transform: inputObsTransform(ZodSimpleButtonUIElementComponentConfigs.shape.disabled),
+    transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.disabled.parse(val),
   });
 
-  colorConfigOption: InputSignalWithTransform<
-    Observable<ButtonColor>,
-    ButtonColor | Observable<ButtonColor>
-  > = input(of('primary'), {
+  colorConfigOption: InputSignal<ButtonColor> = input('primary', {
     alias: 'color',
-    transform: inputObsTransform(ZodSimpleButtonUIElementComponentConfigs.shape.color),
+    transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.color.parse(val),
   });
 
-  onClickConfigOption: InputSignalWithTransform<
-    Observable<UICommAction[]>,
-    UICommAction[] | Observable<UICommAction[]>
-  > = input(of([]), {
+  onClickConfigOption: InputSignal<UICommAction[]> = input([], {
     alias: 'onClick',
-    transform: inputObsTransform(ZodSimpleButtonUIElementComponentConfigs.shape.onClick),
+    transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.onClick.parse(val),
   });
 
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   handleButtonClick(): void {
-    this.onClickConfigOption()
-      .pipe(first())
-      .subscribe((dispatchableActions) =>
-        runInInjectionContext(this.#environmentInjector, () =>
-          triggerMultipleUIActions(dispatchableActions)
-        )
+    const onclickActions = this.onClickConfigOption();
+    if (onclickActions.length > 0) {
+      runInInjectionContext(this.#environmentInjector, () =>
+        triggerMultipleUIActions(onclickActions)
       );
+    }
   }
 }
