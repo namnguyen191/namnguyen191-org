@@ -212,7 +212,13 @@ export class RemoteResourceService {
     const remoteResourceSubscribable = remoteResource$.pipe(
       switchMap((remoteResource) => {
         const stateSubscription = remoteResource.stateSubscription;
-        return stateSubscription ? getStatesSubscriptionAsContext(stateSubscription) : of(EMPTY);
+        let states: Observable<unknown> = of(EMPTY);
+        if (stateSubscription) {
+          states = runInInjectionContext(this.#environmentInjector, () =>
+            getStatesSubscriptionAsContext(stateSubscription)
+          );
+        }
+        return states;
       }),
       tap(() => this.#reloadControlSubject.next(id)),
       takeUntil(

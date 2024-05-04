@@ -45,7 +45,9 @@ export class DuiConsumerComponent {
   layoutService: LayoutService = inject(LayoutService);
 
   constructor() {
-    this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
+    setTimeout(() => {
+      this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
+    }, 5000);
 
     this.setupEventsListener();
 
@@ -91,34 +93,48 @@ export class DuiConsumerComponent {
     this.eventsService.getEvents().subscribe((event) => {
       if (event.type === 'MISSING_UI_ELEMENT_TEMPLATE') {
         if (event.payload.id === 'MY_SIMPLE_TABLE_2') {
-          this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2);
+          }, 5000);
         }
 
         if (event.payload.id === 'MY_SIMPLE_TABLE_V2') {
-          this.uiElementTemplatesService.registerUIElementTemplate(simpleTableV2);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(simpleTableV2);
+          }, 5000);
         }
 
         if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
-          this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
+          }, 5000);
         }
 
         if (event.payload.id === 'MY_SIMPLE_BUTTON_1') {
-          this.uiElementTemplatesService.registerUIElementTemplate(simpleButton1);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(simpleButton1);
+          }, 5000);
         }
 
         if (event.payload.id === 'MY_SIMPLE_TAB_1') {
-          this.uiElementTemplatesService.registerUIElementTemplate(tabs1);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(tabs1);
+          }, 5000);
         }
 
         if (event.payload.id === 'MY_SIMPLE_TAB_2') {
-          this.uiElementTemplatesService.registerUIElementTemplate(tabs2);
+          setTimeout(() => {
+            this.uiElementTemplatesService.registerUIElementTemplate(tabs2);
+          }, 5000);
         }
       }
 
       if (event.type === 'MISSING_REMOTE_RESOURCE') {
         if (event.payload.id === '123') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          this.remoteResourceService.registerRemoteResource(boredResource as any);
+          setTimeout(() => {
+            this.remoteResourceService.registerRemoteResource(boredResource as any);
+          }, 5000);
         }
       }
 
@@ -130,15 +146,21 @@ export class DuiConsumerComponent {
         const missingLayoutId = event.payload.id;
         switch (missingLayoutId) {
           case mainLayout.id: {
-            this.layoutService.registerLayout(mainLayout);
+            setTimeout(() => {
+              this.layoutService.registerLayout(mainLayout);
+            }, 5000);
             break;
           }
           case testLayout.id: {
-            this.layoutService.registerLayout(testLayout);
+            setTimeout(() => {
+              this.layoutService.registerLayout(testLayout);
+            }, 5000);
             break;
           }
           case testLayout2.id: {
-            this.layoutService.registerLayout(testLayout2);
+            setTimeout(() => {
+              this.layoutService.registerLayout(testLayout2);
+            }, 5000);
             break;
           }
           default:
