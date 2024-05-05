@@ -13,7 +13,15 @@ import {
 } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEqual } from 'lodash-es';
-import { combineLatest, distinctUntilChanged, from, map, Observable, switchMap } from 'rxjs';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  from,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+} from 'rxjs';
 
 import {
   ComponentContextPropertyKey,
@@ -42,9 +50,9 @@ export class UiElementWrapperComponent {
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
-    return this.#uiElementTemplatesService.getUIElementTemplate(
-      this.uiElementInstance().uiElementTemplateId
-    );
+    return this.#uiElementTemplatesService
+      .getUIElementTemplate(this.uiElementInstance().uiElementTemplateId)
+      .pipe(shareReplay(1));
   });
 
   uiElementComponent: Signal<Observable<Type<unknown>>> = computed(() => {
