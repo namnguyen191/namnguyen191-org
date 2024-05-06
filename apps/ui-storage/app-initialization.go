@@ -7,8 +7,9 @@ import (
 )
 
 type AppConfig struct {
-	LayoutsRepo db.LayoutsRepo
-	server      *gin.Engine
+	LayoutsRepo            db.LayoutsRepo
+	UIElementTemplatesRepo db.UIElementTemplatesRepo
+	server                 *gin.Engine
 }
 
 var App AppConfig

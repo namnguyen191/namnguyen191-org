@@ -6,9 +6,10 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx-go/nx-go:build",
+      "executor": "nx:run-commands",
       "options": {
-        "main": "{projectRoot}/main.go"
+        "cwd": "apps/ui-storage",
+        "command": "go build ."
       }
     },
     "serve": {

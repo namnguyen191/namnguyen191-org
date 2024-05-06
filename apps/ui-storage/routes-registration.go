@@ -9,4 +9,7 @@ import (
 func RegisterAllRoutes(r *gin.Engine) {
 	layoutRoutes := routes.NewLayoutRoutes(&App.LayoutsRepo)
 	layoutRoutes.RegisterLayoutRoutes(r)
+
+	uiElementTemplateRoutes := routes.NewUIElementTemplateRoutes(&App.UIElementTemplatesRepo)
+	uiElementTemplateRoutes.RegisterUIElementTemplateRoutes(r)
 }
