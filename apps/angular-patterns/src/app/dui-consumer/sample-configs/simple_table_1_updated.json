@@ -1,0 +1,40 @@
+{
+  "id": "MY_SIMPLE_TABLE",
+  "type": "SIMPLE_TABLE",
+  "remoteResourceId": "123",
+  "stateSubscription": {
+    "global": ["activities1", "activities", "activities1"]
+  },
+  "options": {
+    "title": "Title updated",
+    "columns": [
+      {
+        "dataKey": "activity",
+        "displayedValue": "Activity"
+      },
+      {
+        "dataKey": "type",
+        "displayedValue": "Type"
+      },
+      {
+        "dataKey": "price",
+        "displayedValue": "Price"
+      }
+    ],
+    "rows": "<${ return this.state?.global?.activities?.map(({ activity, type, price }) => ({ activity, type, price })) ?? [] }$>",
+    "pagination": {
+      "pageSizes": [10, 20, 50, 100],
+      "onPageChange": [
+        {
+          "type": "addToState",
+          "payload": {
+            "scope": "global",
+            "data": {
+              "page": "<${ return this.$paginationContext }$>"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

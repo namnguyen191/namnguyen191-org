@@ -1,0 +1,1 @@
+GET http://localhost:8080/layouts/LAYOUT_MAIN HTTP/1.1
