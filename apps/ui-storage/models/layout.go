@@ -10,12 +10,12 @@ type ElementInstancePositionAndSizeConfig struct {
 }
 
 type UIElementInstance struct {
-	ID                  *string                               `json:"id,omitempty" bson:"id,omitempty"`
+	Id                  *string                               `json:"id,omitempty" bson:"id,omitempty"`
 	UIElementTemplateId *string                               `json:"uiElementTemplateId,omitempty" bson:"uiElementTemplateId,omitempty"`
 	PositionAndSize     *ElementInstancePositionAndSizeConfig `json:"positionAndSize,omitempty" bson:"positionAndSize,omitempty"`
 }
 
 type Layout struct {
-	ID                 *string              `json:"id,omitempty" bson:"id,omitempty"`
+	Id                 *string              `json:"id,omitempty" bson:"id,omitempty"`
 	UIElementInstances *[]UIElementInstance `json:"uiElementInstances,omitempty" bson:"uiElementInstances,omitempty"`
 }

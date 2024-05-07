@@ -80,7 +80,7 @@ func (r *LayoutsRepo) ClearMockLayouts() {
 			return
 		}
 
-		err = r.RemoveLayout(*layout.ID)
+		err = r.RemoveLayout(*layout.Id)
 		if err != nil {
 			fmt.Println(err)
 			return

@@ -9,6 +9,7 @@ import (
 type AppConfig struct {
 	LayoutsRepo            db.LayoutsRepo
 	UIElementTemplatesRepo db.UIElementTemplatesRepo
+	RemoteResourcesRepo    db.RemoteResourcesRepo
 	server                 *gin.Engine
 }
 

@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/ui-storage",
-        "command": "go build ."
+        "command": "go build -o dist/ ."
       }
     },
     "serve": {

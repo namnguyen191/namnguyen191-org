@@ -12,4 +12,7 @@ func RegisterAllRoutes(r *gin.Engine) {
 
 	uiElementTemplateRoutes := routes.NewUIElementTemplateRoutes(&App.UIElementTemplatesRepo)
 	uiElementTemplateRoutes.RegisterUIElementTemplateRoutes(r)
+
+	remoteResourceRoutes := routes.NewRemoteResourceRoutes(&App.RemoteResourcesRepo)
+	remoteResourceRoutes.RegisterRemoteResourceRoutes(r)
 }
