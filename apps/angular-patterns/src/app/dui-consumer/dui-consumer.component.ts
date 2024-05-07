@@ -1,7 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   DuiComponent,
+  EventObject,
   EventsService,
   LayoutService,
   RemoteResourceService,
@@ -13,19 +22,11 @@ import {
   SimpleTableComponent,
   TabsComponent,
 } from '@namnguyen191/dui/prebuilt-components';
+import { filter, mergeMap, switchMap, tap } from 'rxjs';
 
-import boredResource from './sample-configs/boredapi-remote-resource.json';
-import testLayout from './sample-configs/layout-1.json';
-import testLayout2 from './sample-configs/layout-2.json';
-import mainLayout from './sample-configs/main-layout.json';
-import simpleTableV2 from './sample-configs/my_simple_table_v2.json';
-import simpleButton1 from './sample-configs/simple_button_1.json';
-import tabs1 from './sample-configs/simple_tab_1.json';
-import tabs2 from './sample-configs/simple_tab_2.json';
-import simpleTable1 from './sample-configs/simple_table_1.json';
-import simpleTable2 from './sample-configs/simple_table_2.json';
-import simpleTable2updated from './sample-configs/simple_table_2_updated.json';
-import simpleTable3 from './sample-configs/simple_table_3.json';
+import { LayoutsService } from './services/layouts.service';
+import { RemoteResourcesService } from './services/remote-resources.service';
+import { UIElementTemplatesService as UIElementTemplatesServiceAPI } from './services/ui-element-templates.service';
 
 @Component({
   selector: 'namnguyen191-dui-consumer',
@@ -36,19 +37,19 @@ import simpleTable3 from './sample-configs/simple_table_3.json';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiConsumerComponent {
-  layoutId: WritableSignal<string> = signal(mainLayout.id);
+  layoutId: WritableSignal<string> = signal('LAYOUT_MAIN');
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
   eventsService: EventsService = inject(EventsService);
   layoutService: LayoutService = inject(LayoutService);
+  layoutsServiceAPI: LayoutsService = inject(LayoutsService);
+  uiElementTemplatesServiceAPI: UIElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
+  remoteResourcesServiceAPI: RemoteResourcesService = inject(RemoteResourcesService);
+  destroyRef = inject(DestroyRef);
 
   constructor() {
-    setTimeout(() => {
-      this.uiElementTemplatesService.registerUIElementTemplate(simpleTable1);
-    }, 5000);
-
     this.setupEventsListener();
 
     this.uiElementFactoryService.registerUIElement({
@@ -90,109 +91,84 @@ export class DuiConsumerComponent {
   }
 
   setupEventsListener(): void {
-    this.eventsService.getEvents().subscribe((event) => {
-      if (event.type === 'MISSING_UI_ELEMENT_TEMPLATE') {
-        if (event.payload.id === 'MY_SIMPLE_TABLE_2') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(simpleTable2);
-          }, 5000);
-        }
+    const allEvents = this.eventsService.getEvents().pipe(takeUntilDestroyed(this.destroyRef));
 
-        if (event.payload.id === 'MY_SIMPLE_TABLE_V2') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(simpleTableV2);
-          }, 5000);
-        }
-
-        if (event.payload.id === 'MY_SIMPLE_TABLE_3') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(simpleTable3);
-          }, 5000);
-        }
-
-        if (event.payload.id === 'MY_SIMPLE_BUTTON_1') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(simpleButton1);
-          }, 5000);
-        }
-
-        if (event.payload.id === 'MY_SIMPLE_TAB_1') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(tabs1);
-          }, 5000);
-        }
-
-        if (event.payload.id === 'MY_SIMPLE_TAB_2') {
-          setTimeout(() => {
-            this.uiElementTemplatesService.registerUIElementTemplate(tabs2);
-          }, 5000);
-        }
-      }
-
-      if (event.type === 'MISSING_REMOTE_RESOURCE') {
-        if (event.payload.id === '123') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setTimeout(() => {
-            this.remoteResourceService.registerRemoteResource(boredResource as any);
-          }, 5000);
-        }
-      }
-
-      if (event.type === 'UI_ELEMENT_REPOSITION') {
-        console.log(event);
-      }
-
-      if (event.type === 'MISSING_LAYOUT') {
+    const missingLayoutEvents = allEvents.pipe(
+      filter(
+        (event): event is Extract<EventObject, { type: 'MISSING_LAYOUT' }> =>
+          event.type === 'MISSING_LAYOUT'
+      ),
+      switchMap((event) => {
         const missingLayoutId = event.payload.id;
-        switch (missingLayoutId) {
-          case mainLayout.id: {
-            setTimeout(() => {
-              this.layoutService.registerLayout(mainLayout);
-            }, 5000);
-            break;
-          }
-          case testLayout.id: {
-            setTimeout(() => {
-              this.layoutService.registerLayout(testLayout);
-            }, 5000);
-            break;
-          }
-          case testLayout2.id: {
-            setTimeout(() => {
-              this.layoutService.registerLayout(testLayout2);
-            }, 5000);
-            break;
-          }
-          default:
-            console.error('Unknown layout with id: ', missingLayoutId);
-        }
-      }
-    });
-  }
-
-  private _testChangingTemplateAndElement(): void {
-    console.log(
-      `------------------- Before setting layout to: ${testLayout.id} -------------------`
+        return this.layoutsServiceAPI.getLayoutById(missingLayoutId);
+      }),
+      tap((layout) => this.layoutService.registerLayout(layout))
     );
-    this.layoutId.set(testLayout.id);
-    setTimeout(() => {
-      console.log(
-        `------------------- Before setting layout to: ${testLayout2.id} -------------------`
-      );
-      this.layoutId.set(testLayout2.id);
-      setTimeout(() => {
-        console.log(
-          `------------------- Before update ui element for: ${simpleTable2updated.id} -------------------`
-        );
-        this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
 
-        setTimeout(() => {
-          console.log(
-            `------------------- Before setting layout to: ${testLayout.id} -------------------`
+    missingLayoutEvents.subscribe();
+
+    const missingUIElementTemplates = allEvents.pipe(
+      filter(
+        (event): event is Extract<EventObject, { type: 'MISSING_UI_ELEMENT_TEMPLATE' }> =>
+          event.type === 'MISSING_UI_ELEMENT_TEMPLATE'
+      ),
+      mergeMap((event) => {
+        const missingUIElementTemplateId = event.payload.id;
+        console.log('Nam data is: missing ui element', missingUIElementTemplateId);
+        return this.uiElementTemplatesServiceAPI
+          .getUIElementTemplateById(missingUIElementTemplateId)
+          .pipe(
+            tap((uiElementTemplate) => {
+              try {
+                this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
+              } catch (error) {
+                console.log('Nam data is: duplicated registration');
+              }
+            })
           );
-          this.layoutId.set(testLayout.id);
-        }, 5000);
-      }, 5000);
-    }, 5000);
+      })
+    );
+
+    missingUIElementTemplates.subscribe();
+
+    const missingRemoteResources = allEvents.pipe(
+      filter(
+        (event): event is Extract<EventObject, { type: 'MISSING_REMOTE_RESOURCE' }> =>
+          event.type === 'MISSING_REMOTE_RESOURCE'
+      ),
+      switchMap((event) => {
+        const missingRemoteResourceId = event.payload.id;
+        return this.remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);
+      }),
+      tap((remoteResource) => this.remoteResourceService.registerRemoteResource(remoteResource))
+    );
+
+    missingRemoteResources.subscribe();
   }
+
+  // private _testChangingTemplateAndElement(): void {
+  //   console.log(
+  //     `------------------- Before setting layout to: ${testLayout.id} -------------------`
+  //   );
+  //   this.layoutId.set(testLayout.id);
+  //   setTimeout(() => {
+  //     console.log(
+  //       `------------------- Before setting layout to: ${testLayout2.id} -------------------`
+  //     );
+  //     this.layoutId.set(testLayout2.id);
+  //     setTimeout(() => {
+  //       console.log(
+  //         `------------------- Before update ui element for: ${simpleTable2updated.id} -------------------`
+  //       );
+  //       this.uiElementTemplatesService.updateUIElementTemplate(simpleTable2updated);
+
+  //       setTimeout(() => {
+  //         console.log(
+  //           `------------------- Before setting layout to: ${testLayout.id} -------------------`
+  //         );
+  //         this.layoutId.set(testLayout.id);
+  //       }, 5000);
+  //     }, 5000);
+  //   }, 5000);
+  // }
 }

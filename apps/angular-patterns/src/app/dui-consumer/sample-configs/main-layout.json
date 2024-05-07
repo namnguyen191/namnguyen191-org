@@ -1,9 +1,0 @@
-{
-  "id": "LAYOUT_MAIN",
-  "uiElementInstances": [
-    {
-      "id": "instance-1",
-      "uiElementTemplateId": "MY_SIMPLE_TABLE"
-    }
-  ]
-}

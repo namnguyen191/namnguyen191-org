@@ -21,7 +21,7 @@
         "displayedValue": "Price"
       }
     ],
-    "rows": "<${ const result = this.state.global.activities ? this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) : []; console.log('This: ', result); return result; }$>",
+    "rows": "<${ const result = this.state?.global?.activities ? this.state.global.activities.map(({ activity, type, price }) => ({ activity, type, price })) : []; return result; }$>",
     "isError": false
   }
 }

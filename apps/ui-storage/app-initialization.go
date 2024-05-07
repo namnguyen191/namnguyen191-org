@@ -3,6 +3,7 @@ package main
 import (
 	"namnguyen191/uistorage/db"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +22,11 @@ func initApp() {
 	RegisterAllRepos()
 
 	App.server = gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+	App.server.Use(cors.New(config))
+
 	RegisterAllRoutes(App.server)
 }
 

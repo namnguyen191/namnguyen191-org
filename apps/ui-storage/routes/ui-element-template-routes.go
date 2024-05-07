@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const BASE_UI_ELEMENT_TEMPLATE_ROUTE = "/uiElementTemplates"
+const BASE_UI_ELEMENT_TEMPLATE_ROUTE = "/ui-element-templates"
 
 type UIElementTemplateRoutes struct {
 	uiElementTemplatesRepo *db.UIElementTemplatesRepo

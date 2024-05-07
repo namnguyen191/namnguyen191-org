@@ -1,1 +1,1 @@
-GET http://localhost:8080/uiElementTemplates HTTP/1.1
+GET http://localhost:8080/ui-element-templates HTTP/1.1
