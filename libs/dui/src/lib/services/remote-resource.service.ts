@@ -20,7 +20,7 @@ import {
 } from 'rxjs';
 
 import { UICommAction } from '../interfaces';
-import { RawJsString, RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
+import { RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
 import { logInfo, logSubscription } from '../utils/logging';
 import { DataFetchingService, FetchDataParams } from './data-fetching.service';
 import { EventsService } from './events.service';
@@ -247,10 +247,17 @@ export class RemoteResourceService {
       this.#environmentInjector,
       () => firstValueFrom(getResourceRequestHooksInterpolationContext(resourceResult))
     );
-    return this.#interpolationService.interpolate({
-      value: resourceConfig.options.onSuccess,
-      context: resourceHooksInterpolationContext,
-    }) as Promise<UICommAction[]>;
+    try {
+      const interpolatedHooks = (await this.#interpolationService.interpolate({
+        value: resourceConfig.options.onSuccess,
+        context: resourceHooksInterpolationContext,
+      })) as UICommAction[];
+
+      return interpolatedHooks;
+    } catch (error) {
+      console.warn('Failed to interpolate resource hooks');
+      return [];
+    }
   }
 
   async #interpolateRequestOptions(
@@ -262,10 +269,17 @@ export class RemoteResourceService {
         getResourceRequestConfigInterpolationContext(accumulatedRequestsResults)
       )
     );
-    return this.#interpolationService.interpolateObject({
-      object: req.configs,
-      context: requestConfigInterpolationContext,
-    });
+    try {
+      const interpolatedRequestOptions = (await this.#interpolationService.interpolate({
+        value: req.configs,
+        context: requestConfigInterpolationContext,
+      })) as FetchDataParams;
+
+      return interpolatedRequestOptions;
+    } catch (error) {
+      console.warn('Fail to interpolate request options');
+      throw error;
+    }
   }
 
   async #interpolateRequestResult(
@@ -273,10 +287,8 @@ export class RemoteResourceService {
     requestResult: unknown,
     accumulatedRequestsResults: unknown[]
   ): Promise<unknown> {
-    if (req.interpolation) {
-      const rawJs =
-        this.#interpolationService.extractRawJs(req.interpolation) ??
-        ('return "Invalid interpolation syntax"' as RawJsString);
+    const { interpolation } = req;
+    if (interpolation) {
       const requestTransformationContext = await firstValueFrom(
         runInInjectionContext(this.#environmentInjector, () =>
           getResourceRequestTransformationInterpolationContext({
@@ -286,10 +298,15 @@ export class RemoteResourceService {
         )
       );
 
-      requestResult = await this.#interpolationService.interpolateRawJs({
-        rawJs,
-        context: requestTransformationContext,
-      });
+      try {
+        requestResult = await this.#interpolationService.interpolate({
+          value: interpolation,
+          context: requestTransformationContext,
+        });
+      } catch (error) {
+        console.warn('Failed to interpolate request result');
+        throw error;
+      }
     }
 
     return requestResult;

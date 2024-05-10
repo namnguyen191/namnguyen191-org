@@ -1,5 +1,8 @@
 {
   "id": "123",
+  "stateSubscription": {
+    "global": ["page"]
+  },
   "options": {
     "requests": [
       {

@@ -111,11 +111,15 @@ export class SimpleTableComponent
     }
 
     const context = this.$context$();
-    const actions = (await this.#interpolationService.interpolate({
-      context: { ...context, $paginationContext: { pageSize, currentPage } },
-      value: onPageChange,
-    })) as UICommAction[];
+    try {
+      const actions = (await this.#interpolationService.interpolate({
+        context: { ...context, $paginationContext: { pageSize, currentPage } },
+        value: onPageChange,
+      })) as UICommAction[];
 
-    runInInjectionContext(this.#environmentInjector, () => triggerMultipleUIActions(actions));
+      runInInjectionContext(this.#environmentInjector, () => triggerMultipleUIActions(actions));
+    } catch (error) {
+      console.warn('Failed to interpolate onPageChange config');
+    }
   }
 }

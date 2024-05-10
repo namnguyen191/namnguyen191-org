@@ -14,11 +14,14 @@ import {
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEqual } from 'lodash-es';
 import {
+  catchError,
   combineLatest,
   distinctUntilChanged,
+  EMPTY,
   from,
   map,
   Observable,
+  of,
   shareReplay,
   switchMap,
 } from 'rxjs';
@@ -31,7 +34,10 @@ import {
   UIElementTemplateOptions,
 } from '../../../interfaces';
 import { UIElementFactoryService, UIElementTemplatesService } from '../../../services';
-import { getElementInputsInterpolationContext } from '../../../services/hooks/InterpolationContext';
+import {
+  ElementInputsInterpolationContext,
+  getElementInputsInterpolationContext,
+} from '../../../services/hooks/InterpolationContext';
 import { InterpolationService } from '../../../services/interpolation.service';
 
 @Component({
@@ -84,23 +90,41 @@ export class UiElementWrapperComponent {
   }): Observable<ObjectType> {
     const { templateOptions, remoteResourceId, stateSubscription, component } = params;
 
-    const interpolationContext = getElementInputsInterpolationContext({
-      remoteResourceId,
-      stateSubscription,
-    });
+    const interpolationContext: Observable<ElementInputsInterpolationContext> =
+      getElementInputsInterpolationContext({
+        remoteResourceId,
+        stateSubscription,
+      });
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
     for (const [key, val] of Object.entries(templateOptions)) {
-      inputsObservableMap[key] = interpolationContext.pipe(
-        switchMap((context) =>
-          from(
-            this.#interpolationService.interpolate({
-              context,
-              value: val,
-            })
-          )
-        ),
-        distinctUntilChanged(isEqual)
+      const requiredInterpolation$ = from(this.#interpolationService.checkForInterpolation(val));
+
+      inputsObservableMap[key] = requiredInterpolation$.pipe(
+        switchMap((requiredInterpolation) => {
+          if (!requiredInterpolation) {
+            return of(val);
+          }
+
+          return interpolationContext.pipe(
+            switchMap((context) => {
+              {
+                return from(
+                  this.#interpolationService.interpolate({
+                    context,
+                    value: val,
+                  })
+                ).pipe(
+                  catchError(() => {
+                    console.warn(`Fail to interpolate ${key}`);
+                    return EMPTY;
+                  })
+                );
+              }
+            }),
+            distinctUntilChanged(isEqual)
+          );
+        })
       );
     }
 

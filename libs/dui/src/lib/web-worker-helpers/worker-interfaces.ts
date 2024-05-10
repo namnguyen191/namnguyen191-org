@@ -32,7 +32,22 @@ export type WorkerEventObject = {
   [K in keyof WorkerEventPayloadMap]: GetWorkerEvent<K>;
 }[keyof WorkerEventPayloadMap];
 
+export const INTERPOLATION_ERROR_MESSAGE = 'Interpolation failed';
+
+export type FailedInterpolationResult = {
+  error: typeof INTERPOLATION_ERROR_MESSAGE;
+};
+
+export function isFailedInterpolationResult(result: unknown): result is FailedInterpolationResult {
+  return !!(
+    result &&
+    typeof result === 'object' &&
+    'error' in result &&
+    result.error === INTERPOLATION_ERROR_MESSAGE
+  );
+}
+
 export type WorkerResponse = {
   id: string;
-  result: unknown;
+  result: unknown | FailedInterpolationResult;
 };

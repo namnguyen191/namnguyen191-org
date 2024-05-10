@@ -114,7 +114,6 @@ export class DuiConsumerComponent {
       ),
       mergeMap((event) => {
         const missingUIElementTemplateId = event.payload.id;
-        console.log('Nam data is: missing ui element', missingUIElementTemplateId);
         return this.uiElementTemplatesServiceAPI
           .getUIElementTemplateById(missingUIElementTemplateId)
           .pipe(

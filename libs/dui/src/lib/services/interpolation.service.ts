@@ -5,6 +5,7 @@ import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 
 import { INTERPOLATION_REGEX, RawJsString } from '../interfaces';
 import {
+  isFailedInterpolationResult,
   JS_RUNNER_WORKER,
   JSRunnerContext,
   WorkerEventObject,
@@ -32,7 +33,57 @@ export class InterpolationService {
     };
   }
 
-  interpolateRawJs(params: { rawJs: RawJsString; context: JSRunnerContext }): Promise<unknown> {
+  async interpolate(params: { value: unknown; context: ObjectType }): Promise<unknown> {
+    const { value, context } = params;
+    if (!value || isEmpty(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string') {
+      return this.#interpolateString({
+        stringContent: value,
+        context,
+      });
+    }
+
+    if (typeof value === 'object') {
+      if (Array.isArray(value)) {
+        return this.#interpolateArray({
+          array: value,
+          context,
+        });
+      }
+
+      return this.#interpolateObject({
+        object: value as ObjectType,
+        context,
+      });
+    }
+
+    return value;
+  }
+
+  async checkForInterpolation(value: unknown): Promise<boolean> {
+    if (!value || isEmpty(value)) {
+      return false;
+    }
+
+    if (typeof value === 'string') {
+      return this.#extractRawJs(value) !== null;
+    }
+
+    if (typeof value === 'object') {
+      if (Array.isArray(value)) {
+        return this.#checkForInterpolationInArray(value);
+      }
+
+      return this.#checkForInterpolationInObject(value as ObjectType);
+    }
+
+    return false;
+  }
+
+  #interpolateRawJs(params: { rawJs: RawJsString; context: JSRunnerContext }): Promise<unknown> {
     const { rawJs, context } = params;
 
     const id = Math.random().toString();
@@ -49,31 +100,37 @@ export class InterpolationService {
     return firstValueFrom(
       this.#workerMessagesSubject.pipe(
         filter((msg): msg is WorkerResponse => msg?.id === id),
-        map((msg) => msg.result)
+        map((msg) => {
+          if (isFailedInterpolationResult(msg.result)) {
+            throw new Error('Failed to interpolate rawJs');
+          }
+
+          return msg.result;
+        })
       )
     );
   }
 
-  extractRawJs(input: string): RawJsString | null {
+  #extractRawJs(input: string): RawJsString | null {
     if (INTERPOLATION_REGEX.test(input)) {
       return INTERPOLATION_REGEX.exec(input)?.[2] as RawJsString;
     }
     return null;
   }
 
-  async interpolateString(params: {
+  async #interpolateString(params: {
     stringContent: string;
     context: ObjectType;
   }): Promise<unknown> {
     const { context, stringContent } = params;
     const trimmedStringContent = stringContent.trim();
-    const rawJs = this.extractRawJs(trimmedStringContent);
+    const rawJs = this.#extractRawJs(trimmedStringContent);
     if (rawJs) {
       if (this._isMissingContext(rawJs, context)) {
         return Promise.resolve(stringContent);
       }
 
-      return await this.interpolateRawJs({
+      return await this.#interpolateRawJs({
         rawJs: rawJs as RawJsString,
         context: context,
       });
@@ -82,7 +139,7 @@ export class InterpolationService {
     return stringContent;
   }
 
-  async interpolateObject<T extends ObjectType>(params: {
+  async #interpolateObject<T extends ObjectType>(params: {
     context: ObjectType;
     object: T;
   }): Promise<T> {
@@ -99,7 +156,7 @@ export class InterpolationService {
     return clonedObject;
   }
 
-  async interpolateArray<T extends unknown[]>(params: {
+  async #interpolateArray<T extends unknown[]>(params: {
     context: ObjectType;
     array: T;
   }): Promise<T> {
@@ -116,34 +173,24 @@ export class InterpolationService {
     return clonedArray;
   }
 
-  async interpolate(params: { value: unknown; context: ObjectType }): Promise<unknown> {
-    const { value, context } = params;
-    if (!value || isEmpty(value)) {
-      return value;
+  async #checkForInterpolationInArray(arr: unknown[]): Promise<boolean> {
+    const clonedArray = structuredClone(arr);
+    let result = false;
+    for (let i = 0; i < clonedArray.length; i++) {
+      const val = clonedArray[i];
+      result = result || (await this.checkForInterpolation(val));
+    }
+    return result;
+  }
+
+  async #checkForInterpolationInObject(obj: ObjectType): Promise<boolean> {
+    const clonedObject = structuredClone(obj);
+    let result = false;
+    for (const val of Object.values(clonedObject)) {
+      result = result || (await this.checkForInterpolation(val));
     }
 
-    if (typeof value === 'string') {
-      return this.interpolateString({
-        stringContent: value,
-        context,
-      });
-    }
-
-    if (typeof value === 'object') {
-      if (Array.isArray(value)) {
-        return this.interpolateArray({
-          array: value,
-          context,
-        });
-      }
-
-      return this.interpolateObject({
-        object: value as ObjectType,
-        context,
-      });
-    }
-
-    return value;
+    return result;
   }
 
   private _isMissingContext(rawJs: string, context: ObjectType): boolean {

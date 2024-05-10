@@ -1,14 +1,30 @@
 import { ObjectType } from '@namnguyen191/types-helper';
 
-import { GetWorkerEvent, WorkerResponse } from './worker-interfaces';
+import {
+  FailedInterpolationResult,
+  GetWorkerEvent,
+  INTERPOLATION_ERROR_MESSAGE,
+  WorkerResponse,
+} from './worker-interfaces';
 
 export type JSRunnerContext = ObjectType;
 
-export const runRawJs = (rawJs: string, context: JSRunnerContext): unknown => {
-  return new Function(rawJs).bind(context).call();
+export const runRawJs = (
+  rawJs: string,
+  context: JSRunnerContext,
+  allowList?: Set<string>
+): unknown => {
+  let contextOverride = '';
+  if (allowList) {
+    contextOverride = restrictCurrentExecutionContextGlobal(allowList);
+  }
+  return new Function(`${contextOverride}${rawJs}`).bind(context).call();
 };
 
-export const handleRunJsMessage = (e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>>): void => {
+export const handleRunJsMessage = (
+  e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>>,
+  allowList?: Set<string>
+): void => {
   const {
     data: {
       payload: { rawJs, context, id },
@@ -17,10 +33,10 @@ export const handleRunJsMessage = (e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>
   let result: unknown;
 
   try {
-    result = runRawJs(rawJs, context);
+    result = runRawJs(rawJs, context, allowList);
   } catch (error) {
-    console.warn(`Getting error: ${error}. \nFrom running: ${rawJs}`);
-    result = null;
+    console.warn(`Getting error: ${error}. \nFrom running: ${rawJs}.`);
+    result = { error: INTERPOLATION_ERROR_MESSAGE } as FailedInterpolationResult;
   }
 
   const response: WorkerResponse = {
@@ -29,4 +45,35 @@ export const handleRunJsMessage = (e: MessageEvent<GetWorkerEvent<'INTERPOLATE'>
   };
 
   postMessage(response);
+};
+
+export const REQUIRED_ALLOW_LIST = new Set<string>(['undefined', 'null']);
+
+export const restrictCurrentExecutionContextGlobal = (allowList: Set<string>): string => {
+  const seenProperties: Set<string> = new Set<string>();
+
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  let currentContext: unknown = globalThis;
+  do {
+    const props = Object.getOwnPropertyNames(currentContext);
+    props.forEach((prop) => {
+      seenProperties.add(prop);
+    });
+    currentContext = Object.getPrototypeOf(currentContext);
+  } while (currentContext);
+
+  let contextOverride: string = '';
+  const finalAllowList = new Set<string>([...allowList, ...REQUIRED_ALLOW_LIST]);
+  seenProperties.forEach((prop) => {
+    if (!finalAllowList.has(prop)) {
+      // Object.defineProperty(context, prop, {
+      //   get: () => {
+      //     throw Error(`"${prop}" is forbidden`);
+      //   },
+      //   configurable: false,
+      // });
+      contextOverride += `const ${prop} = undefined;`;
+    }
+  });
+  return contextOverride;
 };
