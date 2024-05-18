@@ -38,6 +38,20 @@
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
         "cwd": "libs/dui"
       }
+    },
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/libs/dui"],
+      "options": {
+        "config": "libs/dui/playwright.config.ts"
+      },
+      "configurations": {
+        "headless": {},
+        "development": {
+          "debug": true
+        }
+      },
+      "defaultConfiguration": "headless"
     }
   }
 }

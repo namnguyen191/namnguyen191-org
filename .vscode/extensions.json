@@ -7,6 +7,7 @@
     "styled-components.vscode-styled-components",
     "firsttris.vscode-jest-runner",
     "graphql.vscode-graphql",
-    "graphql.vscode-graphql-syntax"
+    "graphql.vscode-graphql-syntax",
+    "ms-playwright.playwright"
   ]
 }
