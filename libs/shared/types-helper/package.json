@@ -1,6 +1,9 @@
 {
   "name": "@namnguyen191/types-helper",
   "version": "0.0.2-0",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@swc/helpers": "~0.5.2"
   },

@@ -1,4 +1,18 @@
 {
   "extends": ["plugin:playwright/recommended", "../../.eslintrc-angular.json"],
-  "ignorePatterns": ["!**/*"]
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser",
+      "rules": {
+        "@nx/dependency-checks": [
+          "error",
+          {
+            "ignoredDependencies": ["@nx/playwright", "@playwright/test", "@nx/devkit"] // these libs will be omitted from checks
+          }
+        ]
+      }
+    }
+  ]
 }

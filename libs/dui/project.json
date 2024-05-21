@@ -30,7 +30,11 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/dui/**/*.{ts,tsx,js,jsx}", "libs/dui/package.json"]
+      }
     },
     "typecheck": {
       "executor": "nx:run-commands",
