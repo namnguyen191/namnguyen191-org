@@ -1,3 +1,15 @@
+## 0.0.2-1 (2024-05-22)
+
+
+### 🚀 Features
+
+- dui add dependency linting and update npmrc to use env token ([317d3aa](https://github.com/namnguyen191/namnguyen191-org/commit/317d3aa))
+- dui separate prebuilt component into library ([d83c91a](https://github.com/namnguyen191/namnguyen191-org/commit/d83c91a))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.2-0 (2024-05-21)
 
 
