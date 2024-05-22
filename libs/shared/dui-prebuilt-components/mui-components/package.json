@@ -1,6 +1,9 @@
 {
   "name": "@namnguyen191/mui-components",
   "version": "0.0.2-1",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@angular/common": "^17.3.0",
     "@angular/core": "^17.3.0",
