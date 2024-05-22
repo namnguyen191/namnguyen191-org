@@ -21,7 +21,7 @@ import {
   SimpleButtonComponent,
   SimpleTableComponent,
   TabsComponent,
-} from '@namnguyen191/dui/prebuilt-components';
+} from '@namnguyen191/mui-components';
 import { filter, mergeMap, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from './services/layouts.service';

@@ -19,7 +19,6 @@
     "resolveJsonModule": true,
     "paths": {
       "@namnguyen191/dui": ["libs/dui/src/index.ts"],
-      "@namnguyen191/dui/prebuilt-components": ["libs/dui/prebuilt-components/src/index.ts"],
       "@namnguyen191/mui-components": [
         "libs/shared/dui-prebuilt-components/mui-components/src/index.ts"
       ],

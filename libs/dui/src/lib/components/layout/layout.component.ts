@@ -12,8 +12,6 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatIconModule } from '@angular/material/icon';
 import {
   DisplayGrid,
   GridsterComponent,
@@ -85,14 +83,7 @@ export const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAI
 @Component({
   selector: 'namnguyen191-layout',
   standalone: true,
-  imports: [
-    CommonModule,
-    UiElementWrapperComponent,
-    MatGridListModule,
-    GridsterComponent,
-    GridsterItemComponent,
-    MatIconModule,
-  ],
+  imports: [CommonModule, UiElementWrapperComponent, GridsterComponent, GridsterItemComponent],
   providers: [
     {
       provide: LAYOUTS_CHAIN_TOKEN,
