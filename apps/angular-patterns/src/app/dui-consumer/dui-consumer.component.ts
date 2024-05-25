@@ -135,7 +135,7 @@ export class DuiConsumerComponent {
         (event): event is Extract<EventObject, { type: 'MISSING_REMOTE_RESOURCE' }> =>
           event.type === 'MISSING_REMOTE_RESOURCE'
       ),
-      switchMap((event) => {
+      mergeMap((event) => {
         const missingRemoteResourceId = event.payload.id;
         return this.remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);
       }),

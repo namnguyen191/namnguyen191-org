@@ -1,29 +1,29 @@
 {
   "id": "MY_SIMPLE_TABLE",
   "type": "SIMPLE_TABLE",
-  "remoteResourceId": "123",
+  "remoteResourceId": "us-pop-1",
   "stateSubscription": {
-    "global": ["activities1", "activities", "activities1"]
+    "global": ["usPopulation"]
   },
   "options": {
     "title": "Welcome to my custom table",
     "columns": [
       {
-        "dataKey": "activity",
-        "displayedValue": "Activity"
+        "dataKey": "state",
+        "displayedValue": "State"
       },
       {
-        "dataKey": "type",
-        "displayedValue": "Type"
+        "dataKey": "year",
+        "displayedValue": "Year"
       },
       {
-        "dataKey": "price",
-        "displayedValue": "Price"
+        "dataKey": "population",
+        "displayedValue": "Population"
       }
     ],
-    "rows": "<${ return this.state?.global?.activities?.map(({ activity, type, price }) => ({ activity, type, price })) ?? [] }$>",
+    "rows": "<${ return this.state?.global?.usPopulation?.map((data) => ({ state: data.State, year: data.Year, population: data.Population })) ?? [] }$>",
     "pagination": {
-      "pageSizes": [10, 20, 50, 100],
+      "pageSizes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
       "onPageChange": [
         {
           "type": "addToState",

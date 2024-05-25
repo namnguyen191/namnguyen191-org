@@ -2,6 +2,7 @@ import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   distinctUntilChanged,
   EMPTY,
   expand,
@@ -13,6 +14,7 @@ import {
   Observable,
   of,
   shareReplay,
+  startWith,
   Subject,
   switchMap,
   takeUntil,
@@ -105,18 +107,7 @@ export class RemoteResourceService {
       return remoteResourceState.asObservable();
     }
 
-    const newRemoteResourceState = new BehaviorSubject<RemoteResourceState>({
-      status: 'init',
-      isLoading: true,
-      isError: false,
-      result: null,
-    });
-
-    this.#remoteResourcesStateMap[id] = newRemoteResourceState;
-
-    this.#triggerRemoteResourceDataFetching(id);
-
-    return newRemoteResourceState.asObservable();
+    return this.#initializeRemoteResource(id);
   }
 
   reloadResource(id: string): void {
@@ -153,10 +144,7 @@ export class RemoteResourceService {
   }
 
   #triggerRemoteResourceDataFetching(id: string): void {
-    const remoteResource$ = this.getRemoteResource(id);
-
     const remoteResourceState = this.#remoteResourcesStateMap[id];
-
     if (!remoteResourceState) {
       console.warn(
         `Remote resource ${id} has not been registered or is not associated with any widget yet`
@@ -164,52 +152,16 @@ export class RemoteResourceService {
       return;
     }
 
-    const remoteResourceFetchFlow: Observable<void> = remoteResource$.pipe(
-      tap({
-        next: () => this.#setLoadingState(remoteResourceState),
-      }),
-      switchMap((remoteResource) =>
-        this.#processRequests(remoteResource.options.requests).pipe(
-          map((result) => ({ result, remoteResource }))
-        )
-      ),
-      switchMap(({ result, remoteResource }) =>
-        from(
-          this.#interpolateResourceHooks({ resourceConfig: remoteResource, resourceResult: result })
-        ).pipe(
-          map((interpolatedHooks) => ({
-            interpolatedHooks,
-            result,
-          }))
-        )
-      ),
-      map(({ result, interpolatedHooks }) => {
-        runInInjectionContext(this.#environmentInjector, () => {
-          triggerMultipleUIActions(interpolatedHooks);
-        });
+    const remoteResource$ = this.getRemoteResource(id);
 
-        this.#setCompleteState(remoteResourceState, result);
-      }),
-      catchError(() => {
-        this.#setErrorState(remoteResourceState);
-        return of();
-      }),
-      takeUntil(
-        this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
-      )
+    const remoteResourceFetchFlow: Observable<boolean> = this.#generateRemoteResourceFetchFlow(
+      remoteResource$,
+      remoteResourceState
     );
 
-    this.#reloadControlSubject
-      .pipe(
-        filter((reloadId) => reloadId === id),
-        switchMap(() => remoteResourceFetchFlow),
-        takeUntil(
-          this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
-        )
-      )
-      .subscribe(() => logSubscription(`Subscribing to remote resource ${id} flow`));
+    const reloadControl$ = this.#reloadControlSubject.pipe(filter((reloadId) => reloadId === id));
 
-    const remoteResourceSubscribable = remoteResource$.pipe(
+    const statesSubscriptions$ = remoteResource$.pipe(
       switchMap((remoteResource) => {
         const stateSubscription = remoteResource.stateSubscription;
         let states: Observable<unknown> = of(EMPTY);
@@ -219,18 +171,21 @@ export class RemoteResourceService {
           );
         }
         return states;
-      }),
-      tap(() => this.#reloadControlSubject.next(id)),
-      takeUntil(
-        this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
-      )
+      })
     );
 
-    // since there's always an initial value for state, this will always trigger when we subscribe
-    // therefore initialize the fetch data workflow
-    remoteResourceSubscribable.subscribe(() =>
-      logSubscription(`Remote resource ${id} trigger due to state change`)
-    );
+    combineLatest([reloadControl$.pipe(startWith(true)), statesSubscriptions$])
+      .pipe(
+        switchMap(() => remoteResourceFetchFlow),
+        takeUntil(
+          this.#cancelSubscriptionControlSubject.pipe(filter((canceledId) => canceledId === id))
+        )
+      )
+      .subscribe(() => {
+        // since there's always an initial value for state, this will always trigger when we subscribe
+        // therefore initialize the fetch data workflow
+        logSubscription(`Remote resource ${id} triggered`);
+      });
   }
 
   async #interpolateResourceHooks(params: {
@@ -339,5 +294,59 @@ export class RemoteResourceService {
       isError: false,
       result,
     });
+  }
+
+  #initializeRemoteResource(id: string): Observable<RemoteResourceState> {
+    const newRemoteResourceState = new BehaviorSubject<RemoteResourceState>({
+      status: 'init',
+      isLoading: true,
+      isError: false,
+      result: null,
+    });
+
+    this.#remoteResourcesStateMap[id] = newRemoteResourceState;
+
+    this.#triggerRemoteResourceDataFetching(id);
+
+    return newRemoteResourceState.asObservable();
+  }
+
+  #generateRemoteResourceFetchFlow(
+    remoteResourceObs: Observable<RemoteResourceConfigs>,
+    remoteResourceState: BehaviorSubject<RemoteResourceState>
+  ): Observable<boolean> {
+    return remoteResourceObs.pipe(
+      tap({
+        next: () => this.#setLoadingState(remoteResourceState),
+      }),
+      switchMap((remoteResource) =>
+        this.#processRequests(remoteResource.options.requests).pipe(
+          map((result) => ({ result, remoteResource }))
+        )
+      ),
+      switchMap(({ result, remoteResource }) =>
+        from(
+          this.#interpolateResourceHooks({ resourceConfig: remoteResource, resourceResult: result })
+        ).pipe(
+          map((interpolatedHooks) => ({
+            interpolatedHooks,
+            result,
+          }))
+        )
+      ),
+      map(({ result, interpolatedHooks }) => {
+        runInInjectionContext(this.#environmentInjector, () => {
+          triggerMultipleUIActions(interpolatedHooks);
+        });
+
+        this.#setCompleteState(remoteResourceState, result);
+
+        return true;
+      }),
+      catchError(() => {
+        this.#setErrorState(remoteResourceState);
+        return of(false);
+      })
+    );
   }
 }

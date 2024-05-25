@@ -30,3 +30,18 @@ export const inputObsTransform = (
     return val.pipe(parseZodAndHandleErrorPipe(zodType));
   };
 };
+
+export const parseZodWithDefault = <T>(zodType: ZodType, val: unknown, defaultVal: T): T => {
+  try {
+    const result = zodType.parse(val) as T;
+
+    return result;
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.warn(
+        `Receiving: ${val} which is an invalid option: ${error.message}. The default value: ${defaultVal} will be used instead.`
+      );
+    }
+    return defaultVal;
+  }
+};

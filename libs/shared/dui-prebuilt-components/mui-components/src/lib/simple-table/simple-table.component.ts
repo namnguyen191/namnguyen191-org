@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import {
   BaseUIElementComponent,
   ContextBasedElement,
+  parseZodWithDefault,
   triggerMultipleUIActions,
   UICommAction,
   UIElementImplementation,
@@ -73,22 +74,39 @@ export class SimpleTableComponent
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
   static readonly NEED_CONTEXT = true;
 
-  titleConfigOption: InputSignal<string> = input('Default title', {
+  defaultTitle = 'Default title';
+  titleConfigOption: InputSignal<string> = input(this.defaultTitle, {
     alias: 'title',
-    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.title.parse(val),
+    transform: (val) =>
+      parseZodWithDefault(
+        ZodSimpleTableUIElementComponentConfigs.shape.title,
+        val,
+        this.defaultTitle
+      ),
   });
 
   columnsConfigOption: InputSignal<TableColumnObject[]> = input([], {
     alias: 'columns',
-    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.columns.parse(val),
+    transform: (val) =>
+      parseZodWithDefault<TableColumnObject[]>(
+        ZodSimpleTableUIElementComponentConfigs.shape.columns,
+        val,
+        []
+      ),
   });
 
   rowsConfigOption: InputSignal<TableRowObject[]> = input([], {
     alias: 'rows',
-    transform: (val) => ZodSimpleTableUIElementComponentConfigs.shape.rows.parse(val),
+    transform: (val) =>
+      parseZodWithDefault<TableRowObject[]>(
+        ZodSimpleTableUIElementComponentConfigs.shape.rows,
+        val,
+        []
+      ),
   });
 
   readonly DEFAULT_PAGINATION_PAGE_SIZES = [5, 10, 20];
+  // do not parse zod for the pagination input because we expect the un-interpolated value here
   paginationConfigOption: InputSignal<TablePaginationConfigs> = input(
     {},
     {

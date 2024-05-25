@@ -5,8 +5,8 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@angular/common": "^17.1.0",
-    "@angular/core": "^17.1.0",
+    "@angular/common": "17.X.X",
+    "@angular/core": "17.X.X",
     "@namnguyen191/types-helper": "*",
     "angular-gridster2": "^17.0.0",
     "rxjs": "~7.8.1",

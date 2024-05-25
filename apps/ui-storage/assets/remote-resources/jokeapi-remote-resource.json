@@ -1,0 +1,14 @@
+{
+  "id": "randomJoke1",
+  "options": {
+    "requests": [
+      {
+        "configs": {
+          "endpoint": "https://official-joke-api.appspot.com/random_joke",
+          "method": "GET"
+        },
+        "interpolation": "<${ return this.$current }$>"
+      }
+    ]
+  }
+}
