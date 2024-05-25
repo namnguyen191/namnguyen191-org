@@ -1,3 +1,16 @@
+## 0.0.2-3 (2024-05-25)
+
+
+### 🚀 Features
+
+- make mui-components public ([7741a84](https://github.com/namnguyen191/namnguyen191-org/commit/7741a84))
+- dui pump version to fix release command and add readme ([00398b6](https://github.com/namnguyen191/namnguyen191-org/commit/00398b6))
+- dui refactor rr flow, add error handling for zod parsing and add additional sample data, also update angular version ([a736b53](https://github.com/namnguyen191/namnguyen191-org/commit/a736b53))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.2-1 (2024-05-22)
 
 
