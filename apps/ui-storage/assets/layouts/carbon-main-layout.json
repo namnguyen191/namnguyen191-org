@@ -1,0 +1,9 @@
+{
+  "id": "LAYOUT_CARBON_MAIN",
+  "uiElementInstances": [
+    {
+      "id": "instance-1",
+      "uiElementTemplateId": "CARBON_TABLE_V1"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<cds-table-container>
+  <cds-table-header>
+    <h4 cdsTableHeaderTitle id="table-header">{{ titleConfigOption() }}</h4>
+    <p
+      *ngIf="descriptionConfigOption() as description"
+      cdsTableHeaderDescription
+      id="table-description"
+    >
+      {{ description }}
+    </p>
+  </cds-table-header>
+  @if (isErrorConfigOption()) {
+    <span>Something went wrong fetching data</span>
+  } @else {
+    <cds-table
+      [model]="tableModel()"
+      ariaLabelledby="table-header"
+      ariaDescribedby="table-description"
+      [skeleton]="isLoadingConfigOption()"
+      [showSelectionColumn]="false"
+    >
+      <tbody *ngIf="!isLoadingConfigOption()">
+        <tr>
+          <td class="no-data" colspan="3">
+            <div>
+              {{ isErrorConfigOption() ? 'Something went wrong fetching data' : 'No data' }}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </cds-table>
+    <cds-pagination
+      *ngIf="shouldDisplayPagination()"
+      [model]="tableModel()"
+      (selectPage)="selectPage($event)"
+      [pageInputDisabled]="paginationConfigOption().pageInputDisabled ?? false"
+      [itemsPerPageOptions]="paginationConfigOption().pageSizes ?? DEFAULT_PAGINATION_PAGE_SIZES"
+    ></cds-pagination>
+  }
+</cds-table-container>

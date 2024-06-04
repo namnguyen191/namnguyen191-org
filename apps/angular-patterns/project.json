@@ -17,10 +17,10 @@
         "tsConfig": "apps/angular-patterns/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": ["apps/angular-patterns/src/favicon.ico", "apps/angular-patterns/src/assets"],
-        "styles": [
-          "@angular/material/prebuilt-themes/indigo-pink.css",
-          "apps/angular-patterns/src/styles.scss"
-        ],
+        "styles": ["apps/angular-patterns/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["node_modules"]
+        },
         "scripts": [],
         "webWorkerTsConfig": "apps/angular-patterns/tsconfig.worker.json"
       },

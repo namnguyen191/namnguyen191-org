@@ -8,6 +8,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CarbonTableComponent } from '@namnguyen191/carbon-components';
 import {
   DuiComponent,
   EventObject,
@@ -17,11 +18,7 @@ import {
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
-import {
-  SimpleButtonComponent,
-  SimpleTableComponent,
-  TabsComponent,
-} from '@namnguyen191/mui-components';
+import { ButtonModule } from 'carbon-components-angular';
 import { filter, mergeMap, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from './services/layouts.service';
@@ -31,13 +28,13 @@ import { UIElementTemplatesService as UIElementTemplatesServiceAPI } from './ser
 @Component({
   selector: 'namnguyen191-dui-consumer',
   standalone: true,
-  imports: [CommonModule, DuiComponent],
+  imports: [CommonModule, DuiComponent, ButtonModule],
   templateUrl: './dui-consumer.component.html',
   styleUrl: './dui-consumer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiConsumerComponent {
-  layoutId: WritableSignal<string> = signal('LAYOUT_MAIN');
+  layoutId: WritableSignal<string> = signal('LAYOUT_CARBON_MAIN');
 
   uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
@@ -53,19 +50,19 @@ export class DuiConsumerComponent {
     this.setupEventsListener();
 
     this.uiElementFactoryService.registerUIElement({
-      type: SimpleTableComponent.ELEMENT_TYPE,
-      component: SimpleTableComponent,
+      type: CarbonTableComponent.ELEMENT_TYPE,
+      component: CarbonTableComponent,
     });
 
-    this.uiElementFactoryService.registerUIElement({
-      type: TabsComponent.ELEMENT_TYPE,
-      component: TabsComponent,
-    });
+    // this.uiElementFactoryService.registerUIElement({
+    //   type: TabsComponent.ELEMENT_TYPE,
+    //   component: TabsComponent,
+    // });
 
-    this.uiElementFactoryService.registerUIElement({
-      type: SimpleButtonComponent.ELEMENT_TYPE,
-      component: SimpleButtonComponent,
-    });
+    // this.uiElementFactoryService.registerUIElement({
+    //   type: SimpleButtonComponent.ELEMENT_TYPE,
+    //   component: SimpleButtonComponent,
+    // });
 
     // setTimeout(() => {
     //   const updatedMainLayout = {
