@@ -12,7 +12,7 @@ export const usePrefferedDarkTheme = (): { isDarkTheme: boolean } => {
     };
     const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
     darkThemeMq.addEventListener('change', themeChangeListener);
-    return () => darkThemeMq.removeEventListener('change', themeChangeListener);
+    return (): void => darkThemeMq.removeEventListener('change', themeChangeListener);
   }, []);
 
   return { isDarkTheme };

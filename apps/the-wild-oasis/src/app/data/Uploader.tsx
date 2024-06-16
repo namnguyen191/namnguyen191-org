@@ -84,6 +84,7 @@ const createBookings = async (): Promise<void> => {
 
   console.log(finalBookings);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await supabase.from('bookings').insert(finalBookings as any);
   if (error) console.log(error.message);
 };

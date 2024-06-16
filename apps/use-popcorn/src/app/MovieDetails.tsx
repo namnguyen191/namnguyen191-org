@@ -48,7 +48,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({
 
     document.addEventListener('keydown', escapeKeyCb);
 
-    return () => {
+    return (): void => {
       document.removeEventListener('keydown', escapeKeyCb);
     };
   }, [onCloseMovie]);
@@ -74,7 +74,7 @@ export const MovieDetails: FC<MovieDetailsProps> = ({
     if (!movie?.Title) return;
     document.title = `Movie | ${movie.Title}`;
 
-    return () => {
+    return (): void => {
       document.title = 'usePopcorn';
     };
   }, [movie?.Title]);

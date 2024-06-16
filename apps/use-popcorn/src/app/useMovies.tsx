@@ -45,7 +45,7 @@ export function useMovies(query: string): {
 
     fetchMovies();
 
-    return () => {
+    return (): void => {
       controller.abort();
     };
   }, [query]);

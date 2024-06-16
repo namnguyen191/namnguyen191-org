@@ -10,7 +10,7 @@ export const useKeyWatch = (key: globalThis.KeyboardEvent['key'], cb: () => void
 
     document.addEventListener('keydown', listener);
 
-    return () => {
+    return (): void => {
       document.removeEventListener('keydown', listener);
     };
   });
