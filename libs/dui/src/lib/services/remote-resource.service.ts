@@ -110,6 +110,15 @@ export class RemoteResourceService {
     return this.#initializeRemoteResource(id);
   }
 
+  triggerResource(id: string): void {
+    const existingRemoteResourceState = this.#remoteResourcesStateMap[id];
+    if (existingRemoteResourceState) {
+      this.reloadResource(id);
+    } else {
+      this.#initializeRemoteResource(id);
+    }
+  }
+
   reloadResource(id: string): void {
     this.#reloadControlSubject.next(id);
   }

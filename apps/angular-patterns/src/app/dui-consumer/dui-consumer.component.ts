@@ -18,6 +18,11 @@ import {
   UIElementFactoryService,
   UIElementTemplatesService,
 } from '@namnguyen191/dui';
+import {
+  SimpleButtonComponent,
+  SimpleTableComponent as MUITableComponent,
+  TabsComponent,
+} from '@namnguyen191/mui-components';
 import { ButtonModule } from 'carbon-components-angular';
 import { filter, mergeMap, switchMap, tap } from 'rxjs';
 
@@ -53,6 +58,8 @@ export class DuiConsumerComponent {
       type: CarbonTableComponent.ELEMENT_TYPE,
       component: CarbonTableComponent,
     });
+
+    // this.registerMUIComponent();
 
     // this.uiElementFactoryService.registerUIElement({
     //   type: TabsComponent.ELEMENT_TYPE,
@@ -140,6 +147,23 @@ export class DuiConsumerComponent {
     );
 
     missingRemoteResources.subscribe();
+  }
+
+  private registerMUIComponent(): void {
+    this.uiElementFactoryService.registerUIElement({
+      type: TabsComponent.ELEMENT_TYPE,
+      component: TabsComponent,
+    });
+
+    this.uiElementFactoryService.registerUIElement({
+      type: SimpleButtonComponent.ELEMENT_TYPE,
+      component: SimpleButtonComponent,
+    });
+
+    this.uiElementFactoryService.registerUIElement({
+      type: MUITableComponent.ELEMENT_TYPE,
+      component: MUITableComponent,
+    });
   }
 
   // private _testChangingTemplateAndElement(): void {

@@ -13,7 +13,7 @@ const handleTriggerRemoteResource = (action: TriggerRemoteResourceAction): void 
   const {
     payload: { remoteResourceId },
   } = action;
-  inject(RemoteResourceService).reloadResource(remoteResourceId);
+  inject(RemoteResourceService).triggerResource(remoteResourceId);
 };
 
 const handleAddToState = (action: AddToStateAction): void => {
