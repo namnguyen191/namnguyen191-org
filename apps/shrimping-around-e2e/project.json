@@ -1,0 +1,19 @@
+{
+  "name": "shrimping-around-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/shrimping-around-e2e/src",
+  "implicitDependencies": ["shrimping-around"],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/shrimping-around-e2e"],
+      "options": {
+        "config": "apps/shrimping-around-e2e/playwright.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
