@@ -10,7 +10,14 @@
       "outputs": ["{workspaceRoot}/dist/.playwright/apps/shrimping-around-e2e"],
       "options": {
         "config": "apps/shrimping-around-e2e/playwright.config.ts"
-      }
+      },
+      "configurations": {
+        "ci": {},
+        "development": {
+          "ui": true
+        }
+      },
+      "defaultConfiguration": "ci"
     },
     "lint": {
       "executor": "@nx/eslint:lint"

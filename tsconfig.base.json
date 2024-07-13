@@ -25,6 +25,9 @@
       "@namnguyen191/mui-components": [
         "libs/shared/dui-prebuilt-components/mui-components/src/index.ts"
       ],
+      "@namnguyen191/shrimping-around/features/home": [
+        "libs/shrimping-around/features/home/src/index.ts"
+      ],
       "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"],
       "@namnguyen191/utils": ["libs/shared/utils/src/index.ts"]
     }
