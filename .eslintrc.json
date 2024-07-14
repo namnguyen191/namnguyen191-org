@@ -19,8 +19,12 @@
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
+                "sourceTag": "missing-tag",
                 "onlyDependOnLibsWithTags": ["*"]
+              },
+              {
+                "sourceTag": "scope:shrimping-around:main",
+                "onlyDependOnLibsWithTags": ["/^scope:shrimping-around:feature:.*/"]
               }
             ]
           }

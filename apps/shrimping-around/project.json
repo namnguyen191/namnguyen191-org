@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/shrimping-around/src",
-  "tags": [],
+  "tags": ["scope:shrimping-around:main"],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
@@ -22,7 +22,10 @@
             "input": "apps/shrimping-around/public"
           }
         ],
-        "styles": ["apps/shrimping-around/src/styles.scss"],
+        "styles": [
+          "@angular/material/prebuilt-themes/magenta-violet.css",
+          "apps/shrimping-around/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {

@@ -17,6 +17,9 @@ dependencies:
   '@angular/animations':
     specifier: 18.0.3
     version: 18.0.3(@angular/core@18.0.3)
+  '@angular/cdk':
+    specifier: 18.0.3
+    version: 18.0.3(@angular/common@18.0.3)(@angular/core@18.0.3)(rxjs@7.8.1)
   '@angular/common':
     specifier: 18.0.3
     version: 18.0.3(@angular/core@18.0.3)(rxjs@7.8.1)

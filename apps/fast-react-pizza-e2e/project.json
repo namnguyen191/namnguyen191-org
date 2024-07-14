@@ -36,5 +36,5 @@
     }
   },
   "implicitDependencies": ["fast-react-pizza"],
-  "tags": []
+  "tags": ["missing-tag"]
 }

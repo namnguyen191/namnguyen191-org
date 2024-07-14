@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "namnguyen191",
   "sourceRoot": "apps/angular-patterns/src",
-  "tags": [],
+  "tags": ["missing-tag"],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
