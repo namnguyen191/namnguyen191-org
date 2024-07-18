@@ -14,7 +14,8 @@
       "configurations": {
         "ci": {},
         "development": {
-          "ui": true
+          "ui": true,
+          "trace": "on"
         }
       },
       "defaultConfiguration": "ci"

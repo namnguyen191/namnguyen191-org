@@ -8,7 +8,10 @@ export const appRoutes: Route[] = [
   },
   {
     path: '**',
-    redirectTo: '',
+    loadComponent: () =>
+      import('../components/not-found-page/not-found-page.component').then(
+        (m) => m.NotFoundPageComponent
+      ),
     pathMatch: 'full',
   },
 ];

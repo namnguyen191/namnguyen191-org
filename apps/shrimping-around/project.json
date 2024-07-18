@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/shrimping-around",
         "index": "apps/shrimping-around/src/index.html",
         "browser": "apps/shrimping-around/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/shrimping-around/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
