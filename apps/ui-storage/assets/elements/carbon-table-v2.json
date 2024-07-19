@@ -1,0 +1,7 @@
+{
+  "id": "CARBON_TABLE_V2",
+  "type": "CARBON_TABLE",
+  "options": {
+    "title": "Carbon test table"
+  }
+}

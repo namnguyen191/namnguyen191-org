@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { LayoutConfig } from '@namnguyen191/dui';
-import { delay, Observable, shareReplay } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 
 const BASE_LAYOUT_URL = 'http://localhost:8080/layouts';
 
@@ -24,6 +24,6 @@ export class LayoutsService {
   }
 
   #fetchLayoutById(id: string): Observable<LayoutConfig> {
-    return this.#httpClient.get<LayoutConfig>(`${BASE_LAYOUT_URL}/${id}`).pipe(delay(2000));
+    return this.#httpClient.get<LayoutConfig>(`${BASE_LAYOUT_URL}/${id}`);
   }
 }

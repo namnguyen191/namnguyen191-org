@@ -1,0 +1,27 @@
+{
+  "name": "dui-consumer-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/dui-consumer-e2e/src",
+  "implicitDependencies": ["angular-patterns", "ui-storage"],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/dui-consumer-e2e"],
+      "options": {
+        "config": "apps/dui-consumer-e2e/playwright.config.ts"
+      },
+      "configurations": {
+        "ci": {},
+        "development": {
+          "ui": true,
+          "trace": "on"
+        }
+      },
+      "defaultConfiguration": "ci"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { UIElementTemplate } from '@namnguyen191/dui';
-import { delay, Observable, shareReplay } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 
 const BASE_UI_ELEMENT_TEMPLATE_URL = 'http://localhost:8080/ui-element-templates';
 
@@ -24,8 +24,6 @@ export class UIElementTemplatesService {
   }
 
   #fetchUIElementTemplateById(id: string): Observable<UIElementTemplate> {
-    return this.#httpClient
-      .get<UIElementTemplate>(`${BASE_UI_ELEMENT_TEMPLATE_URL}/${id}`)
-      .pipe(delay(2000));
+    return this.#httpClient.get<UIElementTemplate>(`${BASE_UI_ELEMENT_TEMPLATE_URL}/${id}`);
   }
 }
