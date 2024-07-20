@@ -12,9 +12,6 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./cypress/tsconfig.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

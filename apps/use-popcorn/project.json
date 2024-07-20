@@ -56,19 +56,6 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
-    "e2e": {
-      "executor": "@nx/cypress:cypress",
-      "options": {
-        "cypressConfig": "apps/use-popcorn/cypress.config.ts",
-        "testingType": "e2e",
-        "devServerTarget": "use-popcorn:serve"
-      },
-      "configurations": {
-        "production": {
-          "devServerTarget": "use-popcorn:serve:production"
-        }
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
