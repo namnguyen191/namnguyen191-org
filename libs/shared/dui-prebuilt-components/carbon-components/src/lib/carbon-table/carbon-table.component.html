@@ -21,7 +21,7 @@
     >
       <tbody *ngIf="!isLoadingConfigOption()">
         <tr>
-          <td class="no-data" colspan="3">
+          <td class="no-data" [attr.colspan]="headersConfigOption().length">
             <div>
               {{ isErrorConfigOption() ? 'Something went wrong fetching data' : 'No data' }}
             </div>

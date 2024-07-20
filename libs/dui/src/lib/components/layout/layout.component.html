@@ -1,28 +1,40 @@
-@if (!isInfinite()) {
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-  />
-  <gridster [options]="layoutGridConfigs">
-    @if (gridItems(); as gridItems) {
-      @if (gridItems.length > 0) {
-        @for (item of gridItems; track item.trackById) {
-          <gridster-item [item]="item">
-            <span *ngIf="item.dragEnabled" class="material-symbols-outlined drag-area">
-              drag_indicator
-            </span>
-            <namnguyen191-ui-element-wrapper
-              [uiElementInstance]="item.elementInstance"
-            ></namnguyen191-ui-element-wrapper>
-          </gridster-item>
-        }
-      } @else {
-        <span>This layout is empty</span>
+<ng-container *ngIf="layoutConfig()() as layoutConfig">
+  @if (!isInfinite()) {
+    @switch (layoutConfig.status) {
+      @case ('missing') {
+        <span>No definition for layout with id {{ layoutConfig.id }}</span>
       }
-    } @else {
-      <span>Loading layout configs...</span>
+      @case ('loading') {
+        <span>Loading layout with id {{ layoutConfig.id }}...</span>
+      }
+      @case ('loaded') {
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        />
+        <gridster [options]="layoutGridConfigs">
+          @if (gridItems(); as gridItems) {
+            @if (gridItems.length > 0) {
+              @for (item of gridItems; track item.trackById) {
+                <gridster-item [item]="item">
+                  <span *ngIf="item.dragEnabled" class="material-symbols-outlined drag-area">
+                    drag_indicator
+                  </span>
+                  <namnguyen191-ui-element-wrapper
+                    [uiElementInstance]="item.elementInstance"
+                  ></namnguyen191-ui-element-wrapper>
+                </gridster-item>
+              }
+            } @else {
+              <span>This layout is empty</span>
+            }
+          } @else {
+            <span>Loading layout configs...</span>
+          }
+        </gridster>
+      }
     }
-  </gridster>
-} @else {
-  <span>Infinte loop in rendering layout detected</span>
-}
+  } @else {
+    <span>Infinte loop in rendering layout detected</span>
+  }
+</ng-container>

@@ -5,3 +5,5 @@ export const INTERPOLATION_REGEX = /^(<\${)(.*)(}\$>)$/;
 export type StateSubscriptionConfig = {
   [K in AvailableStateScope]?: string[];
 };
+
+export type RenderStatus = 'missing' | 'loading' | 'loaded';

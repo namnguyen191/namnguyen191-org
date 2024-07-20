@@ -20,7 +20,7 @@ import {
   GridsterItemComponent,
   GridType,
 } from 'angular-gridster2';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import { UIElementInstance } from '../../interfaces';
 import { LayoutConfig } from '../../interfaces/Layout';
@@ -101,21 +101,15 @@ export const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAI
 export class LayoutComponent implements OnDestroy {
   #layoutService: LayoutService = inject(LayoutService);
   #layoutsChain: Set<string> = inject(LAYOUTS_CHAIN_TOKEN);
+  #eventsService: EventsService = inject(EventsService);
 
   #cancelLayoutSubscriptionSubject = new Subject<void>();
   #destroyRef = new Subject<void>();
 
   layoutId: InputSignal<string> = input.required<string>();
   layoutConfig = computed(() => {
-    // Cancel previous layout subscription
-    this.#cancelLayoutSubscriptionSubject.next();
     const layoutId = this.layoutId();
-    const layoutConfigObs = this.#layoutService.getLayout(layoutId);
-
-    return layoutConfigObs.pipe(
-      takeUntil(this.#cancelLayoutSubscriptionSubject),
-      takeUntil(this.#destroyRef)
-    );
+    return this.#layoutService.getLayout(layoutId);
   });
 
   gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
@@ -132,20 +126,35 @@ export class LayoutComponent implements OnDestroy {
   constructor() {
     effect(
       () => {
-        const layoutConfig$ = this.layoutConfig();
-        layoutConfig$.subscribe((layoutConfig) => {
-          const gridItems = this.#createGridItems(layoutConfig);
-          this.gridItems.set(gridItems);
+        const layoutConfigVal = this.layoutConfig()();
 
-          const isInfinite = this.#layoutsChain.has(layoutConfig.id);
+        if (layoutConfigVal.status === 'missing') {
+          this.#eventsService.emitEvent({
+            type: 'MISSING_LAYOUT',
+            payload: {
+              id: layoutConfigVal.id,
+            },
+          });
+          return;
+        }
 
-          if (isInfinite) {
-            console.error(`Layout with id ${layoutConfig.id} has already existed in parents`);
-          }
+        if (layoutConfigVal.status !== 'loaded') {
+          return;
+        }
 
-          this.#layoutsChain.add(layoutConfig.id);
-          this.isInfinite.set(isInfinite);
-        });
+        const gridItems = this.#createGridItems(layoutConfigVal.config);
+        this.gridItems.set(gridItems);
+
+        const isInfinite = this.#layoutsChain.has(layoutConfigVal.config.id);
+
+        if (isInfinite) {
+          console.error(
+            `Layout with id ${layoutConfigVal.config.id} has already existed in parents`
+          );
+        }
+
+        this.#layoutsChain.add(layoutConfigVal.config.id);
+        this.isInfinite.set(isInfinite);
       },
       {
         allowSignalWrites: true,

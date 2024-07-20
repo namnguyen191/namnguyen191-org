@@ -72,6 +72,7 @@ export class DuiE2EPageComponent {
       ),
       switchMap((event) => {
         const missingLayoutId = event.payload.id;
+        this.layoutService.startRegisteringLayout(missingLayoutId);
         return this.layoutsServiceAPI.getLayoutById(missingLayoutId);
       }),
       tap((layout) => this.layoutService.registerLayout(layout))

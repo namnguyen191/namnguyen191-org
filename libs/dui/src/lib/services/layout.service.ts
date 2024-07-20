@@ -1,67 +1,102 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { LayoutConfig } from '../interfaces';
-import { logInfo } from '../utils/logging';
+import { LayoutConfig, RenderStatus } from '../interfaces';
+import { logError } from '../utils/logging';
 import { EventsService } from './events.service';
+
+export type LayoutWithStatus = {
+  id: string;
+} & (
+  | {
+      config: null;
+      status: Exclude<RenderStatus, 'loaded'>;
+    }
+  | {
+      config: LayoutConfig;
+      status: Extract<RenderStatus, 'loaded'>;
+    }
+);
+
+type LayoutId = string;
 
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutService {
-  #layoutMap$: BehaviorSubject<Record<string, LayoutConfig>> = new BehaviorSubject({});
+  #layoutMap: Record<LayoutId, WritableSignal<LayoutWithStatus>> = {};
   #eventsService: EventsService = inject(EventsService);
+
+  startRegisteringLayout(id: string): void {
+    const existingLayoutSig = this.#layoutMap[id];
+    console.log('Nam data is: registering layout', existingLayoutSig);
+    const registeringLayout: LayoutWithStatus = {
+      id,
+      status: 'loading',
+      config: null,
+    };
+    if (!existingLayoutSig) {
+      const newLayoutSig: WritableSignal<LayoutWithStatus> = signal(registeringLayout);
+      this.#layoutMap[id] = newLayoutSig;
+      return;
+    }
+
+    existingLayoutSig.set(registeringLayout);
+  }
 
   registerLayout(layout: LayoutConfig): void {
     const layoutId = layout.id;
-    if (this.#layoutMap$.value[layoutId]) {
-      throw new Error(
-        `Layout with id of "${layoutId}" has already been register. Please update it instead`
-      );
+    const existingLayoutSig = this.#layoutMap[layoutId];
+    const registeredLayout: LayoutWithStatus = {
+      id: layoutId,
+      status: 'loaded',
+      config: layout,
+    };
+    if (existingLayoutSig) {
+      if (existingLayoutSig().status === 'loaded') {
+        logError(
+          `Layout with id of "${layoutId}" has already been register. Please update it instead`
+        );
+        return;
+      }
+
+      existingLayoutSig.set(registeredLayout);
+      return;
     }
 
-    this.#layoutMap$.next({
-      ...this.#layoutMap$.value,
-      [layoutId]: layout,
-    });
+    const newLayoutSig: WritableSignal<LayoutWithStatus> = signal(registeredLayout);
+
+    this.#layoutMap[layoutId] = newLayoutSig;
   }
 
-  getLayout<T extends string>(id: T): Observable<LayoutConfig> {
-    return this.#layoutMap$.asObservable().pipe(
-      distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
-      tap({
-        next: (layoutMap) => {
-          if (!layoutMap[id]) {
-            this.#eventsService.emitEvent({
-              type: 'MISSING_LAYOUT',
-              payload: {
-                id,
-              },
-            });
-          }
-        },
-      }),
-      filter((layoutMap): layoutMap is Record<T, LayoutConfig> => !!layoutMap[id]),
-      map((layoutMap) => {
-        const layout = layoutMap[id];
-        return layout;
-      }),
-      tap((val) => logInfo(`Getting layout ${val.id}`))
-    );
+  getLayout<T extends string>(id: T): Signal<LayoutWithStatus> {
+    const existingLayoutSig = this.#layoutMap[id];
+    if (!existingLayoutSig) {
+      const newLayoutSig: WritableSignal<LayoutWithStatus> = signal({
+        id,
+        status: 'missing',
+        config: null,
+      });
+      this.#layoutMap[id] = newLayoutSig;
+      return newLayoutSig.asReadonly();
+    }
+    return existingLayoutSig.asReadonly();
   }
 
   updateLayout(updatedLayout: LayoutConfig): void {
     const updatedLayoutId = updatedLayout.id;
-    const layoutMap = this.#layoutMap$.value;
+    const existingLayoutSig = this.#layoutMap[updatedLayoutId];
 
-    if (!layoutMap[updatedLayout.id]) {
-      throw new Error(
+    if (!existingLayoutSig) {
+      logError(
         `Layout with id of "${updatedLayoutId}" has not been register. Please register it instead`
       );
+      return;
     }
-    this.#layoutMap$.next({
-      ...layoutMap,
-      [updatedLayoutId]: updatedLayout,
+
+    existingLayoutSig.set({
+      id: updatedLayoutId,
+      status: 'loaded',
+      config: updatedLayout,
     });
   }
 }
