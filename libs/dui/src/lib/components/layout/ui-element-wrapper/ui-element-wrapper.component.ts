@@ -8,6 +8,7 @@ import {
   inject,
   input,
   InputSignal,
+  OnDestroy,
   runInInjectionContext,
   Signal,
   Type,
@@ -24,7 +25,9 @@ import {
   map,
   Observable,
   of,
+  Subject,
   switchMap,
+  takeUntil,
 } from 'rxjs';
 
 import {
@@ -52,12 +55,14 @@ import { InterpolationService } from '../../../services/interpolation.service';
   templateUrl: './ui-element-wrapper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiElementWrapperComponent {
+export class UiElementWrapperComponent implements OnDestroy {
   #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
   #eventsService: EventsService = inject(EventsService);
+
+  #destroyElementInputsObs: Subject<void> = new Subject<void>();
 
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
@@ -76,6 +81,7 @@ export class UiElementWrapperComponent {
   });
 
   uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
+    this.#destroyElementInputsObs.next(); // destroy any previous stream
     const template = this.uiElementTemplate()();
     return of(template).pipe(
       filter((template) => template.status === 'loaded'),
@@ -88,7 +94,8 @@ export class UiElementWrapperComponent {
             component: this.#uiElementFactoryService.getUIElement(template.config.type),
           })
         )
-      )
+      ),
+      takeUntil(this.#destroyElementInputsObs)
     );
   });
 
@@ -104,6 +111,11 @@ export class UiElementWrapperComponent {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.#destroyElementInputsObs.next();
+    this.#destroyElementInputsObs.complete();
   }
 
   #generateComponentInputs(params: {
