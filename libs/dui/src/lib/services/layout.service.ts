@@ -1,21 +1,9 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { LayoutConfig, RenderStatus } from '../interfaces';
+import { ConfigWithStatus, LayoutConfig } from '../interfaces';
 import { logError } from '../utils/logging';
-import { EventsService } from './events.service';
 
-export type LayoutWithStatus = {
-  id: string;
-} & (
-  | {
-      config: null;
-      status: Exclude<RenderStatus, 'loaded'>;
-    }
-  | {
-      config: LayoutConfig;
-      status: Extract<RenderStatus, 'loaded'>;
-    }
-);
+export type LayoutConfigWithStatus = ConfigWithStatus<LayoutConfig>;
 
 type LayoutId = string;
 
@@ -23,19 +11,17 @@ type LayoutId = string;
   providedIn: 'root',
 })
 export class LayoutService {
-  #layoutMap: Record<LayoutId, WritableSignal<LayoutWithStatus>> = {};
-  #eventsService: EventsService = inject(EventsService);
+  #layoutMap: Record<LayoutId, WritableSignal<LayoutConfigWithStatus>> = {};
 
   startRegisteringLayout(id: string): void {
     const existingLayoutSig = this.#layoutMap[id];
-    console.log('Nam data is: registering layout', existingLayoutSig);
-    const registeringLayout: LayoutWithStatus = {
+    const registeringLayout: LayoutConfigWithStatus = {
       id,
       status: 'loading',
       config: null,
     };
     if (!existingLayoutSig) {
-      const newLayoutSig: WritableSignal<LayoutWithStatus> = signal(registeringLayout);
+      const newLayoutSig: WritableSignal<LayoutConfigWithStatus> = signal(registeringLayout);
       this.#layoutMap[id] = newLayoutSig;
       return;
     }
@@ -46,7 +32,7 @@ export class LayoutService {
   registerLayout(layout: LayoutConfig): void {
     const layoutId = layout.id;
     const existingLayoutSig = this.#layoutMap[layoutId];
-    const registeredLayout: LayoutWithStatus = {
+    const registeredLayout: LayoutConfigWithStatus = {
       id: layoutId,
       status: 'loaded',
       config: layout,
@@ -63,15 +49,15 @@ export class LayoutService {
       return;
     }
 
-    const newLayoutSig: WritableSignal<LayoutWithStatus> = signal(registeredLayout);
+    const newLayoutSig: WritableSignal<LayoutConfigWithStatus> = signal(registeredLayout);
 
     this.#layoutMap[layoutId] = newLayoutSig;
   }
 
-  getLayout<T extends string>(id: T): Signal<LayoutWithStatus> {
+  getLayout<T extends string>(id: T): Signal<LayoutConfigWithStatus> {
     const existingLayoutSig = this.#layoutMap[id];
     if (!existingLayoutSig) {
-      const newLayoutSig: WritableSignal<LayoutWithStatus> = signal({
+      const newLayoutSig: WritableSignal<LayoutConfigWithStatus> = signal({
         id,
         status: 'missing',
         config: null,

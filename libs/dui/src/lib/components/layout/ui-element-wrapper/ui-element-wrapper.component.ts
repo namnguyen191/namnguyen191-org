@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   EnvironmentInjector,
   inject,
   input,
@@ -18,11 +19,11 @@ import {
   combineLatest,
   distinctUntilChanged,
   EMPTY,
+  filter,
   from,
   map,
   Observable,
   of,
-  shareReplay,
   switchMap,
 } from 'rxjs';
 
@@ -30,10 +31,14 @@ import {
   ComponentContextPropertyKey,
   StateSubscriptionConfig,
   UIElementInstance,
-  UIElementTemplate,
   UIElementTemplateOptions,
 } from '../../../interfaces';
-import { UIElementFactoryService, UIElementTemplatesService } from '../../../services';
+import {
+  EventsService,
+  UIElementFactoryService,
+  UIElementTemplateConfigWithStatus,
+  UIElementTemplatesService,
+} from '../../../services';
 import {
   ElementInputsInterpolationContext,
   getElementInputsInterpolationContext,
@@ -48,39 +53,58 @@ import { InterpolationService } from '../../../services/interpolation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiElementWrapperComponent {
-  uiElementInstance: InputSignal<UIElementInstance> = input.required();
-
   #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  #eventsService: EventsService = inject(EventsService);
 
-  uiElementTemplate: Signal<Observable<UIElementTemplate>> = computed(() => {
-    return this.#uiElementTemplatesService
-      .getUIElementTemplate(this.uiElementInstance().uiElementTemplateId)
-      .pipe(shareReplay(1));
-  });
+  uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
-  uiElementComponent: Signal<Observable<Type<unknown>>> = computed(() => {
-    return this.uiElementTemplate().pipe(
-      map((template) => this.#uiElementFactoryService.getUIElement(template.type))
+  uiElementTemplate: Signal<Signal<UIElementTemplateConfigWithStatus>> = computed(() => {
+    return this.#uiElementTemplatesService.getUIElementTemplate(
+      this.uiElementInstance().uiElementTemplateId
     );
   });
 
-  uiElementInputs: Signal<Observable<ObjectType>> = computed(() => {
-    return this.uiElementTemplate().pipe(
+  uiElementComponent: Signal<Type<unknown> | null> = computed(() => {
+    const templateConfig = this.uiElementTemplate()();
+    if (templateConfig.status !== 'loaded') {
+      return null;
+    }
+    return this.#uiElementFactoryService.getUIElement(templateConfig.config.type);
+  });
+
+  uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
+    const template = this.uiElementTemplate()();
+    return of(template).pipe(
+      filter((template) => template.status === 'loaded'),
       switchMap((template) =>
         runInInjectionContext(this.#environmentInjector, () =>
           this.#generateComponentInputs({
-            templateOptions: template.options,
-            remoteResourceId: template.remoteResourceId,
-            stateSubscription: template.stateSubscription,
-            component: this.#uiElementFactoryService.getUIElement(template.type),
+            templateOptions: template.config.options,
+            remoteResourceId: template.config.remoteResourceId,
+            stateSubscription: template.config.stateSubscription,
+            component: this.#uiElementFactoryService.getUIElement(template.config.type),
           })
         )
       )
     );
   });
+
+  constructor() {
+    effect(() => {
+      const template = this.uiElementTemplate()();
+      if (template.status === 'missing') {
+        this.#eventsService.emitEvent({
+          type: 'MISSING_UI_ELEMENT_TEMPLATE',
+          payload: {
+            id: template.id,
+          },
+        });
+      }
+    });
+  }
 
   #generateComponentInputs(params: {
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;

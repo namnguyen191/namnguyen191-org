@@ -7,3 +7,16 @@ export type StateSubscriptionConfig = {
 };
 
 export type RenderStatus = 'missing' | 'loading' | 'loaded';
+
+export type ConfigWithStatus<TConfig> = {
+  id: string;
+} & (
+  | {
+      config: null;
+      status: Exclude<RenderStatus, 'loaded'>;
+    }
+  | {
+      config: TConfig;
+      status: Extract<RenderStatus, 'loaded'>;
+    }
+);

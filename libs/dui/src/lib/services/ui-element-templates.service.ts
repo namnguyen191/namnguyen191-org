@@ -1,74 +1,95 @@
-import { inject, Injectable } from '@angular/core';
-import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
-import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
+import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { UIElementTemplate } from '../interfaces';
-import { logInfo } from '../utils/logging';
-import { EventsService } from './events.service';
+import { ConfigWithStatus, UIElementTemplate } from '../interfaces';
+import { logError } from '../utils/logging';
+
+export type UIElementTemplateConfigWithStatus = ConfigWithStatus<UIElementTemplate>;
+
+type UIElementTemplateId = string;
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIElementTemplatesService {
-  #eventsService: EventsService = inject(EventsService);
-  #uiElementTemplatesMap$: BehaviorSubject<{
-    [uiElementTemplateId: string]: UIElementTemplate<ObjectType>;
-  }> = new BehaviorSubject({});
+  #uiElementTemplateMap: Record<
+    UIElementTemplateId,
+    WritableSignal<UIElementTemplateConfigWithStatus>
+  > = {};
 
-  registerUIElementTemplate<T extends ObjectType = EmptyObject>(
-    uiElementTemplate: UIElementTemplate<T>
-  ): void {
-    if (this.#uiElementTemplatesMap$.value[uiElementTemplate.id]) {
-      throw new Error(
-        `UI element template with id of "${uiElementTemplate.id}" has already been register. Please update it instead`
+  startRegisteringUIElementTemplate(id: string): void {
+    const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
+    const registeringUIElementTemplate: UIElementTemplateConfigWithStatus = {
+      id,
+      status: 'loading',
+      config: null,
+    };
+    if (!existingUIElementTemplateSig) {
+      const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal(
+        registeringUIElementTemplate
       );
+      this.#uiElementTemplateMap[id] = newUIElementTemplateSig;
+      return;
     }
-    this.#uiElementTemplatesMap$.next({
-      ...this.#uiElementTemplatesMap$.value,
-      [uiElementTemplate.id]: uiElementTemplate,
-    });
+
+    existingUIElementTemplateSig.set(registeringUIElementTemplate);
   }
 
-  updateUIElementTemplate<T extends ObjectType = EmptyObject>(
-    updatedUIElementTemplate: UIElementTemplate<T>
-  ): void {
-    const uiElementTemplateMaps = this.#uiElementTemplatesMap$.value;
+  registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
+    const uiElementId = uiElementTemplate.id;
+    const existingUIElementTemplateSig = this.#uiElementTemplateMap[uiElementId];
+    const registeredUIElementTemplate: UIElementTemplateConfigWithStatus = {
+      id: uiElementId,
+      status: 'loaded',
+      config: uiElementTemplate,
+    };
+    if (existingUIElementTemplateSig) {
+      if (existingUIElementTemplateSig().status === 'loaded') {
+        logError(
+          `UIElementTemplate with id of "${uiElementId}" has already been register. Please update it instead`
+        );
+        return;
+      }
 
-    if (!uiElementTemplateMaps[updatedUIElementTemplate.id]) {
-      throw new Error(
-        `UI element template with id of "${updatedUIElementTemplate.id}" has not been register. Please register it instead`
-      );
+      existingUIElementTemplateSig.set(registeredUIElementTemplate);
+      return;
     }
-    this.#uiElementTemplatesMap$.next({
-      ...uiElementTemplateMaps,
-      [updatedUIElementTemplate.id]: updatedUIElementTemplate,
-    });
-  }
 
-  getUIElementTemplate<T extends string>(id: T): Observable<UIElementTemplate> {
-    return this.#uiElementTemplatesMap$.asObservable().pipe(
-      distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
-      tap({
-        next: (uiElementTemplatesMap) => {
-          if (!uiElementTemplatesMap[id]) {
-            this.#eventsService.emitEvent({
-              type: 'MISSING_UI_ELEMENT_TEMPLATE',
-              payload: {
-                id,
-              },
-            });
-          }
-        },
-      }),
-      filter(
-        (uiElementTemplatesMap): uiElementTemplatesMap is Record<T, UIElementTemplate> =>
-          !!uiElementTemplatesMap[id]
-      ),
-      map((uiElementTemplatesMap) => {
-        const uiElementTemplate = uiElementTemplatesMap[id];
-        return uiElementTemplate;
-      }),
-      tap((val) => logInfo(`Getting ui template ${val.id}`))
+    const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal(
+      registeredUIElementTemplate
     );
+
+    this.#uiElementTemplateMap[uiElementId] = newUIElementTemplateSig;
+  }
+
+  getUIElementTemplate<T extends string>(id: T): Signal<UIElementTemplateConfigWithStatus> {
+    const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
+    if (!existingUIElementTemplateSig) {
+      const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal({
+        id,
+        status: 'missing',
+        config: null,
+      });
+      this.#uiElementTemplateMap[id] = newUIElementTemplateSig;
+      return newUIElementTemplateSig.asReadonly();
+    }
+    return existingUIElementTemplateSig.asReadonly();
+  }
+
+  updateUIElementTemplate(updatedUIElementTemplate: UIElementTemplate): void {
+    const updatedUIElementTemplateId = updatedUIElementTemplate.id;
+    const existingUIElementTemplateSig = this.#uiElementTemplateMap[updatedUIElementTemplateId];
+
+    if (!existingUIElementTemplateSig) {
+      logError(
+        `UIElementTemplate with id of "${updatedUIElementTemplateId}" has not been register. Please register it instead`
+      );
+      return;
+    }
+
+    existingUIElementTemplateSig.set({
+      id: updatedUIElementTemplateId,
+      status: 'loaded',
+      config: updatedUIElementTemplate,
+    });
   }
 }
