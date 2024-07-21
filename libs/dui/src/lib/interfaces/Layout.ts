@@ -14,7 +14,7 @@ export type UIElementInstance = {
   };
 };
 
-export type LayoutConfig = {
+export type LayoutTemplate = {
   id: string;
   uiElementInstances: UIElementInstance[];
 };

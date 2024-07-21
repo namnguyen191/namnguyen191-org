@@ -8,7 +8,7 @@ const BASE_UI_ELEMENT_TEMPLATE_URL = 'http://localhost:8080/ui-element-templates
 @Injectable({
   providedIn: 'root',
 })
-export class UIElementTemplatesService {
+export class UIElementTemplateService {
   #httpClient: HttpClient = inject(HttpClient);
 
   #uiElementTemplatesCache: Record<string, Observable<UIElementTemplate>> = {};

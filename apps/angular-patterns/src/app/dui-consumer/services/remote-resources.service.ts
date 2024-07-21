@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RemoteResourceConfigs } from '@namnguyen191/dui';
+import { RemoteResourceTemplate } from '@namnguyen191/dui';
 import { Observable, shareReplay } from 'rxjs';
 
 const BASE_REMOTE_RESOURCE_URL = 'http://localhost:8080/remote-resources';
@@ -11,9 +11,9 @@ const BASE_REMOTE_RESOURCE_URL = 'http://localhost:8080/remote-resources';
 export class RemoteResourcesService {
   #httpClient: HttpClient = inject(HttpClient);
 
-  #remoteResourcesCache: Record<string, Observable<RemoteResourceConfigs>> = {};
+  #remoteResourcesCache: Record<string, Observable<RemoteResourceTemplate>> = {};
 
-  getRemoteResourceById(id: string): Observable<RemoteResourceConfigs> {
+  getRemoteResourceById(id: string): Observable<RemoteResourceTemplate> {
     let remoteResource$ = this.#remoteResourcesCache[id];
     if (!remoteResource$) {
       remoteResource$ = this.#fetchRemoteResourceById(id).pipe(shareReplay(1));
@@ -23,7 +23,7 @@ export class RemoteResourcesService {
     return remoteResource$;
   }
 
-  #fetchRemoteResourceById(id: string): Observable<RemoteResourceConfigs> {
-    return this.#httpClient.get<RemoteResourceConfigs>(`${BASE_REMOTE_RESOURCE_URL}/${id}`);
+  #fetchRemoteResourceById(id: string): Observable<RemoteResourceTemplate> {
+    return this.#httpClient.get<RemoteResourceTemplate>(`${BASE_REMOTE_RESOURCE_URL}/${id}`);
   }
 }

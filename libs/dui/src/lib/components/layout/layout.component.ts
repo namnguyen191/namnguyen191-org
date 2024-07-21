@@ -23,8 +23,8 @@ import {
 import { Subject } from 'rxjs';
 
 import { UIElementInstance } from '../../interfaces';
-import { LayoutConfig } from '../../interfaces/Layout';
-import { EventsService, LayoutService } from '../../services';
+import { LayoutTemplate } from '../../interfaces/Layout';
+import { EventsService, LayoutTemplateService } from '../../services';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 export type LayoutGridItem = GridsterItem & {
@@ -99,7 +99,7 @@ export const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAI
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutComponent implements OnDestroy {
-  #layoutService: LayoutService = inject(LayoutService);
+  #layoutService: LayoutTemplateService = inject(LayoutTemplateService);
   #layoutsChain: Set<string> = inject(LAYOUTS_CHAIN_TOKEN);
   #eventsService: EventsService = inject(EventsService);
 
@@ -109,7 +109,7 @@ export class LayoutComponent implements OnDestroy {
   layoutId: InputSignal<string> = input.required<string>();
   layoutConfig = computed(() => {
     const layoutId = this.layoutId();
-    return this.#layoutService.getLayout(layoutId);
+    return this.#layoutService.getLayoutTemplate(layoutId);
   });
 
   gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
@@ -169,7 +169,7 @@ export class LayoutComponent implements OnDestroy {
     this.#destroyRef.complete();
   }
 
-  #createGridItems(layoutConfig: LayoutConfig): LayoutGridItem[] {
+  #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
     return layoutConfig.uiElementInstances.map((eI) => {
       const { positionAndSize } = eI;
       return {

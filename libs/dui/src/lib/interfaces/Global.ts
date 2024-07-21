@@ -6,17 +6,17 @@ export type StateSubscriptionConfig = {
   [K in AvailableStateScope]?: string[];
 };
 
-export type RenderStatus = 'missing' | 'loading' | 'loaded';
+export type TemplateStatus = 'missing' | 'loading' | 'loaded';
 
 export type ConfigWithStatus<TConfig> = {
   id: string;
 } & (
   | {
       config: null;
-      status: Exclude<RenderStatus, 'loaded'>;
+      status: Exclude<TemplateStatus, 'loaded'>;
     }
   | {
       config: TConfig;
-      status: Extract<RenderStatus, 'loaded'>;
+      status: Extract<TemplateStatus, 'loaded'>;
     }
 );

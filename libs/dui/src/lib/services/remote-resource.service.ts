@@ -22,7 +22,7 @@ import {
 } from 'rxjs';
 
 import { UICommAction } from '../interfaces';
-import { RemoteResourceConfigs, Request } from '../interfaces/RemoteResource';
+import { RemoteResourceTemplate, Request } from '../interfaces/RemoteResource';
 import { logInfo, logSubscription } from '../utils/logging';
 import { DataFetchingService, FetchDataParams } from './data-fetching.service';
 import { EventsService } from './events.service';
@@ -46,7 +46,7 @@ export type RemoteResourceState = {
   providedIn: 'root',
 })
 export class RemoteResourceService {
-  #remoteResourcesMap$: BehaviorSubject<Record<string, RemoteResourceConfigs>> =
+  #remoteResourcesMap$: BehaviorSubject<Record<string, RemoteResourceTemplate>> =
     new BehaviorSubject({});
   #remoteResourcesStateMap: Record<string, BehaviorSubject<RemoteResourceState>> = {};
   #reloadControlSubject: Subject<string> = new Subject<string>();
@@ -59,7 +59,7 @@ export class RemoteResourceService {
   #eventsService: EventsService = inject(EventsService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
-  registerRemoteResource(remoteResource: RemoteResourceConfigs): void {
+  registerRemoteResource(remoteResource: RemoteResourceTemplate): void {
     if (this.#remoteResourcesMap$.value[remoteResource.id]) {
       throw new Error(
         `Remote resource with id of "${remoteResource.id}" has already been register. Please update it instead`
@@ -72,7 +72,7 @@ export class RemoteResourceService {
   }
 
   // TODO: keep count of how many subscriber does a remote resource have and remove it state if it has none left
-  getRemoteResource<T extends string>(id: T): Observable<RemoteResourceConfigs> {
+  getRemoteResource<T extends string>(id: T): Observable<RemoteResourceTemplate> {
     return this.#remoteResourcesMap$.asObservable().pipe(
       distinctUntilChanged((prev, curr) => prev[id] === curr[id]),
       tap({
@@ -88,7 +88,7 @@ export class RemoteResourceService {
         },
       }),
       filter(
-        (remoteResourceMap): remoteResourceMap is Record<T, RemoteResourceConfigs> =>
+        (remoteResourceMap): remoteResourceMap is Record<T, RemoteResourceTemplate> =>
           !!remoteResourceMap[id]
       ),
       map((remoteResourceMap) => {
@@ -198,7 +198,7 @@ export class RemoteResourceService {
   }
 
   async #interpolateResourceHooks(params: {
-    resourceConfig: RemoteResourceConfigs;
+    resourceConfig: RemoteResourceTemplate;
     resourceResult: unknown;
   }): Promise<UICommAction[]> {
     const { resourceConfig, resourceResult } = params;
@@ -321,7 +321,7 @@ export class RemoteResourceService {
   }
 
   #generateRemoteResourceFetchFlow(
-    remoteResourceObs: Observable<RemoteResourceConfigs>,
+    remoteResourceObs: Observable<RemoteResourceTemplate>,
     remoteResourceState: BehaviorSubject<RemoteResourceState>
   ): Observable<boolean> {
     return remoteResourceObs.pipe(

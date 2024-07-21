@@ -39,8 +39,8 @@ import {
 import {
   EventsService,
   UIElementFactoryService,
-  UIElementTemplateConfigWithStatus,
-  UIElementTemplatesService,
+  UIElementTemplateService,
+  UIElementTemplateWithStatus,
 } from '../../../services';
 import {
   ElementInputsInterpolationContext,
@@ -57,7 +57,7 @@ import { InterpolationService } from '../../../services/interpolation.service';
 })
 export class UiElementWrapperComponent implements OnDestroy {
   #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
-  #uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
+  #uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
   #eventsService: EventsService = inject(EventsService);
@@ -66,7 +66,7 @@ export class UiElementWrapperComponent implements OnDestroy {
 
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
-  uiElementTemplate: Signal<Signal<UIElementTemplateConfigWithStatus>> = computed(() => {
+  uiElementTemplate: Signal<Signal<UIElementTemplateWithStatus>> = computed(() => {
     return this.#uiElementTemplatesService.getUIElementTemplate(
       this.uiElementInstance().uiElementTemplateId
     );

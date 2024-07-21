@@ -13,10 +13,10 @@ import {
   DuiComponent,
   EventObject,
   EventsService,
-  LayoutService,
+  LayoutTemplateService,
   RemoteResourceService,
   UIElementFactoryService,
-  UIElementTemplatesService,
+  UIElementTemplateService,
 } from '@namnguyen191/dui';
 import {
   SimpleButtonComponent,
@@ -28,7 +28,7 @@ import { filter, mergeMap, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from './services/layouts.service';
 import { RemoteResourcesService } from './services/remote-resources.service';
-import { UIElementTemplatesService as UIElementTemplatesServiceAPI } from './services/ui-element-templates.service';
+import { UIElementTemplateService as UIElementTemplatesServiceAPI } from './services/ui-element-templates.service';
 
 @Component({
   selector: 'namnguyen191-dui-consumer',
@@ -41,11 +41,11 @@ import { UIElementTemplatesService as UIElementTemplatesServiceAPI } from './ser
 export class DuiConsumerComponent {
   layoutId: WritableSignal<string> = signal('LAYOUT_CARBON_MAIN');
 
-  uiElementTemplatesService: UIElementTemplatesService = inject(UIElementTemplatesService);
+  uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
   eventsService: EventsService = inject(EventsService);
-  layoutService: LayoutService = inject(LayoutService);
+  layoutService: LayoutTemplateService = inject(LayoutTemplateService);
   layoutsServiceAPI: LayoutsService = inject(LayoutsService);
   uiElementTemplatesServiceAPI: UIElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
   remoteResourcesServiceAPI: RemoteResourcesService = inject(RemoteResourcesService);
@@ -106,7 +106,7 @@ export class DuiConsumerComponent {
         const missingLayoutId = event.payload.id;
         return this.layoutsServiceAPI.getLayoutById(missingLayoutId);
       }),
-      tap((layout) => this.layoutService.registerLayout(layout))
+      tap((layout) => this.layoutService.registerLayoutTemplate(layout))
     );
 
     missingLayoutEvents.subscribe();

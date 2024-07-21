@@ -1,30 +1,28 @@
 import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { ConfigWithStatus, UIElementTemplate } from '../interfaces';
-import { logError } from '../utils/logging';
+import { ConfigWithStatus, UIElementTemplate } from '../../interfaces';
+import { logError } from '../../utils/logging';
 
-export type UIElementTemplateConfigWithStatus = ConfigWithStatus<UIElementTemplate>;
+export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;
 
 type UIElementTemplateId = string;
 
 @Injectable({
   providedIn: 'root',
 })
-export class UIElementTemplatesService {
-  #uiElementTemplateMap: Record<
-    UIElementTemplateId,
-    WritableSignal<UIElementTemplateConfigWithStatus>
-  > = {};
+export class UIElementTemplateService {
+  #uiElementTemplateMap: Record<UIElementTemplateId, WritableSignal<UIElementTemplateWithStatus>> =
+    {};
 
   startRegisteringUIElementTemplate(id: string): void {
     const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
-    const registeringUIElementTemplate: UIElementTemplateConfigWithStatus = {
+    const registeringUIElementTemplate: UIElementTemplateWithStatus = {
       id,
       status: 'loading',
       config: null,
     };
     if (!existingUIElementTemplateSig) {
-      const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal(
+      const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal(
         registeringUIElementTemplate
       );
       this.#uiElementTemplateMap[id] = newUIElementTemplateSig;
@@ -37,7 +35,7 @@ export class UIElementTemplatesService {
   registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
     const uiElementId = uiElementTemplate.id;
     const existingUIElementTemplateSig = this.#uiElementTemplateMap[uiElementId];
-    const registeredUIElementTemplate: UIElementTemplateConfigWithStatus = {
+    const registeredUIElementTemplate: UIElementTemplateWithStatus = {
       id: uiElementId,
       status: 'loaded',
       config: uiElementTemplate,
@@ -54,17 +52,17 @@ export class UIElementTemplatesService {
       return;
     }
 
-    const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal(
+    const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal(
       registeredUIElementTemplate
     );
 
     this.#uiElementTemplateMap[uiElementId] = newUIElementTemplateSig;
   }
 
-  getUIElementTemplate<T extends string>(id: T): Signal<UIElementTemplateConfigWithStatus> {
+  getUIElementTemplate<T extends string>(id: T): Signal<UIElementTemplateWithStatus> {
     const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
     if (!existingUIElementTemplateSig) {
-      const newUIElementTemplateSig: WritableSignal<UIElementTemplateConfigWithStatus> = signal({
+      const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal({
         id,
         status: 'missing',
         config: null,

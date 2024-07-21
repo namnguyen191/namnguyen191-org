@@ -11,7 +11,7 @@ export type Request = {
   interpolation?: string;
 };
 
-export type RemoteResourceConfigs = {
+export type RemoteResourceTemplate = {
   id: string;
   stateSubscription?: StateSubscriptionConfig;
   options: {
