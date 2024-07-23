@@ -1,7 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 import { ConfigWithStatus, UIElementTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
+import { EventsService } from '../events.service';
 
 export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;
 
@@ -11,6 +12,8 @@ type UIElementTemplateId = string;
   providedIn: 'root',
 })
 export class UIElementTemplateService {
+  #eventsService: EventsService = inject(EventsService);
+
   #uiElementTemplateMap: Record<UIElementTemplateId, WritableSignal<UIElementTemplateWithStatus>> =
     {};
 
@@ -62,6 +65,12 @@ export class UIElementTemplateService {
   getUIElementTemplate<T extends string>(id: T): Signal<UIElementTemplateWithStatus> {
     const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
     if (!existingUIElementTemplateSig) {
+      this.#eventsService.emitEvent({
+        type: 'MISSING_UI_ELEMENT_TEMPLATE',
+        payload: {
+          id,
+        },
+      });
       const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal({
         id,
         status: 'missing',

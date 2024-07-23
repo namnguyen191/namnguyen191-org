@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   EnvironmentInjector,
   inject,
   input,
@@ -98,20 +97,6 @@ export class UiElementWrapperComponent implements OnDestroy {
       takeUntil(this.#destroyElementInputsObs)
     );
   });
-
-  constructor() {
-    effect(() => {
-      const template = this.uiElementTemplate()();
-      if (template.status === 'missing') {
-        this.#eventsService.emitEvent({
-          type: 'MISSING_UI_ELEMENT_TEMPLATE',
-          payload: {
-            id: template.id,
-          },
-        });
-      }
-    });
-  }
 
   ngOnDestroy(): void {
     this.#destroyElementInputsObs.next();

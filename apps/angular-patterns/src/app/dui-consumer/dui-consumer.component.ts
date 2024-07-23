@@ -118,15 +118,12 @@ export class DuiConsumerComponent {
       ),
       mergeMap((event) => {
         const missingUIElementTemplateId = event.payload.id;
+
         return this.uiElementTemplatesServiceAPI
           .getUIElementTemplateById(missingUIElementTemplateId)
           .pipe(
             tap((uiElementTemplate) => {
-              try {
-                this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
-              } catch (error) {
-                console.log('Nam data is: duplicated registration');
-              }
+              this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
             })
           );
       })

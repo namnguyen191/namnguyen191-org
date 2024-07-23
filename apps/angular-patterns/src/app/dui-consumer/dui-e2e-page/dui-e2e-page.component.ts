@@ -91,11 +91,7 @@ export class DuiE2EPageComponent {
           .getUIElementTemplateById(missingUIElementTemplateId)
           .pipe(
             tap((uiElementTemplate) => {
-              try {
-                this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
-              } catch (error) {
-                console.log('Nam data is: duplicated registration');
-              }
+              this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
             })
           );
       })
@@ -145,7 +141,7 @@ export class DuiE2EPageComponent {
   }
 
   #changeLayout(id: string): void {
-    console.log('Nam data is: ', id);
+    console.log('Changing layout to:', id);
     this.layoutId.set(id);
   }
 }

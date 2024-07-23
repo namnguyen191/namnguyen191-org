@@ -5,7 +5,6 @@
     "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss",
     "styled-components.vscode-styled-components",
-    "firsttris.vscode-jest-runner",
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
     "ms-playwright.playwright"

@@ -128,16 +128,6 @@ export class LayoutComponent implements OnDestroy {
       () => {
         const layoutConfigVal = this.layoutConfig()();
 
-        if (layoutConfigVal.status === 'missing') {
-          this.#eventsService.emitEvent({
-            type: 'MISSING_LAYOUT',
-            payload: {
-              id: layoutConfigVal.id,
-            },
-          });
-          return;
-        }
-
         if (layoutConfigVal.status !== 'loaded') {
           return;
         }

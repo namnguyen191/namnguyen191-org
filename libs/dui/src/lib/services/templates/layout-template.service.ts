@@ -1,7 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 import { ConfigWithStatus, LayoutTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
+import { EventsService } from '../events.service';
 
 export type LayoutTemplateWithStatus = ConfigWithStatus<LayoutTemplate>;
 
@@ -11,6 +12,8 @@ type LayoutTemplateId = string;
   providedIn: 'root',
 })
 export class LayoutTemplateService {
+  #eventsService: EventsService = inject(EventsService);
+
   #layoutMap: Record<LayoutTemplateId, WritableSignal<LayoutTemplateWithStatus>> = {};
 
   startRegisteringLayoutTemplate(id: string): void {
@@ -59,6 +62,12 @@ export class LayoutTemplateService {
   getLayoutTemplate<T extends string>(id: T): Signal<LayoutTemplateWithStatus> {
     const existingLayoutTemplateSig = this.#layoutMap[id];
     if (!existingLayoutTemplateSig) {
+      this.#eventsService.emitEvent({
+        type: 'MISSING_LAYOUT',
+        payload: {
+          id,
+        },
+      });
       const newLayoutTemplateSig: WritableSignal<LayoutTemplateWithStatus> = signal({
         id,
         status: 'missing',
