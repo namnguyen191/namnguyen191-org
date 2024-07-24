@@ -14,7 +14,7 @@ import {
   EventObject,
   EventsService,
   LayoutTemplateService,
-  RemoteResourceService,
+  RemoteResourceTemplateService,
   UIElementFactoryService,
   UIElementTemplateService,
 } from '@namnguyen191/dui';
@@ -43,7 +43,9 @@ export class DuiE2EPageComponent {
 
   uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
-  remoteResourceService: RemoteResourceService = inject(RemoteResourceService);
+  remoteResourceTemplateService: RemoteResourceTemplateService = inject(
+    RemoteResourceTemplateService
+  );
   eventsService: EventsService = inject(EventsService);
   layoutService: LayoutTemplateService = inject(LayoutTemplateService);
   layoutsServiceAPI: LayoutsService = inject(LayoutsService);
@@ -108,7 +110,9 @@ export class DuiE2EPageComponent {
         const missingRemoteResourceId = event.payload.id;
         return this.remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);
       }),
-      tap((remoteResource) => this.remoteResourceService.registerRemoteResource(remoteResource))
+      tap((remoteResource) =>
+        this.remoteResourceTemplateService.registerRemoteResourceTemplate(remoteResource)
+      )
     );
 
     missingRemoteResources.subscribe();

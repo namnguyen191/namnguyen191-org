@@ -1,7 +1,8 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 import { ConfigWithStatus, RemoteResourceTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
+import { EventsService } from '../events.service';
 
 export type RemoteResourceTemplateWithStatus = ConfigWithStatus<RemoteResourceTemplate>;
 
@@ -11,6 +12,8 @@ type RemoteResourceTemplateId = string;
   providedIn: 'root',
 })
 export class RemoteResourceTemplateService {
+  #eventsService: EventsService = inject(EventsService);
+
   #remoteResourceTemplateMap: Record<
     RemoteResourceTemplateId,
     WritableSignal<RemoteResourceTemplateWithStatus>
@@ -65,6 +68,12 @@ export class RemoteResourceTemplateService {
   getRemoteResourceTemplate<T extends string>(id: T): Signal<RemoteResourceTemplateWithStatus> {
     const existingRemoteResourceTemplateSig = this.#remoteResourceTemplateMap[id];
     if (!existingRemoteResourceTemplateSig) {
+      this.#eventsService.emitEvent({
+        type: 'MISSING_REMOTE_RESOURCE',
+        payload: {
+          id,
+        },
+      });
       const newRemoteResourceTemplateSig: WritableSignal<RemoteResourceTemplateWithStatus> = signal(
         {
           id,
