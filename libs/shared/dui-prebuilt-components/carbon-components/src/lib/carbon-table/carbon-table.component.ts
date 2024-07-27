@@ -11,18 +11,13 @@ import {
   Signal,
 } from '@angular/core';
 import {
-  BaseUIElementComponent,
-  ContextBasedElement,
+  BaseUIElementWithContextComponent,
   InterpolationService,
-  JSRunnerContext,
   parseZodWithDefault,
   triggerMultipleUIActions,
   UICommAction,
   UIElementImplementation,
-  ZodStringOrNumberOrBoolean,
-  ZodUICommAction,
 } from '@namnguyen191/dui';
-import { ObjectType } from '@namnguyen191/types-helper';
 import {
   PaginationModule,
   TableHeaderItem,
@@ -31,39 +26,15 @@ import {
   TableModule,
 } from 'carbon-components-angular';
 import { isEmpty } from 'lodash-es';
-import { z } from 'zod';
 
-const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);
-export type TableRowObject = z.infer<typeof ZodTableRowObject>;
-
-const ZodTableRowsConfig = z.array(ZodTableRowObject);
-export type TableRowsConfig = z.infer<typeof ZodTableRowsConfig>;
-
-const ZodTableHeadersConfig = z.array(ZodStringOrNumberOrBoolean);
-export type TableHeadersConfig = z.infer<typeof ZodTableHeadersConfig>;
-
-const ZodTableDescriptionConfig = z.string({
-  errorMap: () => ({ message: 'Table description must be a string' }),
-});
-export type TableDescriptionConfig = z.infer<typeof ZodTableDescriptionConfig>;
-
-const ZodTablePaginationConfigs = z.object({
-  pageSizes: z.array(z.number()).optional(),
-  onPageChange: z.array(ZodUICommAction).optional(),
-  pageInputDisabled: z.boolean().optional(),
-});
-export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
-
-const ZodCarbonTableUIElementComponentConfigs = z.object({
-  title: z.string(),
-  headers: ZodTableHeadersConfig,
-  rows: ZodTableRowsConfig,
-  description: ZodTableDescriptionConfig,
-});
-
-export type CarbonTableUIElementComponentConfigs = z.infer<
-  typeof ZodCarbonTableUIElementComponentConfigs
->;
+import {
+  CarbonTableUIElementComponentConfigs,
+  TableDescriptionConfig,
+  TableHeadersConfig,
+  TablePaginationConfigs,
+  TableRowsConfig,
+  ZodCarbonTableUIElementComponentConfigs,
+} from './carbon-table.interface';
 
 @Component({
   selector: 'namnguyen191-carbon-table',
@@ -74,8 +45,8 @@ export type CarbonTableUIElementComponentConfigs = z.infer<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarbonTableComponent
-  extends BaseUIElementComponent
-  implements UIElementImplementation<CarbonTableUIElementComponentConfigs>, ContextBasedElement
+  extends BaseUIElementWithContextComponent
+  implements UIElementImplementation<CarbonTableUIElementComponentConfigs>
 {
   static readonly NEED_CONTEXT = true;
   static readonly ELEMENT_TYPE = 'CARBON_TABLE';
@@ -141,9 +112,6 @@ export class CarbonTableComponent
     }
   );
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
-
-  // Cannot use [ComponentContextPropertyKey] otherwise Angular won't detect it as an input
-  $context$: InputSignal<ObjectType> = input<JSRunnerContext>({});
 
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);

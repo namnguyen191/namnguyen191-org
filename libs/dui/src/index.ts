@@ -1,4 +1,5 @@
 export * from './lib/components/base-ui-element.component';
+export * from './lib/components/base-ui-element-with-context.component';
 export * from './lib/components/dui/dui.component';
 export * from './lib/components/layout/layout.component';
 export * from './lib/interfaces';

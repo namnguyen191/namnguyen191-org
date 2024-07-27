@@ -2,10 +2,13 @@
   "id": "CARBON_TABLE_V1",
   "type": "CARBON_TABLE",
   "remoteResourceId": "us-pop-1",
+  "stateSubscription": {
+    "global": ["usPopulation"]
+  },
   "options": {
     "title": "This is a different table",
     "headers": ["State", "Year", "Population"],
-    "rows": "<${ return this.remoteResourceState?.result?.map(({ State, Year, Population }) => ([State, Year, Population])) ?? [] }$>",
+    "rows": "<${ return this.state?.global?.usPopulation?.map(({ State, Year, Population }) => ([State, Year, Population])) ?? [] }$>",
     "pagination": {
       "pageSizes": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
       "onPageChange": [

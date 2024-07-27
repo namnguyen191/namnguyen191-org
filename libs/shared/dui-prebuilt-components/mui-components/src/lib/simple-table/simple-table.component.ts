@@ -13,8 +13,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
-  BaseUIElementComponent,
-  ContextBasedElement,
+  BaseUIElementWithContextComponent,
   parseZodWithDefault,
   triggerMultipleUIActions,
   UICommAction,
@@ -23,7 +22,6 @@ import {
   ZodUICommAction,
 } from '@namnguyen191/dui';
 import { InterpolationService } from '@namnguyen191/dui';
-import { ObjectType } from '@namnguyen191/types-helper';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';
 
@@ -68,8 +66,8 @@ export type SimpleTableUIElementComponentConfigs = z.infer<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleTableComponent
-  extends BaseUIElementComponent
-  implements UIElementImplementation<SimpleTableUIElementComponentConfigs>, ContextBasedElement
+  extends BaseUIElementWithContextComponent
+  implements UIElementImplementation<SimpleTableUIElementComponentConfigs>
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
   static readonly NEED_CONTEXT = true;
@@ -114,9 +112,6 @@ export class SimpleTableComponent
     }
   );
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
-
-  // Cannot use [ComponentContextPropertyKey] otherwise Angular won't detect it as an input
-  $context$: InputSignal<ObjectType> = input<ObjectType>({});
 
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
