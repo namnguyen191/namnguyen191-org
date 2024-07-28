@@ -15,7 +15,7 @@ export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
 export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
   id: string;
   type: string;
-  remoteResourceId?: string;
+  remoteResourceIds?: string[];
   stateSubscription?: StateSubscriptionConfig;
   options: UIElementTemplateOptions<T>;
 };

@@ -1,7 +1,7 @@
 {
   "id": "MY_SIMPLE_TABLE_V2",
   "type": "SIMPLE_TABLE",
-  "remoteResourceId": "123",
+  "remoteResourceIds": ["123"],
   "stateSubscription": {
     "global": ["activities1", "activities", "activities1"]
   },

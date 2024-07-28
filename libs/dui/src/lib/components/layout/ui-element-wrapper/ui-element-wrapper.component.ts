@@ -17,6 +17,7 @@ import { isEqual } from 'lodash-es';
 import {
   catchError,
   combineLatest,
+  debounceTime,
   distinctUntilChanged,
   EMPTY,
   filter,
@@ -88,7 +89,7 @@ export class UiElementWrapperComponent implements OnDestroy {
         runInInjectionContext(this.#environmentInjector, () =>
           this.#generateComponentInputs({
             templateOptions: template.config.options,
-            remoteResourceId: template.config.remoteResourceId,
+            remoteResourceIds: template.config.remoteResourceIds,
             stateSubscription: template.config.stateSubscription,
             component: this.#uiElementFactoryService.getUIElement(template.config.type),
           })
@@ -105,15 +106,14 @@ export class UiElementWrapperComponent implements OnDestroy {
 
   #generateComponentInputs(params: {
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
-    remoteResourceId?: string;
+    remoteResourceIds?: string[];
     stateSubscription?: StateSubscriptionConfig;
     component: Type<unknown>;
   }): Observable<ObjectType> {
-    const { templateOptions, remoteResourceId, stateSubscription, component } = params;
-
+    const { templateOptions, remoteResourceIds, stateSubscription, component } = params;
     const interpolationContext: Observable<ElementInputsInterpolationContext> =
       getElementInputsInterpolationContext({
-        remoteResourceId,
+        remoteResourceIds,
         stateSubscription,
       });
 
@@ -142,8 +142,7 @@ export class UiElementWrapperComponent implements OnDestroy {
                   })
                 );
               }
-            }),
-            distinctUntilChanged(isEqual)
+            })
           );
         })
       );
@@ -153,22 +152,25 @@ export class UiElementWrapperComponent implements OnDestroy {
       (inputsObservableMap[ComponentContextPropertyKey] as unknown) = interpolationContext;
     }
 
-    if (remoteResourceId) {
+    if (remoteResourceIds) {
       // Only automatically set isLoading and isError if the user does not provide any override for them
       if (templateOptions.isLoading === undefined) {
         inputsObservableMap['isLoading'] = interpolationContext.pipe(
-          map((context) => context.remoteResourceState?.isLoading)
+          map((context) => context.remoteResourcesStates?.isAllLoading)
         );
       }
 
       if (templateOptions.isError === undefined) {
         inputsObservableMap['isError'] = interpolationContext.pipe(
-          map((context) => context.remoteResourceState?.isError)
+          map((context) => !!context.remoteResourcesStates?.isPartialError.length)
         );
       }
     }
 
-    return combineLatest(inputsObservableMap);
+    return combineLatest(inputsObservableMap).pipe(
+      distinctUntilChanged(isEqual),
+      debounceTime(500)
+    );
   }
 
   #isContextBased(component: Type<unknown>): boolean {

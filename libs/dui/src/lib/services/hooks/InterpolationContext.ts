@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
-import { combineLatest, Observable, of, shareReplay } from 'rxjs';
+import { combineLatest, map, Observable, of, shareReplay } from 'rxjs';
 
 import { StateSubscriptionConfig } from '../../interfaces';
 import { RemoteResourceService, RemoteResourceState } from '../remote-resource.service';
@@ -11,7 +11,7 @@ export type StateMap = {
 };
 
 export type ElementInputsInterpolationContext = {
-  remoteResourceState: null | RemoteResourceState;
+  remoteResourcesStates: null | RemoteResourcesStates;
   state: StateMap;
 };
 
@@ -76,27 +76,75 @@ export const getStatesSubscriptionAsContext = (
   });
 };
 
-const getRemoteResourceStateAsContext = (
-  remoteResourceId: string
-): Observable<RemoteResourceState> => {
+export type RemoteResourcesStates = {
+  results: {
+    [remoteResourceId: string]: RemoteResourceState;
+  };
+  isAllLoading: boolean;
+  isPartialLoading: string[];
+  isAllError: boolean;
+  isPartialError: string[];
+};
+const getRemoteResourcesStatesAsContext = (
+  remoteResourceIds: string[]
+): Observable<RemoteResourcesStates> => {
   const remoteResourceService = inject(RemoteResourceService);
 
-  return remoteResourceService.getRemoteResourceState(remoteResourceId);
+  const remoteResourcesStatesMap: { [id: string]: Observable<RemoteResourceState> } =
+    remoteResourceIds.reduce(
+      (acc, curId) => ({ ...acc, [curId]: remoteResourceService.getRemoteResourceState(curId) }),
+      {}
+    );
+
+  return combineLatest(remoteResourcesStatesMap).pipe(
+    map((statesMap) => {
+      const isAllLoading = Object.entries(statesMap).every(([, state]) => state.isLoading);
+      const isPartialLoading: string[] = Object.entries(statesMap).reduce(
+        (acc, [curId, curState]) => {
+          if (curState.isLoading) {
+            return [...acc, curId];
+          }
+
+          return acc;
+        },
+        [] as string[]
+      );
+      const isAllError = Object.entries(statesMap).every(([, state]) => state.isLoading);
+      const isPartialError: string[] = Object.entries(statesMap).reduce(
+        (acc, [curId, curState]) => {
+          if (curState.isError) {
+            return [...acc, curId];
+          }
+
+          return acc;
+        },
+        [] as string[]
+      );
+
+      return {
+        results: statesMap,
+        isAllLoading,
+        isPartialLoading,
+        isAllError,
+        isPartialError,
+      };
+    })
+  );
 };
 
 export const getElementInputsInterpolationContext = (params: {
-  remoteResourceId?: string;
+  remoteResourceIds?: string[];
   stateSubscription?: StateSubscriptionConfig;
 }): Observable<ElementInputsInterpolationContext> => {
-  const { remoteResourceId, stateSubscription = {} } = params;
+  const { remoteResourceIds, stateSubscription = {} } = params;
 
   const state = getStatesSubscriptionAsContext(stateSubscription);
-  const remoteResourceState = remoteResourceId
-    ? getRemoteResourceStateAsContext(remoteResourceId)
+  const remoteResourcesStates = remoteResourceIds?.length
+    ? getRemoteResourcesStatesAsContext(remoteResourceIds)
     : of(null);
 
   return combineLatest({
-    remoteResourceState,
+    remoteResourcesStates,
     state,
   }).pipe(shareReplay(1));
 };

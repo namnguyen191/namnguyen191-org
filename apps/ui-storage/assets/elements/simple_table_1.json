@@ -1,7 +1,7 @@
 {
   "id": "MY_SIMPLE_TABLE",
   "type": "SIMPLE_TABLE",
-  "remoteResourceId": "us-pop-1",
+  "remoteResourceIds": ["us-pop-1"],
   "stateSubscription": {
     "global": ["usPopulation"]
   },
