@@ -11,9 +11,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CarbonTableComponent } from '@namnguyen191/carbon-components';
 import {
   DuiComponent,
-  EventObject,
   EventsService,
   LayoutTemplateService,
+  missingLayoutTemplateEvent,
+  missingRemoteResourceTemplateEvent,
+  missingUIElementTemplateEvent,
   RemoteResourceTemplateService,
   UIElementFactoryService,
   UIElementTemplateService,
@@ -24,7 +26,7 @@ import {
   TabsComponent,
 } from '@namnguyen191/mui-components';
 import { ButtonModule } from 'carbon-components-angular';
-import { delay, filter, mergeMap, of, switchMap, tap } from 'rxjs';
+import { delay, mergeMap, of, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from '../services/layouts.service';
 import { RemoteResourcesService } from '../services/remote-resources.service';
@@ -68,10 +70,7 @@ export class DuiE2EPageComponent {
     const allEvents = this.eventsService.getEvents().pipe(takeUntilDestroyed(this.destroyRef));
 
     const missingLayoutEvents = allEvents.pipe(
-      filter(
-        (event): event is Extract<EventObject, { type: 'MISSING_LAYOUT' }> =>
-          event.type === 'MISSING_LAYOUT'
-      ),
+      missingLayoutTemplateEvent(),
       switchMap((event) => {
         const missingLayoutId = event.payload.id;
         this.layoutService.startRegisteringLayoutTemplate(missingLayoutId);
@@ -83,10 +82,7 @@ export class DuiE2EPageComponent {
     missingLayoutEvents.subscribe();
 
     const missingUIElementTemplates = allEvents.pipe(
-      filter(
-        (event): event is Extract<EventObject, { type: 'MISSING_UI_ELEMENT_TEMPLATE' }> =>
-          event.type === 'MISSING_UI_ELEMENT_TEMPLATE'
-      ),
+      missingUIElementTemplateEvent(),
       mergeMap((event) => {
         const missingUIElementTemplateId = event.payload.id;
         return this.uiElementTemplatesServiceAPI
@@ -102,10 +98,7 @@ export class DuiE2EPageComponent {
     missingUIElementTemplates.subscribe();
 
     const missingRemoteResources = allEvents.pipe(
-      filter(
-        (event): event is Extract<EventObject, { type: 'MISSING_REMOTE_RESOURCE' }> =>
-          event.type === 'MISSING_REMOTE_RESOURCE'
-      ),
+      missingRemoteResourceTemplateEvent(),
       mergeMap((event) => {
         const missingRemoteResourceId = event.payload.id;
         return this.remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);

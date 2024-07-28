@@ -2,7 +2,7 @@ import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/cor
 
 import { ConfigWithStatus, RemoteResourceTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
-import { EventsService } from '../events.service';
+import { EventsService } from '../events-service/events.service';
 
 export type RemoteResourceTemplateWithStatus = ConfigWithStatus<RemoteResourceTemplate>;
 
@@ -69,7 +69,7 @@ export class RemoteResourceTemplateService {
     const existingRemoteResourceTemplateSig = this.#remoteResourceTemplateMap[id];
     if (!existingRemoteResourceTemplateSig) {
       this.#eventsService.emitEvent({
-        type: 'MISSING_REMOTE_RESOURCE',
+        type: 'MISSING_REMOTE_RESOURCE_TEMPLATE',
         payload: {
           id,
         },

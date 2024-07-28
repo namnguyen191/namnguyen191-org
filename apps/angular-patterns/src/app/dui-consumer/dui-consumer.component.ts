@@ -101,8 +101,8 @@ export class DuiConsumerComponent {
 
     const missingLayoutEvents = allEvents.pipe(
       filter(
-        (event): event is Extract<EventObject, { type: 'MISSING_LAYOUT' }> =>
-          event.type === 'MISSING_LAYOUT'
+        (event): event is Extract<EventObject, { type: 'MISSING_LAYOUT_TEMPLATE' }> =>
+          event.type === 'MISSING_LAYOUT_TEMPLATE'
       ),
       switchMap((event) => {
         const missingLayoutId = event.payload.id;
@@ -135,8 +135,8 @@ export class DuiConsumerComponent {
 
     const missingRemoteResources = allEvents.pipe(
       filter(
-        (event): event is Extract<EventObject, { type: 'MISSING_REMOTE_RESOURCE' }> =>
-          event.type === 'MISSING_REMOTE_RESOURCE'
+        (event): event is Extract<EventObject, { type: 'MISSING_REMOTE_RESOURCE_TEMPLATE' }> =>
+          event.type === 'MISSING_REMOTE_RESOURCE_TEMPLATE'
       ),
       mergeMap((event) => {
         const missingRemoteResourceId = event.payload.id;

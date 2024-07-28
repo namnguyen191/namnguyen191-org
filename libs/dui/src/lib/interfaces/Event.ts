@@ -5,13 +5,13 @@ export type DUIEvent = {
   MISSING_UI_ELEMENT: {
     type: string;
   };
-  MISSING_LAYOUT: {
+  MISSING_LAYOUT_TEMPLATE: {
     id: string;
   };
   MISSING_UI_ELEMENT_TEMPLATE: {
     id: string;
   };
-  MISSING_REMOTE_RESOURCE: {
+  MISSING_REMOTE_RESOURCE_TEMPLATE: {
     id: string;
   };
   UI_ELEMENT_REPOSITION: {

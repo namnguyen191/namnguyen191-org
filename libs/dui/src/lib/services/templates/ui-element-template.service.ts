@@ -2,7 +2,7 @@ import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/cor
 
 import { ConfigWithStatus, UIElementTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
-import { EventsService } from '../events.service';
+import { EventsService } from '../events-service/events.service';
 
 export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;
 

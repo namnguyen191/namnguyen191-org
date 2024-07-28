@@ -1,4 +1,4 @@
-export * from './events.service';
+export * from './events-service/events.service';
 export * from './hooks';
 export * from './interpolation.service';
 export * from './remote-resource.service';
