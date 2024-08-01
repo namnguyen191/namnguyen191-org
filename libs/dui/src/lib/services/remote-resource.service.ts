@@ -8,6 +8,7 @@ import {
   expand,
   filter,
   firstValueFrom,
+  forkJoin,
   from,
   last,
   map,
@@ -28,6 +29,7 @@ import {
   getResourceRequestConfigInterpolationContext,
   getResourceRequestHooksInterpolationContext,
   getResourceRequestTransformationInterpolationContext,
+  getStatesAsContext,
   getStatesSubscriptionAsContext,
 } from './hooks/InterpolationContext';
 import { triggerMultipleUIActions } from './hooks/UIActions';
@@ -84,7 +86,7 @@ export class RemoteResourceService {
     this.#reloadControlSubject.next(id);
   }
 
-  #processRequests(requests: Request[]): Observable<unknown> {
+  #processRequestsInSequence(requests: Request[]): Observable<unknown> {
     let currentRequestIndex = 0;
 
     return of([]).pipe(
@@ -94,12 +96,20 @@ export class RemoteResourceService {
         }
         const curReq = requests[currentRequestIndex] as Request;
         currentRequestIndex++;
-        return from(this.#interpolateRequestOptions(curReq, accumulatedRequestsResults)).pipe(
+        return from(
+          this.#interpolateSequencedRequestOptions(curReq, accumulatedRequestsResults)
+        ).pipe(
           switchMap((interpolatedRequestOptions) =>
             this.#dataFetchingService.fetchData(interpolatedRequestOptions)
           ),
           switchMap((requestResult) =>
-            from(this.#interpolateRequestResult(curReq, requestResult, accumulatedRequestsResults))
+            from(
+              this.#interpolateSequencedRequestResult(
+                curReq,
+                requestResult,
+                accumulatedRequestsResults
+              )
+            )
           ),
           map((interpolatedRequestResult) => [
             ...accumulatedRequestsResults,
@@ -110,6 +120,17 @@ export class RemoteResourceService {
       last(),
       // The last request result will be used as the final result for the remote resource
       map((accumulatedRequestsResults) => accumulatedRequestsResults[requests.length - 1])
+    );
+  }
+
+  #processRequestsInParallel(requests: Request[]): Observable<unknown[]> {
+    return from(this.#interpolateParallelRequestOptions(requests)).pipe(
+      switchMap((interpolatedRequestOptions) =>
+        forkJoin(
+          interpolatedRequestOptions.map((request) => this.#dataFetchingService.fetchData(request))
+        )
+      ),
+      switchMap((responses) => this.#interpolateParallelRequestsResult(requests, responses))
     );
   }
 
@@ -187,7 +208,7 @@ export class RemoteResourceService {
     }
   }
 
-  async #interpolateRequestOptions(
+  async #interpolateSequencedRequestOptions(
     req: Request,
     accumulatedRequestsResults: unknown[]
   ): Promise<FetchDataParams> {
@@ -209,7 +230,25 @@ export class RemoteResourceService {
     }
   }
 
-  async #interpolateRequestResult(
+  async #interpolateParallelRequestOptions(reqs: Request[]): Promise<FetchDataParams[]> {
+    const currentState = await firstValueFrom(
+      runInInjectionContext(this.#environmentInjector, () => getStatesAsContext())
+    );
+    const requestsConfigs = reqs.map((req) => req.configs);
+    try {
+      const interpolatedRequestOptions = (await this.#interpolationService.interpolate({
+        value: requestsConfigs,
+        context: currentState,
+      })) as FetchDataParams[];
+
+      return interpolatedRequestOptions;
+    } catch (error) {
+      console.warn('Fail to interpolate parallel requests options');
+      throw error;
+    }
+  }
+
+  async #interpolateSequencedRequestResult(
     req: Request,
     requestResult: unknown,
     accumulatedRequestsResults: unknown[]
@@ -237,6 +276,39 @@ export class RemoteResourceService {
     }
 
     return requestResult;
+  }
+
+  async #interpolateParallelRequestsResult(
+    reqs: Request[],
+    responses: unknown[]
+  ): Promise<unknown[]> {
+    const results: unknown[] = [];
+    for (let i = 0; i < reqs.length; i++) {
+      const { interpolation } = reqs[i] as Request;
+      if (interpolation) {
+        const requestTransformationContext = await firstValueFrom(
+          runInInjectionContext(this.#environmentInjector, () =>
+            getResourceRequestTransformationInterpolationContext({
+              currentRequestResult: responses[i],
+            })
+          )
+        );
+
+        try {
+          const requestResult = await this.#interpolationService.interpolate({
+            value: interpolation,
+            context: requestTransformationContext,
+          });
+          results.push(requestResult);
+        } catch (error) {
+          console.warn('Failed to interpolate request result');
+          results.push({ error });
+          throw error;
+        }
+      }
+    }
+
+    return results;
   }
 
   #setLoadingState(remoteResourceState: BehaviorSubject<RemoteResourceState>): void {
@@ -292,11 +364,15 @@ export class RemoteResourceService {
       tap({
         next: () => this.#setLoadingState(remoteResourceState),
       }),
-      switchMap((rrt) =>
-        this.#processRequests(rrt.config.options.requests).pipe(
-          map((result) => ({ result, remoteResourceTemplate: rrt }))
-        )
-      ),
+      switchMap((rrt) => {
+        const requests = rrt.config.options.requests;
+        const isParallel = rrt.config.options.parallel;
+        const proccessMethod = isParallel
+          ? this.#processRequestsInParallel(requests)
+          : this.#processRequestsInSequence(requests);
+
+        return proccessMethod.pipe(map((result) => ({ result, remoteResourceTemplate: rrt })));
+      }),
       switchMap(({ result, remoteResourceTemplate }) => {
         const {
           config: {

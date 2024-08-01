@@ -17,5 +17,6 @@ export type RemoteResourceTemplate = {
   options: {
     requests: Request[];
     onSuccess?: UICommAction[];
+    parallel?: boolean;
   };
 };

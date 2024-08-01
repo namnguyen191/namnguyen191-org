@@ -18,7 +18,8 @@ export const runRawJs = (
   if (allowList) {
     contextOverride = restrictCurrentExecutionContextGlobal(allowList);
   }
-  return new Function(`${contextOverride}${rawJs}`).bind(context).call();
+  const result = new Function(`${contextOverride}${rawJs}`).bind(context).call();
+  return result;
 };
 
 export const handleRunJsMessage = (

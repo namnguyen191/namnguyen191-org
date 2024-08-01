@@ -19,7 +19,7 @@ type AccumulatedRequestsResults = unknown[];
 
 export type RequestConfigsInterpolationContext = {
   state: StateMap;
-  $requests: AccumulatedRequestsResults;
+  $requests?: AccumulatedRequestsResults;
 };
 
 export type RequestTransformationInterpolationContext = RequestConfigsInterpolationContext & {
@@ -31,7 +31,7 @@ export type RequestHooksInterpolationContext = {
   $result: unknown;
 };
 
-const getStatesAsContext = (): Observable<StateMap> => {
+export const getStatesAsContext = (): Observable<StateMap> => {
   const stateStoreService = inject(StateStoreService);
 
   const local: Observable<ObjectType> = stateStoreService.getLocalState();
@@ -162,8 +162,8 @@ export const getResourceRequestConfigInterpolationContext = (
 };
 
 export const getResourceRequestTransformationInterpolationContext = (params: {
-  accumulatedRequestsResults: AccumulatedRequestsResults;
-  currentRequestResult: unknown;
+  accumulatedRequestsResults?: AccumulatedRequestsResults;
+  currentRequestResult?: unknown;
 }): Observable<RequestTransformationInterpolationContext> => {
   const { accumulatedRequestsResults, currentRequestResult } = params;
   const state = getStatesAsContext();

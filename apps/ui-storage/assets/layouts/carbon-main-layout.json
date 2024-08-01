@@ -4,6 +4,10 @@
     {
       "id": "instance-1",
       "uiElementTemplateId": "CARBON_TABLE_V1"
+    },
+    {
+      "id": "instance-2",
+      "uiElementTemplateId": "POKEMON_PARALLEL_TABLE"
     }
   ]
 }
