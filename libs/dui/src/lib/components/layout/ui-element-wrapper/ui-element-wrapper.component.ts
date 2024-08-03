@@ -156,7 +156,7 @@ export class UiElementWrapperComponent implements OnDestroy {
       // Only automatically set isLoading and isError if the user does not provide any override for them
       if (templateOptions.isLoading === undefined) {
         inputsObservableMap['isLoading'] = interpolationContext.pipe(
-          map((context) => context.remoteResourcesStates?.isAllLoading)
+          map((context) => !!context.remoteResourcesStates?.isPartialLoading.length)
         );
       }
 

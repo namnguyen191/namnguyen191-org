@@ -8,6 +8,10 @@
     {
       "id": "instance-2",
       "uiElementTemplateId": "POKEMON_PARALLEL_TABLE"
+    },
+    {
+      "id": "instance-3",
+      "uiElementTemplateId": "pokemon-and-us-pop-table"
     }
   ]
 }
