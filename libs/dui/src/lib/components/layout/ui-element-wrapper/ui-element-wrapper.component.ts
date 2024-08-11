@@ -31,6 +31,10 @@ import {
 } from 'rxjs';
 
 import {
+  ElementInputsInterpolationContext,
+  getElementInputsInterpolationContext,
+} from '../../../hooks/InterpolationContext';
+import {
   ComponentContextPropertyKey,
   StateSubscriptionConfig,
   UIElementInstance,
@@ -42,10 +46,6 @@ import {
   UIElementTemplateService,
   UIElementTemplateWithStatus,
 } from '../../../services';
-import {
-  ElementInputsInterpolationContext,
-  getElementInputsInterpolationContext,
-} from '../../../services/hooks/InterpolationContext';
 import { InterpolationService } from '../../../services/interpolation.service';
 
 @Component({

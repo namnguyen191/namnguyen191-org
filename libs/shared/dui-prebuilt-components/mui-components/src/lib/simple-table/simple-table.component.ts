@@ -13,13 +13,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
+  ActionHookService,
   BaseUIElementWithContextComponent,
+  DefaultActionHook,
   parseZodWithDefault,
-  triggerMultipleUIActions,
-  UICommAction,
   UIElementImplementation,
+  ZodDefaultActionHook,
   ZodStringOrNumberOrBoolean,
-  ZodUICommAction,
 } from '@namnguyen191/dui';
 import { InterpolationService } from '@namnguyen191/dui';
 import { isEmpty } from 'lodash-es';
@@ -40,7 +40,7 @@ export type TableColumnObject = z.infer<typeof ZodTableColumnObject>;
 
 const ZodTablePaginationConfigs = z.object({
   pageSizes: z.array(z.number()).optional(),
-  onPageChange: z.array(ZodUICommAction).optional(),
+  onPageChange: z.array(ZodDefaultActionHook).optional(),
 });
 export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
 
@@ -114,11 +114,13 @@ export class SimpleTableComponent
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
 
   #interpolationService: InterpolationService = inject(InterpolationService);
+  #actionHookService: ActionHookService = inject(ActionHookService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   async onPageChange(event: PageEvent): Promise<void> {
     const { pageSize, pageIndex: currentPage } = event;
-    const onPageChange: UICommAction[] | undefined = this.paginationConfigOption().onPageChange;
+    const onPageChange: DefaultActionHook[] | undefined =
+      this.paginationConfigOption().onPageChange;
     if (!onPageChange || onPageChange.length === 0) {
       return;
     }
@@ -128,9 +130,11 @@ export class SimpleTableComponent
       const actions = (await this.#interpolationService.interpolate({
         context: { ...context, $paginationContext: { pageSize, currentPage } },
         value: onPageChange,
-      })) as UICommAction[];
+      })) as DefaultActionHook[];
 
-      runInInjectionContext(this.#environmentInjector, () => triggerMultipleUIActions(actions));
+      runInInjectionContext(this.#environmentInjector, () =>
+        this.#actionHookService.triggerActionHooks(actions)
+      );
     } catch (error) {
       console.warn('Failed to interpolate onPageChange config');
     }

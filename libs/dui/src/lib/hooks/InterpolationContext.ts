@@ -2,9 +2,9 @@ import { inject } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { combineLatest, map, Observable, of, shareReplay } from 'rxjs';
 
-import { StateSubscriptionConfig } from '../../interfaces';
-import { RemoteResourceService, RemoteResourceState } from '../remote-resource.service';
-import { AvailableStateScope, StateStoreService } from '../state-store.service';
+import { StateSubscriptionConfig } from '../interfaces';
+import { RemoteResourceService, RemoteResourceState } from '../services/remote-resource.service';
+import { AvailableStateScope, StateStoreService } from '../services/state-store.service';
 
 export type StateMap = {
   [K in AvailableStateScope]: ObjectType;

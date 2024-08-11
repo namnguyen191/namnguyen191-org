@@ -1,5 +1,5 @@
+export * from './action-hook.service';
 export * from './events-service/events.service';
-export * from './hooks';
 export * from './interpolation.service';
 export * from './remote-resource.service';
 export * from './templates/layout-template.service';

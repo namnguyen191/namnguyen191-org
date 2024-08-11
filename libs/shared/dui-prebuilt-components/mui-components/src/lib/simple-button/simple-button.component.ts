@@ -11,11 +11,11 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
+  ActionHookService,
   BaseUIElementComponent,
-  triggerMultipleUIActions,
-  UICommAction,
+  DefaultActionHook,
   UIElementImplementation,
-  ZodUICommAction,
+  ZodDefaultActionHook,
 } from '@namnguyen191/dui';
 import { z } from 'zod';
 
@@ -32,7 +32,7 @@ const ZodSimpleButtonUIElementComponentConfigs = z.object({
   }),
   color: ZodButtonColor,
   disabled: z.boolean(),
-  onClick: z.array(ZodUICommAction),
+  onClick: z.array(ZodDefaultActionHook),
 });
 
 export type SimpleButtonUIElementComponentConfigs = z.infer<
@@ -68,18 +68,19 @@ export class SimpleButtonComponent
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.color.parse(val),
   });
 
-  onClickConfigOption: InputSignal<UICommAction[]> = input([], {
+  onClickConfigOption: InputSignal<DefaultActionHook[]> = input([], {
     alias: 'onClick',
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.onClick.parse(val),
   });
 
+  #actionHookService: ActionHookService = inject(ActionHookService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   handleButtonClick(): void {
     const onclickActions = this.onClickConfigOption();
     if (onclickActions.length > 0) {
       runInInjectionContext(this.#environmentInjector, () =>
-        triggerMultipleUIActions(onclickActions)
+        this.#actionHookService.triggerActionHooks(onclickActions)
       );
     }
   }

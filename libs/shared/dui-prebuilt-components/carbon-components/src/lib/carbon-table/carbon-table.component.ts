@@ -11,11 +11,11 @@ import {
   Signal,
 } from '@angular/core';
 import {
+  ActionHookService,
   BaseUIElementWithContextComponent,
+  DefaultActionHook,
   InterpolationService,
   parseZodWithDefault,
-  triggerMultipleUIActions,
-  UICommAction,
   UIElementImplementation,
 } from '@namnguyen191/dui';
 import {
@@ -114,11 +114,13 @@ export class CarbonTableComponent
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
 
   #interpolationService: InterpolationService = inject(InterpolationService);
+  #actionHookService: ActionHookService = inject(ActionHookService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   async selectPage(selectedPage: number): Promise<void> {
     const pageLength = this.tableModel().pageLength;
-    const onPageChange: UICommAction[] | undefined = this.paginationConfigOption().onPageChange;
+    const onPageChange: DefaultActionHook[] | undefined =
+      this.paginationConfigOption().onPageChange;
     if (!onPageChange || onPageChange.length === 0) {
       return;
     }
@@ -128,9 +130,11 @@ export class CarbonTableComponent
       const actions = (await this.#interpolationService.interpolate({
         context: { ...context, $paginationContext: { pageLength, selectedPage } },
         value: onPageChange,
-      })) as UICommAction[];
+      })) as DefaultActionHook[];
 
-      runInInjectionContext(this.#environmentInjector, () => triggerMultipleUIActions(actions));
+      runInInjectionContext(this.#environmentInjector, () =>
+        this.#actionHookService.triggerActionHooks(actions)
+      );
     } catch (error) {
       console.warn('Failed to interpolate onPageChange config');
     }

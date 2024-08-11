@@ -21,18 +21,18 @@ import {
   tap,
 } from 'rxjs';
 
-import { UICommAction } from '../interfaces';
-import { RemoteResourceTemplate, Request } from '../interfaces/RemoteResource';
-import { logSubscription } from '../utils/logging';
-import { DataFetchingService, FetchDataParams } from './data-fetching.service';
 import {
   getResourceRequestConfigInterpolationContext,
   getResourceRequestHooksInterpolationContext,
   getResourceRequestTransformationInterpolationContext,
   getStatesAsContext,
   getStatesSubscriptionAsContext,
-} from './hooks/InterpolationContext';
-import { triggerMultipleUIActions } from './hooks/UIActions';
+} from '../hooks/InterpolationContext';
+import { DefaultActionHook } from '../interfaces';
+import { RemoteResourceTemplate, Request } from '../interfaces/RemoteResource';
+import { logSubscription } from '../utils/logging';
+import { ActionHookService } from './action-hook.service';
+import { DataFetchingService, FetchDataParams } from './data-fetching.service';
 import { InterpolationService } from './interpolation.service';
 import {
   RemoteResourceTemplateService,
@@ -61,6 +61,7 @@ export class RemoteResourceService {
   #remoteResourceTemplateService: RemoteResourceTemplateService = inject(
     RemoteResourceTemplateService
   );
+  #actionHookService: ActionHookService = inject(ActionHookService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
   getRemoteResourceState(id: string): Observable<RemoteResourceState> {
@@ -188,7 +189,7 @@ export class RemoteResourceService {
   async #interpolateResourceHooks(params: {
     onSuccessHooks: Exclude<RemoteResourceTemplate['options']['onSuccess'], undefined>;
     resourceResult: unknown;
-  }): Promise<UICommAction[]> {
+  }): Promise<DefaultActionHook[]> {
     const { onSuccessHooks, resourceResult } = params;
 
     const resourceHooksInterpolationContext = await runInInjectionContext(
@@ -199,7 +200,7 @@ export class RemoteResourceService {
       const interpolatedHooks = (await this.#interpolationService.interpolate({
         value: onSuccessHooks,
         context: resourceHooksInterpolationContext,
-      })) as UICommAction[];
+      })) as DefaultActionHook[];
 
       return interpolatedHooks;
     } catch (error) {
@@ -399,7 +400,7 @@ export class RemoteResourceService {
       }),
       map(({ result, interpolatedHooks }) => {
         runInInjectionContext(this.#environmentInjector, () => {
-          triggerMultipleUIActions(interpolatedHooks);
+          this.#actionHookService.triggerActionHooks(interpolatedHooks);
         });
 
         this.#setCompleteState(remoteResourceState, result);

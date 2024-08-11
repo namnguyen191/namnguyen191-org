@@ -1,4 +1,4 @@
-import { ZodStringOrNumberOrBoolean, ZodUICommAction } from '@namnguyen191/dui';
+import { ZodDefaultActionHook, ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
 import { z } from 'zod';
 
 export const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);
@@ -17,7 +17,7 @@ export type TableDescriptionConfig = z.infer<typeof ZodTableDescriptionConfig>;
 
 export const ZodTablePaginationConfigs = z.object({
   pageSizes: z.array(z.number()).optional(),
-  onPageChange: z.array(ZodUICommAction).optional(),
+  onPageChange: z.array(ZodDefaultActionHook).optional(),
   pageInputDisabled: z.boolean().optional(),
 });
 export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
