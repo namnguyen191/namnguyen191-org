@@ -119,15 +119,11 @@ export class UiElementWrapperComponent implements OnDestroy {
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
     for (const [key, val] of Object.entries(templateOptions)) {
-      const requiredInterpolation$ = from(this.#interpolationService.checkForInterpolation(val));
+      const requiredInterpolation = this.#interpolationService.checkForInterpolation(val);
 
-      inputsObservableMap[key] = requiredInterpolation$.pipe(
-        switchMap((requiredInterpolation) => {
-          if (!requiredInterpolation) {
-            return of(val);
-          }
-
-          return interpolationContext.pipe(
+      inputsObservableMap[key] = !requiredInterpolation
+        ? of(val)
+        : interpolationContext.pipe(
             switchMap((context) => {
               {
                 return from(
@@ -142,10 +138,9 @@ export class UiElementWrapperComponent implements OnDestroy {
                   })
                 );
               }
-            })
+            }),
+            distinctUntilChanged(isEqual)
           );
-        })
-      );
     }
 
     if (this.#isContextBased(component)) {
@@ -169,7 +164,7 @@ export class UiElementWrapperComponent implements OnDestroy {
 
     return combineLatest(inputsObservableMap).pipe(
       distinctUntilChanged(isEqual),
-      debounceTime(500)
+      debounceTime(100)
     );
   }
 

@@ -11,14 +11,14 @@ import {
   Signal,
 } from '@angular/core';
 import {
-  ActionHookService,
+  ActionHook,
   BaseUIElementWithContextComponent,
-  DefaultActionHook,
-  InterpolationService,
+  interpolateAndTriggerContextBasedActionHooks,
   parseZodWithDefault,
   UIElementImplementation,
 } from '@namnguyen191/dui';
 import {
+  PaginationModel,
   PaginationModule,
   TableHeaderItem,
   TableItem,
@@ -104,39 +104,55 @@ export class CarbonTableComponent
   });
 
   readonly DEFAULT_PAGINATION_PAGE_SIZES = [5, 10, 20];
-  // do not parse zod for the pagination input because we expect the un-interpolated value here
   paginationConfigOption: InputSignal<TablePaginationConfigs> = input(
     {},
     {
       alias: 'pagination',
+      transform: (val) => {
+        const result = parseZodWithDefault<TablePaginationConfigs>(
+          ZodCarbonTableUIElementComponentConfigs.shape.pagination,
+          val,
+          {
+            pageSizes: this.DEFAULT_PAGINATION_PAGE_SIZES,
+          }
+        );
+        return result;
+      },
     }
   );
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
+  paginationModel = computed<PaginationModel>(() => {
+    const paginationConfig = this.paginationConfigOption();
+    const pageLength = paginationConfig.pageSizes?.[0] ?? this.DEFAULT_PAGINATION_PAGE_SIZES[0];
+    const totalDataLength = paginationConfig.totalDataLength;
+    const pgModel = new PaginationModel();
+    pgModel.currentPage = 1;
+    pgModel.pageLength = pageLength;
+    pgModel.totalDataLength = totalDataLength ?? 0;
+    return pgModel;
+  });
 
-  #interpolationService: InterpolationService = inject(InterpolationService);
-  #actionHookService: ActionHookService = inject(ActionHookService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
 
-  async selectPage(selectedPage: number): Promise<void> {
-    const pageLength = this.tableModel().pageLength;
-    const onPageChange: DefaultActionHook[] | undefined =
+  selectPage(selectedPage: number): void {
+    this.paginationModel().currentPage = selectedPage;
+    const onPageChangeHooks: ActionHook[] | undefined | string =
       this.paginationConfigOption().onPageChange;
-    if (!onPageChange || onPageChange.length === 0) {
+
+    if (!onPageChangeHooks) {
       return;
     }
 
-    const context = this.$context$();
-    try {
-      const actions = (await this.#interpolationService.interpolate({
-        context: { ...context, $paginationContext: { pageLength, selectedPage } },
-        value: onPageChange,
-      })) as DefaultActionHook[];
-
-      runInInjectionContext(this.#environmentInjector, () =>
-        this.#actionHookService.triggerActionHooks(actions)
-      );
-    } catch (error) {
-      console.warn('Failed to interpolate onPageChange config');
-    }
+    const pageLength = this.paginationModel().pageLength;
+    const context = {
+      ...this.$context$(),
+      $paginationContext: { pageLength, selectedPage },
+    };
+    runInInjectionContext(this.#environmentInjector, async () => {
+      await interpolateAndTriggerContextBasedActionHooks({
+        hooks: onPageChangeHooks,
+        context,
+      });
+    });
   }
 }

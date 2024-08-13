@@ -1,15 +1,33 @@
-import { Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 
-import { defaultActionHooksHandlersMap } from '../hooks';
+import { actionsHandlersMap } from '../hooks';
 import { ActionHook, ActionHookHandler } from '../interfaces';
 
 export type ActionHooksHandlersMap = { [hookId: string]: ActionHookHandler };
+
+export const createHookWithInjectionContext = <T extends ActionHook>(
+  injectionContext: EnvironmentInjector,
+  hook: ActionHookHandler<T>
+): ActionHookHandler<T> => {
+  return (action: T): void => runInInjectionContext(injectionContext, () => hook(action));
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActionHookService {
-  #actionHooksHandlersMap: ActionHooksHandlersMap = defaultActionHooksHandlersMap;
+  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+
+  #actionHooksHandlersMap: ActionHooksHandlersMap = {
+    triggerRemoteResource: createHookWithInjectionContext(
+      this.#environmentInjector,
+      actionsHandlersMap.handleTriggerRemoteResource
+    ),
+    addToState: createHookWithInjectionContext(
+      this.#environmentInjector,
+      actionsHandlersMap.handleAddToState
+    ),
+  } as ActionHooksHandlersMap;
 
   registerHook(hookId: string, handler: ActionHookHandler): void {
     const existingHandler = this.#actionHooksHandlersMap[hookId];

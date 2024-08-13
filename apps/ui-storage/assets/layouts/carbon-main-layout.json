@@ -3,7 +3,15 @@
   "uiElementInstances": [
     {
       "id": "instance-1",
-      "uiElementTemplateId": "CARBON_TABLE_V1"
+      "uiElementTemplateId": "CARBON_TABLE_V1",
+      "positionAndSize": {
+        "x": 0,
+        "y": 0,
+        "rows": 20,
+        "cols": 8,
+        "resizeEnabled": false,
+        "dragEnabled": false
+      }
     },
     {
       "id": "instance-2",
@@ -12,6 +20,30 @@
     {
       "id": "instance-3",
       "uiElementTemplateId": "pokemon-and-us-pop-table"
+    },
+    {
+      "id": "instance-4",
+      "uiElementTemplateId": "carbon_table_in_memory_pagination",
+      "positionAndSize": {
+        "x": 0,
+        "y": 20,
+        "rows": 20,
+        "cols": 8,
+        "resizeEnabled": false,
+        "dragEnabled": false
+      }
+    },
+    {
+      "id": "instance-5",
+      "uiElementTemplateId": "carbon_table_server_side_pagination",
+      "positionAndSize": {
+        "x": 9,
+        "y": 20,
+        "rows": 20,
+        "cols": 8,
+        "resizeEnabled": false,
+        "dragEnabled": false
+      }
     }
   ]
 }

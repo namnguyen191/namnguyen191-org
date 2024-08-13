@@ -31,7 +31,7 @@
     </cds-table>
     <cds-pagination
       *ngIf="shouldDisplayPagination()"
-      [model]="tableModel()"
+      [model]="paginationModel()"
       (selectPage)="selectPage($event)"
       [pageInputDisabled]="paginationConfigOption().pageInputDisabled ?? false"
       [itemsPerPageOptions]="paginationConfigOption().pageSizes ?? DEFAULT_PAGINATION_PAGE_SIZES"

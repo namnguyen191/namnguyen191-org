@@ -1,0 +1,29 @@
+{
+  "id": "carbon_table_in_memory_pagination",
+  "type": "CARBON_TABLE",
+  "remoteResourceIds": ["us-pop-no-refresh"],
+  "stateSubscription": {
+    "global": ["usPopPage"]
+  },
+  "options": {
+    "title": "In memory pagination table",
+    "headers": ["State", "Year", "Population"],
+    "rows": "<${ const currentPage=this.state?.global?.usPopPage?.selectedPage??1;const currentPageLength=this.state?.global?.usPopPage?.pageLength??15;const startPageIndex=(currentPage-1)*currentPageLength;const endPageIndex=currentPage*currentPageLength;return this.remoteResourcesStates?.results?.[\"us-pop-no-refresh\"]?.result?.slice(startPageIndex,endPageIndex)?.map((({State:State,Year:Year,Population:Population})=>[State,Year,Population]))??[]; }$>",
+    "pagination": {
+      "totalDataLength": "<${ return this.remoteResourcesStates?.results?.['us-pop-no-refresh']?.result?.length ?? 0 }$>",
+      "pageSizes": [15, 20, 25, 50],
+      "onPageChange": [
+        {
+          "type": "addToState",
+          "payload": {
+            "scope": "global",
+            "data": {
+              "usPopPage": "<${ return this.$paginationContext }$>"
+            }
+          }
+        }
+      ],
+      "pageInputDisabled": false
+    }
+  }
+}

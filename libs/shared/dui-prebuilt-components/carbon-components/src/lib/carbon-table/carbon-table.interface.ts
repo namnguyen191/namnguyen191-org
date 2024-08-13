@@ -1,4 +1,4 @@
-import { ZodDefaultActionHook, ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
+import { ZodContextBasedActionHooks, ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
 import { z } from 'zod';
 
 export const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);
@@ -17,8 +17,9 @@ export type TableDescriptionConfig = z.infer<typeof ZodTableDescriptionConfig>;
 
 export const ZodTablePaginationConfigs = z.object({
   pageSizes: z.array(z.number()).optional(),
-  onPageChange: z.array(ZodDefaultActionHook).optional(),
+  onPageChange: ZodContextBasedActionHooks.optional(),
   pageInputDisabled: z.boolean().optional(),
+  totalDataLength: z.number().optional(),
 });
 export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
 
@@ -27,6 +28,7 @@ export const ZodCarbonTableUIElementComponentConfigs = z.object({
   headers: ZodTableHeadersConfig,
   rows: ZodTableRowsConfig,
   description: ZodTableDescriptionConfig,
+  pagination: ZodTablePaginationConfigs,
 });
 
 export type CarbonTableUIElementComponentConfigs = z.infer<

@@ -1,0 +1,17 @@
+{
+  "id": "pokemon-server-pagination",
+  "stateSubscription": {
+    "global": ["pokemonPage"]
+  },
+  "options": {
+    "requests": [
+      {
+        "configs": {
+          "endpoint": "<${ return `https://pokeapi.co/api/v2/pokemon?offset=${(this.state?.global?.pokemonPage?.selectedPage ?? 0) * (this.state?.global?.pokemonPage?.pageLength ?? 10)}&limit=${this.state?.global?.pokemonPage?.pageLength ?? 10}` }$>",
+          "method": "GET"
+        },
+        "interpolation": "<${ return { pokemons: this.$current.results, totalCount: this.$current.count } }$>"
+      }
+    ]
+  }
+}

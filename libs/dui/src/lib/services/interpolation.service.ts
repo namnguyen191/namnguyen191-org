@@ -63,7 +63,7 @@ export class InterpolationService {
     return value;
   }
 
-  async checkForInterpolation(value: unknown): Promise<boolean> {
+  checkForInterpolation(value: unknown): boolean {
     if (!value || isEmpty(value)) {
       return false;
     }
@@ -173,21 +173,19 @@ export class InterpolationService {
     return clonedArray;
   }
 
-  async #checkForInterpolationInArray(arr: unknown[]): Promise<boolean> {
-    const clonedArray = structuredClone(arr);
+  #checkForInterpolationInArray(arr: unknown[]): boolean {
     let result = false;
-    for (let i = 0; i < clonedArray.length; i++) {
-      const val = clonedArray[i];
-      result = result || (await this.checkForInterpolation(val));
+    for (let i = 0; i < arr.length; i++) {
+      const val = arr[i];
+      result = result || this.checkForInterpolation(val);
     }
     return result;
   }
 
-  async #checkForInterpolationInObject(obj: ObjectType): Promise<boolean> {
-    const clonedObject = structuredClone(obj);
+  #checkForInterpolationInObject(obj: ObjectType): boolean {
     let result = false;
-    for (const val of Object.values(clonedObject)) {
-      result = result || (await this.checkForInterpolation(val));
+    for (const val of Object.values(obj)) {
+      result = result || this.checkForInterpolation(val);
     }
 
     return result;

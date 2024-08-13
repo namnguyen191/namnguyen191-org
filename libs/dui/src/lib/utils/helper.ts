@@ -1,6 +1,10 @@
+import { inject } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import { isObservable, map, Observable, of, OperatorFunction } from 'rxjs';
 import { ZodError, ZodType } from 'zod';
 
+import { ActionHook, ContextBasedActionHooks } from '../interfaces';
+import { ActionHookService, InterpolationService } from '../services';
 import { logError } from './logging';
 
 export const parseZodAndHandleErrorPipe = <T>(zodType: ZodType): OperatorFunction<T, T> => {
@@ -39,9 +43,42 @@ export const parseZodWithDefault = <T>(zodType: ZodType, val: unknown, defaultVa
   } catch (error) {
     if (error instanceof ZodError) {
       console.warn(
-        `Receiving: ${val} which is an invalid option: ${error.message}. The default value: ${defaultVal} will be used instead.`
+        `Receiving: ${JSON.stringify(val)} which is an invalid option: ${error.message}. The default value: ${JSON.stringify(defaultVal)} will be used instead.`
+      );
+    } else {
+      console.warn(
+        `An unknown error has occured while trying to interpolate ${JSON.stringify(val)}. The default value: ${JSON.stringify(defaultVal)} will be used instead.`
       );
     }
+
     return defaultVal;
+  }
+};
+
+export type InterpolateAndTriggerContextBasedActionHooksParams = {
+  context: ObjectType;
+  hooks: ContextBasedActionHooks;
+};
+export const interpolateAndTriggerContextBasedActionHooks = async (
+  params: InterpolateAndTriggerContextBasedActionHooksParams
+): Promise<void> => {
+  const { hooks, context } = params;
+  if (hooks.length === 0) {
+    return;
+  }
+
+  // Always interpolate cause the ActionHook might have partial interpolation
+  const interpolationService = inject(InterpolationService);
+  const actionHookService = inject(ActionHookService);
+
+  try {
+    const interpolatedHooks = (await interpolationService.interpolate({
+      context,
+      value: hooks,
+    })) as ActionHook[];
+
+    actionHookService.triggerActionHooks(interpolatedHooks);
+  } catch (error) {
+    console.warn(`Failed to interpolate action hooks: ${JSON.stringify(hooks)}`);
   }
 };

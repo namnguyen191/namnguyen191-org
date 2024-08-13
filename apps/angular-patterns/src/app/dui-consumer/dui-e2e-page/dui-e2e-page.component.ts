@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CarbonTableComponent } from '@namnguyen191/carbon-components';
 import {
+  ActionHookService,
   DuiComponent,
   EventsService,
   LayoutTemplateService,
@@ -25,7 +26,7 @@ import {
   SimpleTableComponent as MUITableComponent,
   TabsComponent,
 } from '@namnguyen191/mui-components';
-import { ButtonModule } from 'carbon-components-angular';
+import { ButtonModule, NotificationModule, ToastContent } from 'carbon-components-angular';
 import { delay, mergeMap, of, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from '../services/layouts.service';
@@ -35,7 +36,7 @@ import { UIElementTemplateService as UIElementTemplatesServiceAPI } from '../ser
 @Component({
   selector: 'namnguyen191-dui-e2e-page',
   standalone: true,
-  imports: [CommonModule, DuiComponent, ButtonModule],
+  imports: [CommonModule, DuiComponent, ButtonModule, NotificationModule],
   templateUrl: './dui-e2e-page.component.html',
   styleUrl: './dui-e2e-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,8 +53,19 @@ export class DuiE2EPageComponent {
   layoutService: LayoutTemplateService = inject(LayoutTemplateService);
   layoutsServiceAPI: LayoutsService = inject(LayoutsService);
   uiElementTemplatesServiceAPI: UIElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
+  actionHookService: ActionHookService = inject(ActionHookService);
   remoteResourcesServiceAPI: RemoteResourcesService = inject(RemoteResourcesService);
   destroyRef = inject(DestroyRef);
+
+  isNotificationDisplayed = signal<boolean>(false);
+  notificationConfig: ToastContent = {
+    type: 'info',
+    title: 'Custom hook toast',
+    subtitle: 'This toast was triggered by a custom hook',
+    caption:
+      'Testing custom action hook by registering a hook that open this toast. If you are seeing this toast then it is working',
+    showClose: true,
+  };
 
   constructor() {
     this.setupEventsListener();
@@ -63,7 +75,13 @@ export class DuiE2EPageComponent {
       component: CarbonTableComponent,
     });
 
-    this.#triggerChanges();
+    this.actionHookService.registerHook('showTestNotification', () => this.#showNotification());
+
+    // this.#triggerChanges();
+  }
+
+  #showNotification(): void {
+    this.isNotificationDisplayed.set(true);
   }
 
   setupEventsListener(): void {

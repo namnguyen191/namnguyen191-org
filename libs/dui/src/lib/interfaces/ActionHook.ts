@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { ZodAvailableStateScope } from '../services/state-store.service';
-import { ZodObjectType } from '../utils/zod-types';
+import { ZodInterpolationString, ZodObjectType } from '../utils/zod-types';
 
 export const ZodActionHook = z.object({
   type: z.string(),
@@ -59,3 +59,7 @@ export type DefaultActionHooksHandlers = {
     Extract<DefaultActionHook, { type: K }>
   >;
 };
+
+export const ZodContextBasedActionHooks = z.union([ZodInterpolationString, z.array(ZodActionHook)]);
+
+export type ContextBasedActionHooks = z.infer<typeof ZodContextBasedActionHooks>;
