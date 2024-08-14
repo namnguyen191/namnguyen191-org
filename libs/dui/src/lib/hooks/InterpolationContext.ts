@@ -109,7 +109,7 @@ const getRemoteResourcesStatesAsContext = (
         },
         [] as string[]
       );
-      const isAllError = Object.entries(statesMap).every(([, state]) => state.isLoading);
+      const isAllError = Object.entries(statesMap).every(([, state]) => state.isError);
       const isPartialError: string[] = Object.entries(statesMap).reduce(
         (acc, [curId, curState]) => {
           if (curState.isError) {
@@ -146,7 +146,12 @@ export const getElementInputsInterpolationContext = (params: {
   return combineLatest({
     remoteResourcesStates,
     state,
-  }).pipe(shareReplay(1));
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
 };
 
 export const getResourceRequestConfigInterpolationContext = (
@@ -158,7 +163,12 @@ export const getResourceRequestConfigInterpolationContext = (
   return combineLatest({
     $requests,
     state,
-  }).pipe(shareReplay(1));
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
 };
 
 export const getResourceRequestTransformationInterpolationContext = (params: {
@@ -174,7 +184,12 @@ export const getResourceRequestTransformationInterpolationContext = (params: {
     $requests,
     state,
     $current,
-  }).pipe(shareReplay(1));
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
 };
 
 export const getResourceRequestHooksInterpolationContext = (
@@ -186,5 +201,10 @@ export const getResourceRequestHooksInterpolationContext = (
   return combineLatest({
     $result,
     state,
-  }).pipe(shareReplay(1));
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
 };

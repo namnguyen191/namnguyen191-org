@@ -1,0 +1,19 @@
+{
+  "id": "carbon-button-test",
+  "type": "CARBON_BUTTON",
+  "remoteResourceIds": ["pokemon-server-pagination"],
+  "options": {
+    "text": "<${ return this.remoteResourcesStates?.results?.[\"pokemon-server-pagination\"]?.result?.pokemons?.[0]?.name ?? 'No pokemon yet' }$>",
+    "onClick": [
+      {
+        "type": "addToState",
+        "payload": {
+          "scope": "global",
+          "data": {
+            "pokemonPage": "<${ return '1' }$>"
+          }
+        }
+      }
+    ]
+  }
+}

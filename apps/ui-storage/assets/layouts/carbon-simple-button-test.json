@@ -1,0 +1,9 @@
+{
+  "id": "LAYOUT_CARBON_TEST_SIMPLE_BUTTON",
+  "uiElementInstances": [
+    {
+      "id": "instance-1",
+      "uiElementTemplateId": "carbon-button-test"
+    }
+  ]
+}
