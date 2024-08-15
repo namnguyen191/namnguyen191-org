@@ -6,6 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm",
+    "check-circular-dep": "madge --circular --exclude 'dist' --extensions ts ./",
     "lint:affected": "pnpm nx affected -t lint",
     "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel -t lint",
     "fix-lint": "pnpm nx affected -t lint --fix",
@@ -151,6 +152,7 @@
     "jsdom": "~24.0.0",
     "jsonc-eslint-parser": "^2.4.0",
     "lint-staged": "^15.2.2",
+    "madge": "^8.0.0",
     "ng-packagr": "18.1.0",
     "nx": "19.5.1",
     "postcss": "8.4.38",
@@ -168,7 +170,7 @@
     "vite": "^5.1.6",
     "vitest": "1.4.0"
   },
-  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
+  "packageManager": "pnpm@9.7.1",
   "pnpm": {
     "overrides": {
       "lodash@<4.17.12": ">=4.17.12",
