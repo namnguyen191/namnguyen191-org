@@ -1,8 +1,22 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
 
-import { ConfigWithStatus, UIElementTemplate } from '../../interfaces';
+import { UIElementRequiredConfigs } from '../../components/base-ui-element.component';
 import { logError } from '../../utils/logging';
-import { EventsService } from '../events-service/events.service';
+import { EventsService } from '../events-and-actions/events.service';
+import { StateSubscriptionConfig } from '../state-store.service';
+import { ConfigWithStatus } from './shared-types';
+
+export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
+  Partial<UIElementRequiredConfigs> & T;
+
+export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
+  id: string;
+  type: string;
+  remoteResourceIds?: string[];
+  stateSubscription?: StateSubscriptionConfig;
+  options: UIElementTemplateOptions<T>;
+};
 
 export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;
 

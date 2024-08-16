@@ -25,28 +25,58 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   Subject,
   switchMap,
   takeUntil,
 } from 'rxjs';
 
+import { EventsService } from '../../../services/events-and-actions/events.service';
+import { InterpolationService } from '../../../services/interpolation.service';
 import {
-  ElementInputsInterpolationContext,
-  getElementInputsInterpolationContext,
-} from '../../../hooks/InterpolationContext';
+  getRemoteResourcesStatesAsContext,
+  RemoteResourcesStates,
+} from '../../../services/remote-resource.service';
 import {
-  ComponentContextPropertyKey,
+  getStatesSubscriptionAsContext,
+  StateMap,
   StateSubscriptionConfig,
-  UIElementInstance,
-  UIElementTemplateOptions,
-} from '../../../interfaces';
+} from '../../../services/state-store.service';
+import { UIElementInstance } from '../../../services/templates/layout-template-interfaces';
 import {
-  EventsService,
-  UIElementFactoryService,
+  UIElementTemplateOptions,
   UIElementTemplateService,
   UIElementTemplateWithStatus,
-} from '../../../services';
-import { InterpolationService } from '../../../services/interpolation.service';
+} from '../../../services/templates/ui-element-template.service';
+import { UIElementFactoryService } from '../../../services/ui-element-factory.service';
+import { ComponentContextPropertyKey } from '../../base-ui-element-with-context.component';
+
+type ElementInputsInterpolationContext = {
+  remoteResourcesStates: null | RemoteResourcesStates;
+  state: StateMap;
+};
+
+export const getElementInputsInterpolationContext = (params: {
+  remoteResourceIds?: string[];
+  stateSubscription?: StateSubscriptionConfig;
+}): Observable<ElementInputsInterpolationContext> => {
+  const { remoteResourceIds, stateSubscription = {} } = params;
+
+  const state = getStatesSubscriptionAsContext(stateSubscription);
+  const remoteResourcesStates = remoteResourceIds?.length
+    ? getRemoteResourcesStatesAsContext(remoteResourceIds)
+    : of(null);
+
+  return combineLatest({
+    remoteResourcesStates,
+    state,
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
+};
 
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',

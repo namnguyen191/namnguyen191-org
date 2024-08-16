@@ -1,7 +1,20 @@
-import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
+import { EnvironmentInjector, Injectable, runInInjectionContext } from '@angular/core';
+import { z } from 'zod';
 
-import { actionsHandlersMap } from '../hooks';
-import { ActionHook, ActionHookHandler } from '../interfaces';
+import { ZodInterpolationString } from '../interpolation.service';
+
+export const ZodActionHook = z.object({
+  type: z.string(),
+  payload: z.any().optional(),
+});
+
+export type ActionHook = z.infer<typeof ZodActionHook>;
+
+export type ActionHookHandler<T extends ActionHook = ActionHook> = (action: T) => void;
+
+export const ZodContextBasedActionHooks = z.union([ZodInterpolationString, z.array(ZodActionHook)]);
+
+export type ContextBasedActionHooks = z.infer<typeof ZodContextBasedActionHooks>;
 
 export type ActionHooksHandlersMap = { [hookId: string]: ActionHookHandler };
 
@@ -16,18 +29,7 @@ export const createHookWithInjectionContext = <T extends ActionHook>(
   providedIn: 'root',
 })
 export class ActionHookService {
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
-
-  #actionHooksHandlersMap: ActionHooksHandlersMap = {
-    triggerRemoteResource: createHookWithInjectionContext(
-      this.#environmentInjector,
-      actionsHandlersMap.handleTriggerRemoteResource
-    ),
-    addToState: createHookWithInjectionContext(
-      this.#environmentInjector,
-      actionsHandlersMap.handleAddToState
-    ),
-  } as ActionHooksHandlersMap;
+  #actionHooksHandlersMap: ActionHooksHandlersMap = {};
 
   registerHook(hookId: string, handler: ActionHookHandler): void {
     const existingHandler = this.#actionHooksHandlersMap[hookId];

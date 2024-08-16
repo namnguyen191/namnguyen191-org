@@ -1,10 +1,8 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { ConfigWithStatus, LayoutTemplate } from '../../interfaces';
 import { logError } from '../../utils/logging';
-import { EventsService } from '../events-service/events.service';
-
-export type LayoutTemplateWithStatus = ConfigWithStatus<LayoutTemplate>;
+import { EventsService } from '../events-and-actions/events.service';
+import { LayoutTemplate, LayoutTemplateWithStatus } from './layout-template-interfaces';
 
 type LayoutTemplateId = string;
 

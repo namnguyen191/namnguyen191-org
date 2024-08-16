@@ -13,15 +13,16 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
-  ActionHookService,
   BaseUIElementWithContextComponent,
+  InterpolationService,
+  UIElementImplementation,
+} from '@namnguyen191/dui';
+import {
+  ActionHookService,
   DefaultActionHook,
   parseZodWithDefault,
-  UIElementImplementation,
-  ZodDefaultActionHook,
   ZodStringOrNumberOrBoolean,
 } from '@namnguyen191/dui';
-import { InterpolationService } from '@namnguyen191/dui';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';
 
@@ -40,7 +41,7 @@ export type TableColumnObject = z.infer<typeof ZodTableColumnObject>;
 
 const ZodTablePaginationConfigs = z.object({
   pageSizes: z.array(z.number()).optional(),
-  onPageChange: z.array(ZodDefaultActionHook).optional(),
+  onPageChange: z.array(z.any()).optional(),
 });
 export type TablePaginationConfigs = z.infer<typeof ZodTablePaginationConfigs>;
 

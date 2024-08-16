@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { ObjectType } from '@namnguyen191/types-helper';
+import { Brand, ObjectType } from '@namnguyen191/types-helper';
 
 export const JS_RUNNER_WORKER = new InjectionToken<Worker>('JS_RUNNER_WORKER');
 
@@ -51,3 +51,5 @@ export type WorkerResponse = {
   id: string;
   result: unknown | FailedInterpolationResult;
 };
+
+export type RawJsString = Brand<string, 'RawJsString'>;

@@ -15,7 +15,6 @@ import {
   BaseUIElementComponent,
   DefaultActionHook,
   UIElementImplementation,
-  ZodDefaultActionHook,
 } from '@namnguyen191/dui';
 import { z } from 'zod';
 
@@ -32,7 +31,7 @@ const ZodSimpleButtonUIElementComponentConfigs = z.object({
   }),
   color: ZodButtonColor,
   disabled: z.boolean(),
-  onClick: z.array(ZodDefaultActionHook),
+  onClick: z.array(z.any()),
 });
 
 export type SimpleButtonUIElementComponentConfigs = z.infer<

@@ -22,26 +22,29 @@ import {
 } from 'angular-gridster2';
 import { Subject } from 'rxjs';
 
-import { UIElementInstance } from '../../interfaces';
-import { LayoutTemplate } from '../../interfaces/Layout';
-import { EventsService, LayoutTemplateService } from '../../services';
+import { EventsService } from '../../services/events-and-actions/events.service';
+import { LayoutTemplateService } from '../../services/templates/layout-template.service';
+import {
+  LayoutTemplate,
+  UIElementInstance,
+} from '../../services/templates/layout-template-interfaces';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
-export type LayoutGridItem = GridsterItem & {
+type LayoutGridItem = GridsterItem & {
   id: string;
   trackById: string;
   elementInstance: UIElementInstance;
 };
 
-export const GRID_COLS = 16; // 16 columns layout
-export const GRID_ROW_HEIGHT = 16; // 16px per row
-export const DEFAULT_UI_ELEMENT_COLSPAN = 4;
-export const DEFAULT_UI_ELEMENT_ROWSPAN = 20;
-export const DEFAULT_UI_ELEMENT_X = 0;
-export const DEFAULT_UI_ELEMENT_Y = 0;
-export const DEFAULT_UI_ELEMENT_RESIZABLE = true;
-export const DEFAULT_UI_ELEMENT_DRAGGABLE = true;
-export const DEFAULT_POSITION_AND_SIZE: Pick<
+const GRID_COLS = 16; // 16 columns layout
+const GRID_ROW_HEIGHT = 16; // 16px per row
+const DEFAULT_UI_ELEMENT_COLSPAN = 4;
+const DEFAULT_UI_ELEMENT_ROWSPAN = 20;
+const DEFAULT_UI_ELEMENT_X = 0;
+const DEFAULT_UI_ELEMENT_Y = 0;
+const DEFAULT_UI_ELEMENT_RESIZABLE = true;
+const DEFAULT_UI_ELEMENT_DRAGGABLE = true;
+const DEFAULT_POSITION_AND_SIZE: Pick<
   GridsterItem,
   'x' | 'y' | 'rows' | 'cols' | 'resizeEnabled' | 'dragEnabled'
 > = {
@@ -53,9 +56,9 @@ export const DEFAULT_POSITION_AND_SIZE: Pick<
   dragEnabled: DEFAULT_UI_ELEMENT_DRAGGABLE,
 };
 
-export const UI_ELEMENT_MAX_ROWS = 400;
+const UI_ELEMENT_MAX_ROWS = 400;
 
-export const GRID_CONFIG: GridsterConfig = {
+const GRID_CONFIG: GridsterConfig = {
   setGridSize: true,
   margin: 5,
   displayGrid: DisplayGrid.None,
@@ -78,7 +81,7 @@ const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
   return typeof item['id'] === 'string' && item['elementInstance'];
 };
 
-export const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN');
+const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN');
 
 @Component({
   selector: 'namnguyen191-layout',

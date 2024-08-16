@@ -1,4 +1,7 @@
-import { UIElementPositionAndSize } from './Layout';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+
+import { UIElementPositionAndSize } from '../templates/layout-template-interfaces';
 
 export type DUIEvent = {
   GENERIC: never;
@@ -32,3 +35,18 @@ export type EventObject = {
         payload: DUIEventPayload<K>;
       };
 }[keyof DUIEvent];
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EventsService {
+  #events$: Subject<EventObject> = new Subject();
+
+  getEvents(): Observable<EventObject> {
+    return this.#events$.asObservable();
+  }
+
+  emitEvent(event: EventObject): void {
+    this.#events$.next(event);
+  }
+}

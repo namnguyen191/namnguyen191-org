@@ -1,8 +1,26 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { ConfigWithStatus, RemoteResourceTemplate } from '../../interfaces';
+import { FetchDataParams } from '../../internal/data-fetching.service';
 import { logError } from '../../utils/logging';
-import { EventsService } from '../events-service/events.service';
+import { ActionHook } from '../events-and-actions/action-hook.service';
+import { EventsService } from '../events-and-actions/events.service';
+import { StateSubscriptionConfig } from '../state-store.service';
+import { ConfigWithStatus } from './shared-types';
+
+export type Request = {
+  configs: FetchDataParams;
+  interpolation?: string;
+};
+
+export type RemoteResourceTemplate = {
+  id: string;
+  stateSubscription?: StateSubscriptionConfig;
+  options: {
+    requests: Request[];
+    onSuccess?: ActionHook[];
+    parallel?: boolean;
+  };
+};
 
 export type RemoteResourceTemplateWithStatus = ConfigWithStatus<RemoteResourceTemplate>;
 

@@ -2,11 +2,6 @@ import { Route } from '@angular/router';
 
 export const appRoutes: Route[] = [
   {
-    path: 'dui',
-    loadComponent: () =>
-      import('./dui-consumer/dui-consumer.component').then((m) => m.DuiConsumerComponent),
-  },
-  {
     path: 'dui-e2e',
     loadComponent: () =>
       import('./dui-consumer/dui-e2e-page/dui-e2e-page.component').then(
@@ -27,5 +22,5 @@ export const appRoutes: Route[] = [
         (m) => m.LazyLoadedServiceComponent
       ),
   },
-  { path: '**', redirectTo: 'dui' },
+  { path: '**', redirectTo: 'dui-e2e' },
 ];

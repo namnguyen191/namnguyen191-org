@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  EnvironmentInjector,
   inject,
   signal,
   WritableSignal,
@@ -13,6 +14,7 @@ import {
   ActionHookService,
   DuiComponent,
   EventsService,
+  getDefaultActionsHooksMap,
   LayoutTemplateService,
   missingLayoutTemplateEvent,
   missingRemoteResourceTemplateEvent,
@@ -30,7 +32,7 @@ import { ButtonModule, NotificationModule, ToastContent } from 'carbon-component
 import { delay, mergeMap, of, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from '../services/layouts.service';
-import { RemoteResourcesService } from '../services/remote-resources.service';
+import { RemoteResourcesService as RemoteResourcesServiceAPI } from '../services/remote-resources.service';
 import { UIElementTemplateService as UIElementTemplatesServiceAPI } from '../services/ui-element-templates.service';
 
 @Component({
@@ -54,8 +56,9 @@ export class DuiE2EPageComponent {
   layoutsServiceAPI: LayoutsService = inject(LayoutsService);
   uiElementTemplatesServiceAPI: UIElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
   actionHookService: ActionHookService = inject(ActionHookService);
-  remoteResourcesServiceAPI: RemoteResourcesService = inject(RemoteResourcesService);
+  remoteResourcesServiceAPI: RemoteResourcesServiceAPI = inject(RemoteResourcesServiceAPI);
   destroyRef = inject(DestroyRef);
+  injector = inject(EnvironmentInjector);
 
   isNotificationDisplayed = signal<boolean>(false);
   notificationConfig: ToastContent = {
@@ -75,6 +78,7 @@ export class DuiE2EPageComponent {
       component: CarbonTableComponent,
     });
 
+    this.actionHookService.registerHooks(getDefaultActionsHooksMap(this.injector));
     this.actionHookService.registerHook('showTestNotification', () => this.#showNotification());
 
     // this.#triggerChanges();

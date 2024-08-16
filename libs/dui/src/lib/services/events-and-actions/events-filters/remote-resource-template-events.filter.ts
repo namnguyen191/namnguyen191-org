@@ -1,6 +1,6 @@
 import { filter, Observable, pipe, UnaryFunction } from 'rxjs';
 
-import { EventObject } from '../../../interfaces';
+import { EventObject } from '../events.service';
 
 export const missingRemoteResourceTemplateEvent = (): UnaryFunction<
   Observable<EventObject>,

@@ -14,6 +14,7 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   startWith,
   Subject,
   switchMap,
@@ -21,22 +22,20 @@ import {
   tap,
 } from 'rxjs';
 
-import {
-  getResourceRequestConfigInterpolationContext,
-  getResourceRequestHooksInterpolationContext,
-  getResourceRequestTransformationInterpolationContext,
-  getStatesAsContext,
-  getStatesSubscriptionAsContext,
-} from '../hooks/InterpolationContext';
-import { DefaultActionHook } from '../interfaces';
-import { RemoteResourceTemplate, Request } from '../interfaces/RemoteResource';
+import { DataFetchingService, FetchDataParams } from '../internal/data-fetching.service';
 import { logSubscription } from '../utils/logging';
-import { ActionHookService } from './action-hook.service';
-import { DataFetchingService, FetchDataParams } from './data-fetching.service';
+import { ActionHook, ActionHookService } from './events-and-actions/action-hook.service';
 import { InterpolationService } from './interpolation.service';
 import {
+  getStatesAsContext,
+  getStatesSubscriptionAsContext,
+  StateMap,
+} from './state-store.service';
+import {
+  RemoteResourceTemplate,
   RemoteResourceTemplateService,
   RemoteResourceTemplateWithStatus,
+  Request,
 } from './templates/remote-resource-template.service';
 
 export type RemoteResourceState = {
@@ -44,6 +43,134 @@ export type RemoteResourceState = {
   isLoading: boolean;
   isError: boolean;
   result: unknown | null;
+};
+
+export type RemoteResourcesStates = {
+  results: {
+    [remoteResourceId: string]: RemoteResourceState;
+  };
+  isAllLoading: boolean;
+  isPartialLoading: string[];
+  isAllError: boolean;
+  isPartialError: string[];
+};
+
+type AccumulatedRequestsResults = unknown[];
+
+export type RequestConfigsInterpolationContext = {
+  state: StateMap;
+  $requests?: AccumulatedRequestsResults;
+};
+
+export type RequestTransformationInterpolationContext = RequestConfigsInterpolationContext & {
+  $current: unknown;
+};
+
+export type RequestHooksInterpolationContext = {
+  state: StateMap;
+  $result: unknown;
+};
+
+export const getRemoteResourcesStatesAsContext = (
+  remoteResourceIds: string[]
+): Observable<RemoteResourcesStates> => {
+  const remoteResourceService = inject(RemoteResourceService);
+
+  const remoteResourcesStatesMap: { [id: string]: Observable<RemoteResourceState> } =
+    remoteResourceIds.reduce(
+      (acc, curId) => ({ ...acc, [curId]: remoteResourceService.getRemoteResourceState(curId) }),
+      {}
+    );
+
+  return combineLatest(remoteResourcesStatesMap).pipe(
+    map((statesMap) => {
+      const isAllLoading = Object.entries(statesMap).every(([, state]) => state.isLoading);
+      const isPartialLoading: string[] = Object.entries(statesMap).reduce(
+        (acc, [curId, curState]) => {
+          if (curState.isLoading) {
+            return [...acc, curId];
+          }
+
+          return acc;
+        },
+        [] as string[]
+      );
+      const isAllError = Object.entries(statesMap).every(([, state]) => state.isError);
+      const isPartialError: string[] = Object.entries(statesMap).reduce(
+        (acc, [curId, curState]) => {
+          if (curState.isError) {
+            return [...acc, curId];
+          }
+
+          return acc;
+        },
+        [] as string[]
+      );
+
+      return {
+        results: statesMap,
+        isAllLoading,
+        isPartialLoading,
+        isAllError,
+        isPartialError,
+      };
+    })
+  );
+};
+
+const getResourceRequestConfigInterpolationContext = (
+  accumulatedRequestsResults: AccumulatedRequestsResults
+): Observable<RequestConfigsInterpolationContext> => {
+  const state = getStatesAsContext();
+  const $requests = of(accumulatedRequestsResults);
+
+  return combineLatest({
+    $requests,
+    state,
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
+};
+
+const getResourceRequestTransformationInterpolationContext = (params: {
+  accumulatedRequestsResults?: AccumulatedRequestsResults;
+  currentRequestResult?: unknown;
+}): Observable<RequestTransformationInterpolationContext> => {
+  const { accumulatedRequestsResults, currentRequestResult } = params;
+  const state = getStatesAsContext();
+  const $requests = of(accumulatedRequestsResults);
+  const $current = of(currentRequestResult);
+
+  return combineLatest({
+    $requests,
+    state,
+    $current,
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
+};
+
+const getResourceRequestHooksInterpolationContext = (
+  transformationResult: unknown
+): Observable<RequestHooksInterpolationContext> => {
+  const state = getStatesAsContext();
+  const $result = of(transformationResult);
+
+  return combineLatest({
+    $result,
+    state,
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
 };
 
 @Injectable({
@@ -189,7 +316,7 @@ export class RemoteResourceService {
   async #interpolateResourceHooks(params: {
     onSuccessHooks: Exclude<RemoteResourceTemplate['options']['onSuccess'], undefined>;
     resourceResult: unknown;
-  }): Promise<DefaultActionHook[]> {
+  }): Promise<ActionHook[]> {
     const { onSuccessHooks, resourceResult } = params;
 
     const resourceHooksInterpolationContext = await runInInjectionContext(
@@ -200,7 +327,7 @@ export class RemoteResourceService {
       const interpolatedHooks = (await this.#interpolationService.interpolate({
         value: onSuccessHooks,
         context: resourceHooksInterpolationContext,
-      })) as DefaultActionHook[];
+      })) as ActionHook[];
 
       return interpolatedHooks;
     } catch (error) {

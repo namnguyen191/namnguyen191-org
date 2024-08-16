@@ -1,3 +1,5 @@
+import { ConfigWithStatus } from './shared-types';
+
 export type UIElementPositionAndSize = {
   x: number;
   y: number;
@@ -18,3 +20,5 @@ export type LayoutTemplate = {
   id: string;
   uiElementInstances: UIElementInstance[];
 };
+
+export type LayoutTemplateWithStatus = ConfigWithStatus<LayoutTemplate>;

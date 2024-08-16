@@ -3,8 +3,12 @@ import { ObjectType } from '@namnguyen191/types-helper';
 import { isObservable, map, Observable, of, OperatorFunction } from 'rxjs';
 import { ZodError, ZodType } from 'zod';
 
-import { ActionHook, ContextBasedActionHooks } from '../interfaces';
-import { ActionHookService, InterpolationService } from '../services';
+import {
+  ActionHook,
+  ActionHookService,
+  ContextBasedActionHooks,
+} from '../services/events-and-actions/action-hook.service';
+import { InterpolationService } from '../services/interpolation.service';
 import { logError } from './logging';
 
 export const parseZodAndHandleErrorPipe = <T>(zodType: ZodType): OperatorFunction<T, T> => {

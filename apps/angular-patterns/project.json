@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/angular-patterns",
         "index": "apps/angular-patterns/src/index.html",
         "browser": "apps/angular-patterns/src/main.ts",
-        "polyfills": ["zone.js"],
         "tsConfig": "apps/angular-patterns/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": ["apps/angular-patterns/src/favicon.ico", "apps/angular-patterns/src/assets"],

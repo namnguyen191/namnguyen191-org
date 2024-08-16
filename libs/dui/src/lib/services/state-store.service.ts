@@ -1,11 +1,73 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { get, isEqual, set } from 'lodash-es';
-import { BehaviorSubject, distinctUntilChanged, map, Observable, pipe, UnaryFunction } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  Observable,
+  of,
+  pipe,
+  UnaryFunction,
+} from 'rxjs';
 import { z } from 'zod';
 
 export const ZodAvailableStateScope = z.enum(['global', 'local', 'layout']);
 export type AvailableStateScope = z.infer<typeof ZodAvailableStateScope>;
+
+export type StateMap = {
+  [K in AvailableStateScope]: ObjectType;
+};
+
+export type StateSubscriptionConfig = {
+  [K in AvailableStateScope]?: string[];
+};
+
+export const getStatesAsContext = (): Observable<StateMap> => {
+  const stateStoreService = inject(StateStoreService);
+
+  const local: Observable<ObjectType> = stateStoreService.getLocalState();
+
+  const global: Observable<ObjectType> = stateStoreService.getGlobalState();
+
+  const layout: Observable<ObjectType> = stateStoreService.getLayoutState();
+
+  return combineLatest({
+    global,
+    local,
+    layout,
+  });
+};
+
+export const getStatesSubscriptionAsContext = (
+  stateSubscription: StateSubscriptionConfig
+): Observable<StateMap> => {
+  const {
+    local: localSubscription,
+    layout: layoutSubscription,
+    global: globalSubscription,
+  } = stateSubscription;
+  const stateStoreService = inject(StateStoreService);
+
+  const local: Observable<ObjectType> = localSubscription
+    ? stateStoreService.getLocalStateByPaths(localSubscription)
+    : of({});
+
+  const global: Observable<ObjectType> = globalSubscription
+    ? stateStoreService.getGlobalStateByPaths(globalSubscription)
+    : of({});
+
+  const layout: Observable<ObjectType> = layoutSubscription
+    ? stateStoreService.getLayoutStateByPaths(layoutSubscription)
+    : of({});
+
+  return combineLatest({
+    global,
+    local,
+    layout,
+  });
+};
 
 @Injectable({
   providedIn: 'root',
