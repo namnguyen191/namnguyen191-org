@@ -3,10 +3,8 @@ import { Route } from '@angular/router';
 export const appRoutes: Route[] = [
   {
     path: 'dui-e2e',
-    loadComponent: () =>
-      import('./dui-consumer/dui-e2e-page/dui-e2e-page.component').then(
-        (m) => m.DuiE2EPageComponent
-      ),
+    loadChildren: () =>
+      import('./dui-consumer/dui-e2e-page/dui-e2e.routes').then((m) => m.duiE2ERoutes),
   },
   {
     path: 'injector-function',

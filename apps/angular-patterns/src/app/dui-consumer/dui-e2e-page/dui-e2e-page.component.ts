@@ -6,13 +6,12 @@ import {
   EnvironmentInjector,
   inject,
   signal,
-  WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CarbonTableComponent } from '@namnguyen191/carbon-components';
+import { RouterModule } from '@angular/router';
+import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/carbon-components';
 import {
   ActionHookService,
-  DuiComponent,
   EventsService,
   getDefaultActionsHooksMap,
   LayoutTemplateService,
@@ -23,13 +22,8 @@ import {
   UIElementFactoryService,
   UIElementTemplateService,
 } from '@namnguyen191/dui';
-import {
-  SimpleButtonComponent,
-  SimpleTableComponent as MUITableComponent,
-  TabsComponent,
-} from '@namnguyen191/mui-components';
-import { ButtonModule, NotificationModule, ToastContent } from 'carbon-components-angular';
-import { delay, mergeMap, of, switchMap, tap } from 'rxjs';
+import { NotificationModule, ToastContent } from 'carbon-components-angular';
+import { mergeMap, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from '../services/layouts.service';
 import { RemoteResourcesService as RemoteResourcesServiceAPI } from '../services/remote-resources.service';
@@ -38,14 +32,12 @@ import { UIElementTemplateService as UIElementTemplatesServiceAPI } from '../ser
 @Component({
   selector: 'namnguyen191-dui-e2e-page',
   standalone: true,
-  imports: [CommonModule, DuiComponent, ButtonModule, NotificationModule],
+  imports: [CommonModule, RouterModule, NotificationModule],
   templateUrl: './dui-e2e-page.component.html',
   styleUrl: './dui-e2e-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiE2EPageComponent {
-  layoutId: WritableSignal<string> = signal('LAYOUT_CARBON_MAIN');
-
   uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
   uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   remoteResourceTemplateService: RemoteResourceTemplateService = inject(
@@ -78,10 +70,13 @@ export class DuiE2EPageComponent {
       component: CarbonTableComponent,
     });
 
+    this.uiElementFactoryService.registerUIElement({
+      type: CarbonButtonComponent.ELEMENT_TYPE,
+      component: CarbonButtonComponent,
+    });
+
     this.actionHookService.registerHooks(getDefaultActionsHooksMap(this.injector));
     this.actionHookService.registerHook('showTestNotification', () => this.#showNotification());
-
-    // this.#triggerChanges();
   }
 
   #showNotification(): void {
@@ -131,36 +126,5 @@ export class DuiE2EPageComponent {
     );
 
     missingRemoteResources.subscribe();
-  }
-
-  private registerMUIComponent(): void {
-    this.uiElementFactoryService.registerUIElement({
-      type: TabsComponent.ELEMENT_TYPE,
-      component: TabsComponent,
-    });
-
-    this.uiElementFactoryService.registerUIElement({
-      type: SimpleButtonComponent.ELEMENT_TYPE,
-      component: SimpleButtonComponent,
-    });
-
-    this.uiElementFactoryService.registerUIElement({
-      type: MUITableComponent.ELEMENT_TYPE,
-      component: MUITableComponent,
-    });
-  }
-
-  #triggerChanges(): void {
-    of(null)
-      .pipe(
-        delay(5000),
-        tap(() => this.#changeLayout('LAYOUT_CARBON_TEST'))
-      )
-      .subscribe();
-  }
-
-  #changeLayout(id: string): void {
-    console.log('Changing layout to:', id);
-    this.layoutId.set(id);
   }
 }

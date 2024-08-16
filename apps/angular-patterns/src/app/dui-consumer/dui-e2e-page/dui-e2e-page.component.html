@@ -1,8 +1,12 @@
+<div class="links-container">
+  <a [routerLink]="['./table-patterns']"> Go to table patterns e2e </a>
+  <a [routerLink]="['./button-pattenrs']"> Go to button patterns e2e </a>
+</div>
+<router-outlet></router-outlet>
+
 <cds-toast
   *ngIf="isNotificationDisplayed()"
   class="toast-container"
   [notificationObj]="notificationConfig"
   (close)="isNotificationDisplayed.set(false)"
 ></cds-toast>
-
-<namnguyen191-dui [layoutId]="layoutId()"></namnguyen191-dui> {{ layoutId() }}
