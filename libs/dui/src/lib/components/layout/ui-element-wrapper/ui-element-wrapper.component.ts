@@ -7,7 +7,6 @@ import {
   inject,
   input,
   InputSignal,
-  OnDestroy,
   runInInjectionContext,
   Signal,
   Type,
@@ -26,12 +25,9 @@ import {
   Observable,
   of,
   shareReplay,
-  Subject,
   switchMap,
-  takeUntil,
 } from 'rxjs';
 
-import { EventsService } from '../../../services/events-and-actions/events.service';
 import { InterpolationService } from '../../../services/interpolation.service';
 import {
   getRemoteResourcesStatesAsContext,
@@ -85,25 +81,22 @@ export const getElementInputsInterpolationContext = (params: {
   templateUrl: './ui-element-wrapper.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiElementWrapperComponent implements OnDestroy {
+export class UiElementWrapperComponent {
   #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
   #uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
   #interpolationService: InterpolationService = inject(InterpolationService);
   #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
-  #eventsService: EventsService = inject(EventsService);
-
-  #destroyElementInputsObs: Subject<void> = new Subject<void>();
 
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 
-  uiElementTemplate: Signal<Signal<UIElementTemplateWithStatus>> = computed(() => {
+  uiElementTemplate: Signal<UIElementTemplateWithStatus> = computed(() => {
     return this.#uiElementTemplatesService.getUIElementTemplate(
       this.uiElementInstance().uiElementTemplateId
-    );
+    )();
   });
 
   uiElementComponent: Signal<Type<unknown> | null> = computed(() => {
-    const templateConfig = this.uiElementTemplate()();
+    const templateConfig = this.uiElementTemplate();
     if (templateConfig.status !== 'loaded') {
       return null;
     }
@@ -111,8 +104,8 @@ export class UiElementWrapperComponent implements OnDestroy {
   });
 
   uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
-    this.#destroyElementInputsObs.next(); // destroy any previous stream
-    const template = this.uiElementTemplate()();
+    const template = this.uiElementTemplate();
+
     return of(template).pipe(
       filter((template) => template.status === 'loaded'),
       switchMap((template) =>
@@ -124,15 +117,9 @@ export class UiElementWrapperComponent implements OnDestroy {
             component: this.#uiElementFactoryService.getUIElement(template.config.type),
           })
         )
-      ),
-      takeUntil(this.#destroyElementInputsObs)
+      )
     );
   });
-
-  ngOnDestroy(): void {
-    this.#destroyElementInputsObs.next();
-    this.#destroyElementInputsObs.complete();
-  }
 
   #generateComponentInputs(params: {
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;

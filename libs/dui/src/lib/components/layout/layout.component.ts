@@ -8,7 +8,6 @@ import {
   InjectionToken,
   input,
   InputSignal,
-  OnDestroy,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -20,7 +19,6 @@ import {
   GridsterItemComponent,
   GridType,
 } from 'angular-gridster2';
-import { Subject } from 'rxjs';
 
 import { EventsService } from '../../services/events-and-actions/events.service';
 import { LayoutTemplateService } from '../../services/templates/layout-template.service';
@@ -92,7 +90,6 @@ const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN
       provide: LAYOUTS_CHAIN_TOKEN,
       useFactory: (): Set<string> => {
         const existingToken = inject(LAYOUTS_CHAIN_TOKEN, { optional: true, skipSelf: true });
-
         return existingToken ? structuredClone(existingToken) : new Set();
       },
     },
@@ -101,18 +98,14 @@ const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LayoutComponent implements OnDestroy {
+export class LayoutComponent {
   #layoutService: LayoutTemplateService = inject(LayoutTemplateService);
   #layoutsChain: Set<string> = inject(LAYOUTS_CHAIN_TOKEN);
-  #eventsService: EventsService = inject(EventsService);
-
-  #cancelLayoutSubscriptionSubject = new Subject<void>();
-  #destroyRef = new Subject<void>();
 
   layoutId: InputSignal<string> = input.required<string>();
   layoutConfig = computed(() => {
     const layoutId = this.layoutId();
-    return this.#layoutService.getLayoutTemplate(layoutId);
+    return this.#layoutService.getLayoutTemplate(layoutId)();
   });
 
   gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
@@ -128,8 +121,8 @@ export class LayoutComponent implements OnDestroy {
 
   constructor() {
     effect(
-      () => {
-        const layoutConfigVal = this.layoutConfig()();
+      (onCleanup) => {
+        const layoutConfigVal = this.layoutConfig();
 
         if (layoutConfigVal.status !== 'loaded') {
           return;
@@ -148,18 +141,15 @@ export class LayoutComponent implements OnDestroy {
 
         this.#layoutsChain.add(layoutConfigVal.config.id);
         this.isInfinite.set(isInfinite);
+
+        onCleanup(() => {
+          this.#layoutsChain.delete(layoutConfigVal.config.id);
+        });
       },
       {
         allowSignalWrites: true,
       }
     );
-  }
-
-  ngOnDestroy(): void {
-    this.#cancelLayoutSubscriptionSubject.next();
-    this.#cancelLayoutSubscriptionSubject.complete();
-    this.#destroyRef.next();
-    this.#destroyRef.complete();
   }
 
   #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
