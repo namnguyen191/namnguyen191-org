@@ -20,10 +20,13 @@ import {
   missingUIElementTemplateEvent,
   RemoteResourceTemplateService,
   UIElementFactoryService,
+  UIElementPositionAndSize,
+  UIElementRepositionEvent,
   UIElementTemplateService,
 } from '@namnguyen191/dui';
 import { NotificationModule, ToastContent } from 'carbon-components-angular';
-import { mergeMap, switchMap, tap } from 'rxjs';
+import { set } from 'lodash-es';
+import { buffer, debounceTime, forkJoin, map, mergeMap, switchMap, tap } from 'rxjs';
 
 import { LayoutsService } from '../services/layouts.service';
 import { RemoteResourcesService as RemoteResourcesServiceAPI } from '../services/remote-resources.service';
@@ -126,5 +129,33 @@ export class DuiE2EPageComponent {
     );
 
     missingRemoteResources.subscribe();
+
+    const uiElementReposition = allEvents.pipe(UIElementRepositionEvent());
+
+    const buffTrigger = uiElementReposition.pipe(debounceTime(3000));
+
+    const updateElementPosition = uiElementReposition.pipe(
+      buffer(buffTrigger),
+      map((events) =>
+        events.reduce<{ [layoutId: string]: { [eleId: string]: UIElementPositionAndSize } }>(
+          (acc, cur) => {
+            const {
+              payload: { elementId, layoutId, newPositionAndSize },
+            } = cur;
+            acc = set(acc, `${layoutId}.${elementId}`, newPositionAndSize);
+            return acc;
+          },
+          {}
+        )
+      ),
+      mergeMap((val) => {
+        const updateLayoutRequests = Object.entries(val).map(([layoutId, eleWithNewPosAndSize]) =>
+          this.layoutsServiceAPI.updateLayoutElementPositionAndSize(layoutId, eleWithNewPosAndSize)
+        );
+        return forkJoin(updateLayoutRequests);
+      })
+    );
+
+    updateElementPosition.subscribe();
   }
 }

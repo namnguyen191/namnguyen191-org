@@ -73,6 +73,8 @@ const GRID_CONFIG: GridsterConfig = {
   draggable: { enabled: true, ignoreContent: true, dragHandleClass: 'drag-area' },
   defaultItemRows: DEFAULT_UI_ELEMENT_ROWSPAN,
   defaultItemCols: DEFAULT_UI_ELEMENT_COLSPAN,
+  pushItems: true,
+  compactType: 'compactLeft&Up',
 };
 
 const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
@@ -171,7 +173,8 @@ export class LayoutComponent {
       this.#eventService.emitEvent({
         type: 'UI_ELEMENT_REPOSITION',
         payload: {
-          id,
+          layoutId: this.layoutId(),
+          elementId: id,
           newPositionAndSize: {
             x,
             y,

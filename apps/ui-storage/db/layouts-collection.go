@@ -28,6 +28,13 @@ func (r *LayoutsRepo) InserLayout(layout *models.Layout) error {
 	return err
 }
 
+func (r *LayoutsRepo) UpdateLayout(updatedLayout *models.Layout) error {
+	filter := bson.M{"id": updatedLayout.Id}
+	singleResult := r.coll.FindOneAndReplace(context.TODO(), filter, updatedLayout)
+
+	return singleResult.Err()
+}
+
 func (r *LayoutsRepo) RemoveLayout(id string) error {
 	filter := bson.M{"id": id}
 	opts := options.Delete().SetHint(bson.D{{Key: "_id", Value: 1}})

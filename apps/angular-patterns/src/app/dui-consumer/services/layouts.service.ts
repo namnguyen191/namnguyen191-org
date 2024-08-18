@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { LayoutTemplate } from '@namnguyen191/dui';
-import { Observable, shareReplay } from 'rxjs';
+import { LayoutTemplate, UIElementPositionAndSize } from '@namnguyen191/dui';
+import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 
 const BASE_LAYOUT_URL = 'http://localhost:8080/layouts';
 
@@ -21,6 +21,38 @@ export class LayoutsService {
     }
 
     return layout$;
+  }
+
+  updateLayout(updatedLayout: LayoutTemplate): Observable<void> {
+    return this.#httpClient
+      .put<void>(BASE_LAYOUT_URL, updatedLayout)
+      .pipe(tap(() => (this.#layoutsCache[updatedLayout.id] = of(updatedLayout))));
+  }
+
+  updateLayoutElementPositionAndSize(
+    layoutId: string,
+    elementsWithNewPosAndSize: Record<string, UIElementPositionAndSize>
+  ): Observable<void> {
+    const layoutInCache$ = this.#layoutsCache[layoutId];
+    if (!layoutInCache$) {
+      throw new Error(
+        `Failed to update element pos and size because layout ${layoutId} does not exist in the cache`
+      );
+    }
+    return layoutInCache$.pipe(
+      switchMap((layout) => {
+        const allEleInLayout = layout.uiElementInstances;
+        Object.entries(elementsWithNewPosAndSize).forEach(([elementId, newPosAndSize]) => {
+          const foundEle = allEleInLayout.find((ele) => ele.id === elementId);
+          if (!foundEle) {
+            throw new Error(`Cannot find element with id ${elementId}`);
+          }
+
+          foundEle.positionAndSize = newPosAndSize;
+        });
+        return this.updateLayout(layout);
+      })
+    );
   }
 
   #fetchLayoutById(id: string): Observable<LayoutTemplate> {

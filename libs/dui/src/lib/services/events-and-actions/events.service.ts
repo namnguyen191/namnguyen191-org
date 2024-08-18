@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { asyncScheduler, Observable, observeOn, Subject } from 'rxjs';
 
 import { UIElementPositionAndSize } from '../templates/layout-template-interfaces';
 
@@ -18,7 +18,8 @@ export type DUIEvent = {
     id: string;
   };
   UI_ELEMENT_REPOSITION: {
-    id: string;
+    layoutId: string;
+    elementId: string;
     newPositionAndSize: UIElementPositionAndSize;
   };
 };
@@ -43,7 +44,7 @@ export class EventsService {
   #events$: Subject<EventObject> = new Subject();
 
   getEvents(): Observable<EventObject> {
-    return this.#events$.asObservable();
+    return this.#events$.asObservable().pipe(observeOn(asyncScheduler));
   }
 
   emitEvent(event: EventObject): void {
