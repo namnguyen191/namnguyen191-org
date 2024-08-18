@@ -13,8 +13,8 @@ import { MainNavComponent } from '../components/main-nav/main-nav.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  #matIconRegistry: MatIconRegistry = inject(MatIconRegistry);
-  #domSanitizer: DomSanitizer = inject(DomSanitizer);
+  readonly #matIconRegistry = inject(MatIconRegistry);
+  readonly #domSanitizer = inject(DomSanitizer);
 
   constructor() {
     this.#matIconRegistry.addSvgIcon(

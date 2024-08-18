@@ -12,7 +12,6 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { fetchWithStatus } from '@namnguyen191/utils';
-import { Apollo } from 'apollo-angular';
 
 import { JobListComponent } from '../../components/job-list/job-list.component';
 import { PaginationBarComponent } from '../../components/pagination-bar/pagination-bar.component';
@@ -28,8 +27,7 @@ import { getAllJobs } from './query';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  apollo: Apollo = inject(Apollo);
-  environmentInjector = inject(EnvironmentInjector);
+  readonly #environmentInjector = inject(EnvironmentInjector);
   limit = 5;
   currentPage = signal<number>(1);
   totalCount = signal<number>(0);
@@ -60,13 +58,13 @@ export class HomeComponent implements OnInit {
       return;
     }
     this.currentPage.set(newPage);
-    runInInjectionContext(this.environmentInjector, () => {
+    runInInjectionContext(this.#environmentInjector, () => {
       this.allJobsResource.startFetching(this.limit, this.currentPage());
     });
   }
 
   ngOnInit(): void {
-    runInInjectionContext(this.environmentInjector, () => {
+    runInInjectionContext(this.#environmentInjector, () => {
       this.allJobsResource.startFetching(this.limit, this.currentPage());
     });
   }

@@ -20,8 +20,8 @@ import { AuthService } from '../../services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  environmentInjector = inject(EnvironmentInjector);
-  authService = inject(AuthService);
+  readonly #environmentInjector = inject(EnvironmentInjector);
+  readonly #authService = inject(AuthService);
 
   loginFormModel = {
     email: '',
@@ -31,10 +31,10 @@ export class LoginComponent {
   isError = signal<boolean>(false);
 
   handleSubmit(): void {
-    runInInjectionContext(this.environmentInjector, async () => {
+    runInInjectionContext(this.#environmentInjector, async () => {
       try {
         this.isLoggingIn.set(true);
-        await this.authService.login(this.loginFormModel);
+        await this.#authService.login(this.loginFormModel);
         this.isError.set(false);
         // this.router.navigateByUrl(`/jobs/${job.id}`);
       } catch (err) {

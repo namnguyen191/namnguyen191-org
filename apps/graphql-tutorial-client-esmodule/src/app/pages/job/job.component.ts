@@ -29,8 +29,8 @@ type JobLoader = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobComponent implements OnInit {
-  activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-  environmentInjector = inject(EnvironmentInjector);
+  readonly #activatedRoute = inject(ActivatedRoute);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   jobLoader: WritableSignal<JobLoader> = signal({
     isLoading: false,
@@ -43,9 +43,9 @@ export class JobComponent implements OnInit {
   }
 
   async #fetchJob(): Promise<void> {
-    runInInjectionContext(this.environmentInjector, async () => {
+    runInInjectionContext(this.#environmentInjector, async () => {
       this.jobLoader.update((prev) => ({ ...prev, isLoading: true }));
-      const jobId = this.activatedRoute.snapshot.paramMap.get('jobId');
+      const jobId = this.#activatedRoute.snapshot.paramMap.get('jobId');
       if (!jobId) {
         this.jobLoader.update((prev) => ({ ...prev, isError: true, isLoading: true }));
         return;

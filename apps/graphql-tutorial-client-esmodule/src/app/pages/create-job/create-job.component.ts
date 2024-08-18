@@ -21,7 +21,7 @@ import { createJob } from './query';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateJobComponent {
-  environmentInjector = inject(EnvironmentInjector);
+  readonly #environmentInjector = inject(EnvironmentInjector);
   router = inject(Router);
   creatJobFormModel = {
     title: '',
@@ -30,7 +30,7 @@ export class CreateJobComponent {
   isCreatingJob = signal<boolean>(false);
 
   handleSubmit(): void {
-    runInInjectionContext(this.environmentInjector, async () => {
+    runInInjectionContext(this.#environmentInjector, async () => {
       this.isCreatingJob.set(true);
       const job = await createJob(this.creatJobFormModel);
       this.isCreatingJob.set(false);

@@ -132,7 +132,7 @@ export class CarbonTableComponent
     return pgModel;
   });
 
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   selectPage(selectedPage: number): void {
     this.paginationModel().currentPage = selectedPage;

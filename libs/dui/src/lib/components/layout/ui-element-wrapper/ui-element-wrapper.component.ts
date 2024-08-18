@@ -82,10 +82,10 @@ export const getElementInputsInterpolationContext = (params: {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiElementWrapperComponent {
-  #uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
-  #uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
-  #interpolationService: InterpolationService = inject(InterpolationService);
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #uiElementFactoryService = inject(UIElementFactoryService);
+  readonly #uiElementTemplatesService = inject(UIElementTemplateService);
+  readonly #interpolationService = inject(InterpolationService);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   uiElementInstance: InputSignal<UIElementInstance> = input.required();
 

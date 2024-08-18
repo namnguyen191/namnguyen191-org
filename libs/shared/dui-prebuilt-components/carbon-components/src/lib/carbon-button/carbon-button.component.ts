@@ -67,7 +67,7 @@ export class CarbonButtonComponent
       parseZodWithDefault(ZodCarbonButtonUIElementComponentConfigs.shape.onClick, val, []),
   });
 
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   onClick(): void {
     const onClickHooks: ActionHook[] | undefined | string = this.onClickConfigOption();

@@ -10,7 +10,7 @@ type LayoutTemplateId = string;
   providedIn: 'root',
 })
 export class LayoutTemplateService {
-  #eventsService: EventsService = inject(EventsService);
+  readonly #eventsService = inject(EventsService);
 
   #layoutMap: Record<LayoutTemplateId, WritableSignal<LayoutTemplateWithStatus>> = {};
 

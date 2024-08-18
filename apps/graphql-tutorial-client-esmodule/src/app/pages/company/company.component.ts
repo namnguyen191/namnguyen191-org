@@ -26,9 +26,9 @@ import { CompanyWithJobs, getCompanyById } from './query';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompanyComponent implements OnInit {
-  apollo: Apollo = inject(Apollo);
-  activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-  environmentInjector = inject(EnvironmentInjector);
+  readonly #apollo = inject(Apollo);
+  readonly #activatedRoute = inject(ActivatedRoute);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   companyWithJobsResource = fetchWithStatus({
     fetcher: this.#fetchCompany.bind(this),
@@ -37,13 +37,13 @@ export class CompanyComponent implements OnInit {
   jobs: WritableSignal<Job[]> = signal([]);
 
   ngOnInit(): void {
-    runInInjectionContext(this.environmentInjector, () => {
+    runInInjectionContext(this.#environmentInjector, () => {
       this.companyWithJobsResource.startFetching();
     });
   }
 
   async #fetchCompany(): Promise<CompanyWithJobs> {
-    const companyId = this.activatedRoute.snapshot.paramMap.get('companyId');
+    const companyId = this.#activatedRoute.snapshot.paramMap.get('companyId');
     if (!companyId) {
       throw new Error('Missing company id in url param');
     }

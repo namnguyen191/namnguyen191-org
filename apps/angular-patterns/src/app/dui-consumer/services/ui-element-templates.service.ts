@@ -9,7 +9,7 @@ const BASE_UI_ELEMENT_TEMPLATE_URL = 'http://localhost:8080/ui-element-templates
   providedIn: 'root',
 })
 export class UIElementTemplateService {
-  #httpClient: HttpClient = inject(HttpClient);
+  readonly #httpClient = inject(HttpClient);
 
   #uiElementTemplatesCache: Record<string, Observable<UIElementTemplate>> = {};
 

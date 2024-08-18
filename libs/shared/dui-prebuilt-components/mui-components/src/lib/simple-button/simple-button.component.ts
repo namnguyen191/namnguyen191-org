@@ -72,8 +72,8 @@ export class SimpleButtonComponent
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.onClick.parse(val),
   });
 
-  #actionHookService: ActionHookService = inject(ActionHookService);
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #actionHookService = inject(ActionHookService);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   handleButtonClick(): void {
     const onclickActions = this.onClickConfigOption();

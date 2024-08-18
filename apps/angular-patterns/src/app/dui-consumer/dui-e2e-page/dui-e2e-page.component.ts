@@ -41,19 +41,17 @@ import { UIElementTemplateService as UIElementTemplatesServiceAPI } from '../ser
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuiE2EPageComponent {
-  uiElementTemplatesService: UIElementTemplateService = inject(UIElementTemplateService);
-  uiElementFactoryService: UIElementFactoryService = inject(UIElementFactoryService);
-  remoteResourceTemplateService: RemoteResourceTemplateService = inject(
-    RemoteResourceTemplateService
-  );
-  eventsService: EventsService = inject(EventsService);
-  layoutService: LayoutTemplateService = inject(LayoutTemplateService);
-  layoutsServiceAPI: LayoutsService = inject(LayoutsService);
-  uiElementTemplatesServiceAPI: UIElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
-  actionHookService: ActionHookService = inject(ActionHookService);
-  remoteResourcesServiceAPI: RemoteResourcesServiceAPI = inject(RemoteResourcesServiceAPI);
-  destroyRef = inject(DestroyRef);
-  injector = inject(EnvironmentInjector);
+  readonly #uiElementTemplatesService = inject(UIElementTemplateService);
+  readonly #uiElementFactoryService = inject(UIElementFactoryService);
+  readonly #remoteResourceTemplateService = inject(RemoteResourceTemplateService);
+  readonly #eventsService = inject(EventsService);
+  readonly #layoutService = inject(LayoutTemplateService);
+  readonly #layoutsServiceAPI = inject(LayoutsService);
+  readonly #uiElementTemplatesServiceAPI = inject(UIElementTemplatesServiceAPI);
+  readonly #actionHookService = inject(ActionHookService);
+  readonly #remoteResourcesServiceAPI = inject(RemoteResourcesServiceAPI);
+  readonly #destroyRef = inject(DestroyRef);
+  readonly #injector = inject(EnvironmentInjector);
 
   isNotificationDisplayed = signal<boolean>(false);
   notificationConfig: ToastContent = {
@@ -68,18 +66,18 @@ export class DuiE2EPageComponent {
   constructor() {
     this.setupEventsListener();
 
-    this.uiElementFactoryService.registerUIElement({
+    this.#uiElementFactoryService.registerUIElement({
       type: CarbonTableComponent.ELEMENT_TYPE,
       component: CarbonTableComponent,
     });
 
-    this.uiElementFactoryService.registerUIElement({
+    this.#uiElementFactoryService.registerUIElement({
       type: CarbonButtonComponent.ELEMENT_TYPE,
       component: CarbonButtonComponent,
     });
 
-    this.actionHookService.registerHooks(getDefaultActionsHooksMap(this.injector));
-    this.actionHookService.registerHook('showTestNotification', () => this.#showNotification());
+    this.#actionHookService.registerHooks(getDefaultActionsHooksMap(this.#injector));
+    this.#actionHookService.registerHook('showTestNotification', () => this.#showNotification());
   }
 
   #showNotification(): void {
@@ -87,16 +85,16 @@ export class DuiE2EPageComponent {
   }
 
   setupEventsListener(): void {
-    const allEvents = this.eventsService.getEvents().pipe(takeUntilDestroyed(this.destroyRef));
+    const allEvents = this.#eventsService.getEvents().pipe(takeUntilDestroyed(this.#destroyRef));
 
     const missingLayoutEvents = allEvents.pipe(
       missingLayoutTemplateEvent(),
       switchMap((event) => {
         const missingLayoutId = event.payload.id;
-        this.layoutService.startRegisteringLayoutTemplate(missingLayoutId);
-        return this.layoutsServiceAPI.getLayoutById(missingLayoutId);
+        this.#layoutService.startRegisteringLayoutTemplate(missingLayoutId);
+        return this.#layoutsServiceAPI.getLayoutById(missingLayoutId);
       }),
-      tap((layout) => this.layoutService.registerLayoutTemplate(layout))
+      tap((layout) => this.#layoutService.registerLayoutTemplate(layout))
     );
 
     missingLayoutEvents.subscribe();
@@ -105,11 +103,11 @@ export class DuiE2EPageComponent {
       missingUIElementTemplateEvent(),
       mergeMap((event) => {
         const missingUIElementTemplateId = event.payload.id;
-        return this.uiElementTemplatesServiceAPI
+        return this.#uiElementTemplatesServiceAPI
           .getUIElementTemplateById(missingUIElementTemplateId)
           .pipe(
             tap((uiElementTemplate) => {
-              this.uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
+              this.#uiElementTemplatesService.registerUIElementTemplate(uiElementTemplate);
             })
           );
       })
@@ -121,10 +119,10 @@ export class DuiE2EPageComponent {
       missingRemoteResourceTemplateEvent(),
       mergeMap((event) => {
         const missingRemoteResourceId = event.payload.id;
-        return this.remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);
+        return this.#remoteResourcesServiceAPI.getRemoteResourceById(missingRemoteResourceId);
       }),
       tap((remoteResource) =>
-        this.remoteResourceTemplateService.registerRemoteResourceTemplate(remoteResource)
+        this.#remoteResourceTemplateService.registerRemoteResourceTemplate(remoteResource)
       )
     );
 
@@ -150,7 +148,7 @@ export class DuiE2EPageComponent {
       ),
       mergeMap((val) => {
         const updateLayoutRequests = Object.entries(val).map(([layoutId, eleWithNewPosAndSize]) =>
-          this.layoutsServiceAPI.updateLayoutElementPositionAndSize(layoutId, eleWithNewPosAndSize)
+          this.#layoutsServiceAPI.updateLayoutElementPositionAndSize(layoutId, eleWithNewPosAndSize)
         );
         return forkJoin(updateLayoutRequests);
       })

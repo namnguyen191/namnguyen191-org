@@ -26,7 +26,7 @@ type UIElementTemplateId = string;
   providedIn: 'root',
 })
 export class UIElementTemplateService {
-  #eventsService: EventsService = inject(EventsService);
+  readonly #eventsService = inject(EventsService);
 
   #uiElementTemplateMap: Record<UIElementTemplateId, WritableSignal<UIElementTemplateWithStatus>> =
     {};

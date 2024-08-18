@@ -183,13 +183,11 @@ export class RemoteResourceService {
     string | null
   >(null);
 
-  #dataFetchingService: DataFetchingService = inject(DataFetchingService);
-  #interpolationService: InterpolationService = inject(InterpolationService);
-  #remoteResourceTemplateService: RemoteResourceTemplateService = inject(
-    RemoteResourceTemplateService
-  );
-  #actionHookService: ActionHookService = inject(ActionHookService);
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #dataFetchingService = inject(DataFetchingService);
+  readonly #interpolationService = inject(InterpolationService);
+  readonly #remoteResourceTemplateService = inject(RemoteResourceTemplateService);
+  readonly #actionHookService = inject(ActionHookService);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   getRemoteResourceState(id: string): Observable<RemoteResourceState> {
     const remoteResourceState = this.#remoteResourcesStateMap[id];

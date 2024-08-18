@@ -9,9 +9,9 @@ const BASE_LAYOUT_URL = 'http://localhost:8080/layouts';
   providedIn: 'root',
 })
 export class LayoutsService {
-  #httpClient: HttpClient = inject(HttpClient);
+  readonly #httpClient = inject(HttpClient);
 
-  #layoutsCache: Record<string, Observable<LayoutTemplate>> = {};
+  readonly #layoutsCache: Record<string, Observable<LayoutTemplate>> = {};
 
   getLayoutById(id: string): Observable<LayoutTemplate> {
     let layout$ = this.#layoutsCache[id];

@@ -30,7 +30,7 @@ type RemoteResourceTemplateId = string;
   providedIn: 'root',
 })
 export class RemoteResourceTemplateService {
-  #eventsService: EventsService = inject(EventsService);
+  readonly #eventsService = inject(EventsService);
 
   #remoteResourceTemplateMap: Record<
     RemoteResourceTemplateId,

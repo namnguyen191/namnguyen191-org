@@ -16,7 +16,7 @@ export type SuggestedActivity = {
   providedIn: 'root',
 })
 export class BoreService {
-  #httpClient: HttpClient = inject(HttpClient);
+  readonly #httpClient = inject(HttpClient);
 
   getSuggestedActivity(): Observable<SuggestedActivity> {
     return this.#httpClient.get<SuggestedActivity>('https://www.boredapi.com/api/activity');

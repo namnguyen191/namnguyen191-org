@@ -101,8 +101,8 @@ const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutComponent {
-  #layoutService: LayoutTemplateService = inject(LayoutTemplateService);
-  #layoutsChain: Set<string> = inject(LAYOUTS_CHAIN_TOKEN);
+  readonly #layoutService = inject(LayoutTemplateService);
+  readonly #layoutsChain = inject(LAYOUTS_CHAIN_TOKEN);
 
   layoutId: InputSignal<string> = input.required<string>();
   layoutConfig = computed(() => {

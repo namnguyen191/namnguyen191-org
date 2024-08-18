@@ -114,9 +114,9 @@ export class SimpleTableComponent
   );
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
 
-  #interpolationService: InterpolationService = inject(InterpolationService);
-  #actionHookService: ActionHookService = inject(ActionHookService);
-  #environmentInjector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #interpolationService = inject(InterpolationService);
+  readonly #actionHookService = inject(ActionHookService);
+  readonly #environmentInjector = inject(EnvironmentInjector);
 
   async onPageChange(event: PageEvent): Promise<void> {
     const { pageSize, pageIndex: currentPage } = event;

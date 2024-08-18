@@ -8,7 +8,7 @@ export const TOKEN_LOCAL_STORAGE_KEY = 'userToken';
   providedIn: 'root',
 })
 export class AuthService {
-  #httpClient: HttpClient = inject(HttpClient);
+  readonly #httpClient = inject(HttpClient);
 
   AUTH_ENDPOINT = 'http://localhost:3333/login';
 

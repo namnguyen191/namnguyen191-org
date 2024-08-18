@@ -20,7 +20,7 @@ export const ZodInterpolationString = z.string().regex(INTERPOLATION_REGEX);
   providedIn: 'root',
 })
 export class InterpolationService {
-  #jsRunnerWorker: Worker;
+  readonly #jsRunnerWorker: Worker;
   #workerMessagesSubject = new BehaviorSubject<WorkerResponse | null>(null);
 
   constructor() {

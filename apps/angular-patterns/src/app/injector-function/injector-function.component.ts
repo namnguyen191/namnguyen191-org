@@ -22,13 +22,13 @@ import { getSuperSecretQueryParam } from '../../helper/query-params';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InjectorFunctionComponent implements OnInit {
-  injector: EnvironmentInjector = inject(EnvironmentInjector);
+  readonly #injector = inject(EnvironmentInjector);
 
   funText: WritableSignal<string> = signal('Generating fun text ...');
   secretText$ = getSuperSecretQueryParam();
 
   ngOnInit(): void {
-    runInInjectionContext(this.injector, () => {
+    runInInjectionContext(this.#injector, () => {
       getSomethingFun().subscribe((val) => this.funText.set(val));
     });
   }

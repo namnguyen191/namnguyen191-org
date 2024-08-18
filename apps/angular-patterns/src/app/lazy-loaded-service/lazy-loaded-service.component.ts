@@ -11,9 +11,9 @@ import { LazyLoadedService } from '../services/lazy-loaded-service.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LazyLoadedServiceComponent implements OnInit {
-  lazyLoadedService: LazyLoadedService = inject(LazyLoadedService);
+  readonly #lazyLoadedService = inject(LazyLoadedService);
 
   ngOnInit(): void {
-    this.lazyLoadedService.sayHello();
+    this.#lazyLoadedService.sayHello();
   }
 }

@@ -13,12 +13,12 @@ export type FetchDataParams = {
   providedIn: 'root',
 })
 export class DataFetchingService {
-  httpClient: HttpClient = inject(HttpClient);
+  readonly #httpClient = inject(HttpClient);
 
   fetchData(params: FetchDataParams): Observable<unknown> {
     const { endpoint, method, headers, body } = params;
 
-    return this.httpClient.request(method, endpoint, {
+    return this.#httpClient.request(method, endpoint, {
       headers,
       body,
     });
