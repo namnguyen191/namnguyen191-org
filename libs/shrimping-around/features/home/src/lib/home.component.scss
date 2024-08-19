@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  padding: 2rem;
+
+  .species-card {
+    max-width: 400px;
+  }
+
+  .header-avatar {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/2619/2619569.png');
+    background-size: cover;
+  }
+}

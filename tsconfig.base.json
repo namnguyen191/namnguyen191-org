@@ -22,9 +22,6 @@
         "libs/shared/dui-prebuilt-components/carbon-components/src/index.ts"
       ],
       "@namnguyen191/dui": ["libs/dui/src/index.ts"],
-      "@namnguyen191/dui/events-and-actions": ["libs/dui/events-and-actions/src/index.ts"],
-      "@namnguyen191/dui/templates": ["libs/dui/templates/src/index.ts"],
-      "@namnguyen191/dui/utils": ["libs/dui/utils/src/index.ts"],
       "@namnguyen191/mui-components": [
         "libs/shared/dui-prebuilt-components/mui-components/src/index.ts"
       ],

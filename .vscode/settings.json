@@ -9,8 +9,5 @@
   },
   "angular.enable-strict-mode-prompt": false,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "files.associations": {
-    "*.scss": "tailwindcss"
-  },
   "typescript.preferences.importModuleSpecifier": "relative"
 }
