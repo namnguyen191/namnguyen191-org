@@ -1,0 +1,20 @@
+<ng-container *ngIf="resourceState() as resourceState">
+  @if (resourceState === 'pending') {
+    <span>Loading books ...</span>
+  } @else if (isObject(resourceState) && resourceState.error) {
+    <span>Error fetching books. Please try again later</span>
+  } @else if (resourceState === 'fulfilled') {
+    @for (book of allBooksSig(); track book.id) {
+      <div>Id: {{ book.id }}</div>
+      <div>Title: {{ book.title }}</div>
+      <div>AuthorID: {{ book.author.id }}</div>
+      <div>Short description: {{ book.shortDescription }}</div>
+      <div>Price: {{ book.price }}</div>
+      <div>Is best seller: {{ book.isBestSeller }}</div>
+      <br />
+      <hr />
+    }
+  } @else {
+    <span>Something went wrong, please try again later</span>
+  }
+</ng-container>

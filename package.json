@@ -35,6 +35,7 @@
     "@apollo/client": "^3.9.7",
     "@apollo/server": "^4.10.1",
     "@carbon/styles": "^1.58.0",
+    "@ngrx/signals": "^18.0.2",
     "@reduxjs/toolkit": "^2.2.1",
     "@supabase/supabase-js": "^2.39.8",
     "@swc/helpers": "0.5.11",

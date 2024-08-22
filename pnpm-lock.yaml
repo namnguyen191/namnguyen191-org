@@ -56,6 +56,9 @@ importers:
       '@carbon/styles':
         specifier: ^1.58.0
         version: 1.58.0(sass@1.72.0)
+      '@ngrx/signals':
+        specifier: ^18.0.2
+        version: 18.0.2(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.4))(rxjs@7.8.1)
       '@reduxjs/toolkit':
         specifier: ^2.2.1
         version: 2.2.1(react-redux@9.1.0(@types/react@18.3.1)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
@@ -3469,6 +3472,15 @@ packages:
 
   '@napi-rs/wasm-runtime@0.2.4':
     resolution: {integrity: sha512-9zESzOO5aDByvhIAsOy9TbpZ0Ur2AJbUI7UT73kcUTS2mxAMHOBaa1st/jAymNoCtvrit99kkzT1FZuXVcgfIQ==}
+
+  '@ngrx/signals@18.0.2':
+    resolution: {integrity: sha512-FXmcY2cmkbhZtg9k8Ntq69SyelGmmb6fWtdButH4T8GGFH0o3f1FZTR829j4ynphy8SzuDhD/pzrnpWcV481oQ==}
+    peerDependencies:
+      '@angular/core': ^18.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    peerDependenciesMeta:
+      rxjs:
+        optional: true
 
   '@ngtools/webpack@18.1.1':
     resolution: {integrity: sha512-mjlfnWcHtBZJUJaVyffJZZL8U1o1XUQwrFIKeiFUeatLDsjtv8EbLW9Ed1v3eAJyVuaTNKpsdZma1XdxzeLONw==}
@@ -14636,7 +14648,7 @@ snapshots:
       '@graphql-codegen/plugin-helpers': 5.0.3(graphql@16.8.1)
       '@graphql-tools/utils': 10.1.2(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@graphql-codegen/typed-document-node@5.0.6(encoding@0.1.13)(graphql@16.8.1)':
     dependencies:
@@ -14699,7 +14711,7 @@ snapshots:
       graphql: 16.8.1
       graphql-tag: 2.12.6(graphql@16.8.1)
       parse-filepath: 1.0.2
-      tslib: 2.6.2
+      tslib: 2.6.3
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -14759,7 +14771,7 @@ snapshots:
       '@graphql-tools/utils': 9.2.1(graphql@16.8.1)
       globby: 11.1.0
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
       unixify: 1.0.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -14952,7 +14964,7 @@ snapshots:
       '@babel/types': 7.24.0
       '@graphql-tools/utils': 9.2.1(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -15084,7 +15096,7 @@ snapshots:
       '@graphql-tools/merge': 8.4.2(graphql@16.8.1)
       '@graphql-tools/utils': 9.2.1(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
       value-or-promise: 1.0.12
 
   '@graphql-tools/url-loader@7.17.18(@types/node@20.11.28)(encoding@0.1.13)(graphql@16.8.1)':
@@ -15143,7 +15155,7 @@ snapshots:
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@graphql-tools/wrap@10.0.5(graphql@16.8.1)':
     dependencies:
@@ -15539,12 +15551,12 @@ snapshots:
 
   '@material/animation@15.0.0-canary.7f224ddd4.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/auto-init@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/base': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/banner@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15559,11 +15571,11 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/base@15.0.0-canary.7f224ddd4.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/button@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15579,7 +15591,7 @@ snapshots:
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/card@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15591,7 +15603,7 @@ snapshots:
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/checkbox@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15605,7 +15617,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/chips@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15625,7 +15637,7 @@ snapshots:
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
       safevalues: 0.3.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/circular-progress@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15636,7 +15648,7 @@ snapshots:
       '@material/progress-indicator': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/data-table@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15658,11 +15670,11 @@ snapshots:
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/density@15.0.0-canary.7f224ddd4.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/dialog@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15680,13 +15692,13 @@ snapshots:
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/dom@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/drawer@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15701,7 +15713,7 @@ snapshots:
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/elevation@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15710,7 +15722,7 @@ snapshots:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/fab@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15726,11 +15738,11 @@ snapshots:
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/feature-targeting@15.0.0-canary.7f224ddd4.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/floating-label@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15741,7 +15753,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/focus-ring@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15757,7 +15769,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/icon-button@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15771,7 +15783,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/image-list@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15779,11 +15791,11 @@ snapshots:
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/layout-grid@15.0.0-canary.7f224ddd4.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/line-ripple@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15791,7 +15803,7 @@ snapshots:
       '@material/base': 15.0.0-canary.7f224ddd4.0
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/linear-progress@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15802,7 +15814,7 @@ snapshots:
       '@material/progress-indicator': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/list@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15816,7 +15828,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/menu-surface@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15827,7 +15839,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/menu@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15842,7 +15854,7 @@ snapshots:
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/notched-outline@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15852,7 +15864,7 @@ snapshots:
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/progress-indicator@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15869,7 +15881,7 @@ snapshots:
       '@material/ripple': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/ripple@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15879,12 +15891,12 @@ snapshots:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/rtl@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/segmented-button@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15895,7 +15907,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/touch-target': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/select@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15917,14 +15929,14 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/shape@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/slider@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15938,7 +15950,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/snackbar@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15955,7 +15967,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/switch@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15972,7 +15984,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       safevalues: 0.3.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/tab-bar@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15987,7 +15999,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/tab-indicator@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -15995,7 +16007,7 @@ snapshots:
       '@material/base': 15.0.0-canary.7f224ddd4.0
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/tab-scroller@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16004,7 +16016,7 @@ snapshots:
       '@material/dom': 15.0.0-canary.7f224ddd4.0
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/tab': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/tab@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16018,7 +16030,7 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/textfield@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16036,12 +16048,12 @@ snapshots:
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/theme@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/tokens@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16061,7 +16073,7 @@ snapshots:
       '@material/tokens': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
       safevalues: 0.3.4
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/top-app-bar@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16073,7 +16085,7 @@ snapshots:
       '@material/shape': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
       '@material/typography': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/touch-target@15.0.0-canary.7f224ddd4.0':
     dependencies:
@@ -16081,13 +16093,13 @@ snapshots:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/rtl': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@material/typography@15.0.0-canary.7f224ddd4.0':
     dependencies:
       '@material/feature-targeting': 15.0.0-canary.7f224ddd4.0
       '@material/theme': 15.0.0-canary.7f224ddd4.0
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@module-federation/bridge-react-webpack-plugin@0.2.6':
     dependencies:
@@ -16231,6 +16243,13 @@ snapshots:
       '@emnapi/runtime': 1.2.0
       '@tybys/wasm-util': 0.9.0
 
+  '@ngrx/signals@18.0.2(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.4))(rxjs@7.8.1)':
+    dependencies:
+      '@angular/core': 18.1.1(rxjs@7.8.1)(zone.js@0.14.4)
+      tslib: 2.6.3
+    optionalDependencies:
+      rxjs: 7.8.1
+
   '@ngtools/webpack@18.1.1(@angular/compiler-cli@18.1.1(@angular/compiler@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.4)))(typescript@5.5.3))(typescript@5.5.3)(webpack@5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.21.5))':
     dependencies:
       '@angular/compiler-cli': 18.1.1(@angular/compiler@18.1.1(@angular/core@18.1.1(rxjs@7.8.1)(zone.js@0.14.4)))(typescript@5.5.3)
@@ -16316,7 +16335,7 @@ snapshots:
   '@nrwl/angular@19.5.1(tqlrkfs4g46qxgeqjlm3c2pmye)':
     dependencies:
       '@nx/angular': 19.5.1(tqlrkfs4g46qxgeqjlm3c2pmye)
-      tslib: 2.6.2
+      tslib: 2.6.3
     transitivePeerDependencies:
       - '@angular-devkit/build-angular'
       - '@angular-devkit/core'
@@ -16696,7 +16715,7 @@ snapshots:
       nx: 19.5.7(@swc-node/register@1.9.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@swc/types@0.1.7)(typescript@5.5.3))(@swc/core@1.5.7(@swc/helpers@0.5.11))
       semver: 7.6.2
       tmp: 0.2.3
-      tslib: 2.6.2
+      tslib: 2.6.3
       yargs-parser: 21.1.1
 
   '@nx/devkit@19.5.1(nx@19.5.1(@swc-node/register@1.9.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@swc/types@0.1.7)(typescript@5.5.3))(@swc/core@1.5.7(@swc/helpers@0.5.11)))':
@@ -17674,7 +17693,7 @@ snapshots:
   '@swc-node/sourcemap-support@0.5.0':
     dependencies:
       source-map-support: 0.5.21
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@swc/cli@0.3.12(@swc/core@1.5.7(@swc/helpers@0.5.11))(chokidar@3.6.0)':
     dependencies:
@@ -18429,7 +18448,7 @@ snapshots:
 
   '@wry/caches@1.0.1':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@wry/context@0.7.4':
     dependencies:
@@ -18437,7 +18456,7 @@ snapshots:
 
   '@wry/equality@0.5.7':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@wry/trie@0.4.3':
     dependencies:
@@ -18445,7 +18464,7 @@ snapshots:
 
   '@wry/trie@0.5.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@xtuc/ieee754@1.2.0': {}
 
@@ -21325,7 +21344,7 @@ snapshots:
       jiti: 1.17.1
       minimatch: 4.2.3
       string-env-interpolation: 1.0.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -21661,7 +21680,7 @@ snapshots:
 
   injection-js@2.4.0:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   inquirer@8.2.6:
     dependencies:
@@ -22648,7 +22667,7 @@ snapshots:
     dependencies:
       copy-anything: 2.0.6
       parse-node-version: 1.0.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     optionalDependencies:
       errno: 0.1.8
       graceful-fs: 4.2.11
@@ -23416,7 +23435,7 @@ snapshots:
       tar-stream: 2.2.0
       tmp: 0.2.3
       tsconfig-paths: 4.2.0
-      tslib: 2.6.2
+      tslib: 2.6.3
       yargs: 17.7.2
       yargs-parser: 21.1.1
     optionalDependencies:
@@ -23576,7 +23595,7 @@ snapshots:
       '@wry/caches': 1.0.1
       '@wry/context': 0.7.4
       '@wry/trie': 0.4.3
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   optionator@0.9.3:
     dependencies:
@@ -25270,7 +25289,7 @@ snapshots:
   synckit@0.8.8:
     dependencies:
       '@pkgr/core': 0.1.1
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   tailwindcss@3.4.3(ts-node@10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@types/node@20.11.28)(typescript@5.5.3)):
     dependencies:
@@ -25474,7 +25493,7 @@ snapshots:
 
   ts-invariant@0.10.3:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   ts-jest@29.1.2(@babel/core@7.24.7)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.7))(esbuild@0.20.2)(jest@29.7.0(@types/node@20.11.28)(ts-node@10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@types/node@20.11.28)(typescript@5.5.3)))(typescript@5.5.3):
     dependencies:
