@@ -1,5 +1,4 @@
 import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
   catchError,
@@ -269,12 +268,8 @@ export class RemoteResourceService {
       return;
     }
 
-    const remoteResourceTemplate$ = toObservable(
-      this.#remoteResourceTemplateService.getRemoteResourceTemplate(id),
-      {
-        injector: this.#environmentInjector,
-      }
-    );
+    const remoteResourceTemplate$ =
+      this.#remoteResourceTemplateService.getRemoteResourceTemplate(id);
 
     const remoteResourceFetchFlow$: Observable<boolean> = this.#generateRemoteResourceFetchFlow(
       remoteResourceTemplate$,

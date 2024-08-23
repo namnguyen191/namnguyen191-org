@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  ComponentRef,
   computed,
   effect,
   EnvironmentInjector,
@@ -13,6 +14,8 @@ import {
   Signal,
   signal,
   Type,
+  viewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEqual } from 'lodash-es';
@@ -28,7 +31,9 @@ import {
   Observable,
   of,
   shareReplay,
+  Subject,
   switchMap,
+  takeUntil,
 } from 'rxjs';
 
 import { InterpolationService } from '../../../services/interpolation.service';
@@ -52,28 +57,6 @@ import { ComponentContextPropertyKey } from '../../base-ui-element-with-context.
 type ElementInputsInterpolationContext = {
   remoteResourcesStates: null | RemoteResourcesStates;
   state: StateMap;
-};
-
-export const getElementInputsInterpolationContext = (params: {
-  remoteResourceIds?: string[];
-  stateSubscription?: StateSubscriptionConfig;
-}): Observable<ElementInputsInterpolationContext> => {
-  const { remoteResourceIds, stateSubscription = {} } = params;
-
-  const state = getStatesSubscriptionAsContext(stateSubscription);
-  const remoteResourcesStates = remoteResourceIds?.length
-    ? getRemoteResourcesStatesAsContext(remoteResourceIds)
-    : of(null);
-
-  return combineLatest({
-    remoteResourcesStates,
-    state,
-  }).pipe(
-    shareReplay({
-      refCount: true,
-      bufferSize: 1,
-    })
-  );
 };
 
 const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
@@ -103,22 +86,25 @@ export class UiElementWrapperComponent {
   uiElementTemplateId: InputSignal<string> = input.required();
   requiredComponentType: InputSignal<string | undefined> = input<string>();
 
-  readonly #uiElementTemplate: Signal<UIElementTemplateWithStatus> = computed(() => {
-    return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId())();
+  #unsubscribeElementConfig = new Subject<void>();
+
+  #uiElementComponentRef: ComponentRef<unknown> | null = null;
+  private readonly uiElementVCR: Signal<ViewContainerRef | undefined> = viewChild('uiElementVCR', {
+    read: ViewContainerRef,
+  });
+  #unsubscribeInputSubject = new Subject<void>();
+  #unsubscribeUiElementTemplate = new Subject<void>();
+
+  readonly #uiElementTemplate: Signal<Observable<UIElementTemplateWithStatus>> = computed(() => {
+    return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId());
   });
 
-  readonly uiElementComponent: Signal<Type<unknown> | null> = computed(() => {
-    const templateConfig = this.#uiElementTemplate();
-    if (templateConfig.status !== 'loaded') {
-      return null;
-    }
-    return this.#uiElementFactoryService.getUIElement(templateConfig.config.type);
-  });
+  readonly uiElementComponent = signal<Type<unknown> | null>(null);
 
   readonly uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
     const template = this.#uiElementTemplate();
 
-    return of(template).pipe(
+    return template.pipe(
       filter((template) => template.status === 'loaded'),
       switchMap((template) =>
         runInInjectionContext(this.#environmentInjector, () =>
@@ -138,8 +124,11 @@ export class UiElementWrapperComponent {
   readonly isWrongTypeError = signal<string | null>(null);
 
   constructor() {
+    this.#getUIElementComponentEffect();
     this.#checkForInfiniteRenderEffect();
     this.#checkForRequiredComponentTypeEffect();
+    this.#onNewComponentEffect();
+    this.#onNewInputStreamEffect();
   }
 
   #generateComponentInputs(params: {
@@ -150,10 +139,12 @@ export class UiElementWrapperComponent {
   }): Observable<ObjectType> {
     const { templateOptions, remoteResourceIds, stateSubscription, component } = params;
     const interpolationContext: Observable<ElementInputsInterpolationContext> =
-      getElementInputsInterpolationContext({
-        remoteResourceIds,
-        stateSubscription,
-      });
+      runInInjectionContext(this.#environmentInjector, () =>
+        this.#getElementInputsInterpolationContext({
+          remoteResourceIds,
+          stateSubscription,
+        })
+      );
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
     for (const [key, val] of Object.entries(templateOptions)) {
@@ -202,7 +193,8 @@ export class UiElementWrapperComponent {
 
     return combineLatest(inputsObservableMap).pipe(
       distinctUntilChanged(isEqual),
-      debounceTime(100)
+      debounceTime(100),
+      takeUntil(this.#unsubscribeInputSubject)
     );
   }
 
@@ -243,27 +235,114 @@ export class UiElementWrapperComponent {
   }
 
   #checkForRequiredComponentTypeEffect(): void {
-    effect(
-      () => {
-        const uiElementTemplate = this.#uiElementTemplate();
-        const requiredComponentType = this.requiredComponentType();
+    effect((onCleanup) => {
+      onCleanup(() => {
+        this.#unsubscribeUiElementTemplate.next();
+        this.#unsubscribeUiElementTemplate.complete();
+      });
+      const uiElementTemplate$ = this.#uiElementTemplate();
+      const requiredComponentType = this.requiredComponentType();
 
-        if (uiElementTemplate.status !== 'loaded' || !requiredComponentType) {
-          return;
-        }
+      this.#unsubscribeUiElementTemplate.next();
+      uiElementTemplate$
+        .pipe(takeUntil(this.#unsubscribeUiElementTemplate))
+        .subscribe((uiElementTemplate) => {
+          if (uiElementTemplate.status !== 'loaded' || !requiredComponentType) {
+            return;
+          }
 
-        const elementComponentType = uiElementTemplate.config.type;
-        if (elementComponentType !== requiredComponentType) {
-          this.isWrongTypeError.set(
-            `Wrong element type detected, expected: "${requiredComponentType}" but received "${elementComponentType}"`
-          );
-        } else {
-          this.isWrongTypeError.set(null);
-        }
-      },
-      {
-        allowSignalWrites: true,
+          const elementComponentType = uiElementTemplate.config.type;
+          if (elementComponentType !== requiredComponentType) {
+            this.isWrongTypeError.set(
+              `Wrong element type detected, expected: "${requiredComponentType}" but received "${elementComponentType}"`
+            );
+          } else {
+            this.isWrongTypeError.set(null);
+          }
+        });
+    });
+  }
+
+  #onNewComponentEffect(): void {
+    effect(() => {
+      const newComponent = this.uiElementComponent();
+      const uiElementVCR = this.uiElementVCR();
+
+      if (!newComponent || !uiElementVCR) {
+        return;
       }
+
+      uiElementVCR.clear();
+
+      this.#uiElementComponentRef = uiElementVCR.createComponent(newComponent);
+    });
+  }
+
+  #onNewInputStreamEffect(): void {
+    effect((onCleanup) => {
+      onCleanup(() => {
+        this.#unsubscribeInputSubject.next();
+        this.#unsubscribeInputSubject.complete();
+      });
+      const inputsStream = this.uiElementInputsSig$();
+      this.#setupComponentInputs(inputsStream);
+    });
+  }
+
+  #setupComponentInputs(inputsStream: Observable<ObjectType>): void {
+    // clear any previous subscription
+    this.#unsubscribeInputSubject.next();
+    inputsStream.subscribe((inputs) => {
+      if (!this.#uiElementComponentRef) {
+        return;
+      }
+
+      for (const [inputName, inputVal] of Object.entries(inputs)) {
+        this.#uiElementComponentRef.setInput(inputName, inputVal);
+      }
+    });
+  }
+
+  #getElementInputsInterpolationContext = (params: {
+    remoteResourceIds?: string[];
+    stateSubscription?: StateSubscriptionConfig;
+  }): Observable<ElementInputsInterpolationContext> => {
+    const { remoteResourceIds, stateSubscription = {} } = params;
+
+    const state = getStatesSubscriptionAsContext(stateSubscription);
+    const remoteResourcesStates = remoteResourceIds?.length
+      ? getRemoteResourcesStatesAsContext(remoteResourceIds)
+      : of(null);
+
+    return combineLatest({
+      remoteResourcesStates,
+      state,
+    }).pipe(
+      shareReplay({
+        refCount: true,
+        bufferSize: 1,
+      })
     );
+  };
+
+  #getUIElementComponentEffect(): void {
+    effect((onCleanup) => {
+      onCleanup(() => {
+        this.#unsubscribeElementConfig.next();
+        this.#unsubscribeElementConfig.complete();
+      });
+      const templateConfig$ = this.#uiElementTemplate();
+      templateConfig$
+        .pipe(takeUntil(this.#unsubscribeElementConfig))
+        .subscribe((templateConfig) => {
+          if (templateConfig.status !== 'loaded') {
+            return;
+          }
+          const uiElementComponent = this.#uiElementFactoryService.getUIElement(
+            templateConfig.config.type
+          );
+          this.uiElementComponent.set(uiElementComponent);
+        });
+    });
   }
 }

@@ -1,5 +1,6 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { EmptyObject, ObjectType } from '@namnguyen191/types-helper';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { UIElementRequiredConfigs } from '../../components/base-ui-element.component';
 import { logError } from '../../utils/logging';
@@ -28,86 +29,89 @@ type UIElementTemplateId = string;
 export class UIElementTemplateService {
   readonly #eventsService = inject(EventsService);
 
-  #uiElementTemplateMap: Record<UIElementTemplateId, WritableSignal<UIElementTemplateWithStatus>> =
-    {};
+  #uiElementTemplateSubjectMap: Record<
+    UIElementTemplateId,
+    BehaviorSubject<UIElementTemplateWithStatus>
+  > = {};
 
   startRegisteringUIElementTemplate(id: string): void {
-    const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
+    const existingUIElementTemplateSubject = this.#uiElementTemplateSubjectMap[id];
     const registeringUIElementTemplate: UIElementTemplateWithStatus = {
       id,
       status: 'loading',
       config: null,
     };
-    if (!existingUIElementTemplateSig) {
-      const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal(
+    if (!existingUIElementTemplateSubject) {
+      const newUIElementTemplateSubject = new BehaviorSubject<UIElementTemplateWithStatus>(
         registeringUIElementTemplate
       );
-      this.#uiElementTemplateMap[id] = newUIElementTemplateSig;
+      this.#uiElementTemplateSubjectMap[id] = newUIElementTemplateSubject;
       return;
     }
 
-    existingUIElementTemplateSig.set(registeringUIElementTemplate);
+    existingUIElementTemplateSubject.next(registeringUIElementTemplate);
   }
 
   registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
     const uiElementId = uiElementTemplate.id;
-    const existingUIElementTemplateSig = this.#uiElementTemplateMap[uiElementId];
+    const existingUIElementTemplateSubject = this.#uiElementTemplateSubjectMap[uiElementId];
     const registeredUIElementTemplate: UIElementTemplateWithStatus = {
       id: uiElementId,
       status: 'loaded',
       config: uiElementTemplate,
     };
-    if (existingUIElementTemplateSig) {
-      if (existingUIElementTemplateSig().status === 'loaded') {
+    if (existingUIElementTemplateSubject) {
+      if (existingUIElementTemplateSubject.getValue().status === 'loaded') {
         logError(
           `UIElementTemplate with id of "${uiElementId}" has already been register. Please update it instead`
         );
         return;
       }
 
-      existingUIElementTemplateSig.set(registeredUIElementTemplate);
+      existingUIElementTemplateSubject.next(registeredUIElementTemplate);
       return;
     }
 
-    const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal(
+    const newUIElementTemplateSubject = new BehaviorSubject<UIElementTemplateWithStatus>(
       registeredUIElementTemplate
     );
 
-    this.#uiElementTemplateMap[uiElementId] = newUIElementTemplateSig;
+    this.#uiElementTemplateSubjectMap[uiElementId] = newUIElementTemplateSubject;
   }
 
-  getUIElementTemplate<T extends string>(id: T): Signal<UIElementTemplateWithStatus> {
-    const existingUIElementTemplateSig = this.#uiElementTemplateMap[id];
-    if (!existingUIElementTemplateSig) {
+  getUIElementTemplate<T extends string>(id: T): Observable<UIElementTemplateWithStatus> {
+    const existingUIElementTemplateSubject = this.#uiElementTemplateSubjectMap[id];
+    if (!existingUIElementTemplateSubject) {
       this.#eventsService.emitEvent({
         type: 'MISSING_UI_ELEMENT_TEMPLATE',
         payload: {
           id,
         },
       });
-      const newUIElementTemplateSig: WritableSignal<UIElementTemplateWithStatus> = signal({
+      const newUIElementTemplateSubject = new BehaviorSubject<UIElementTemplateWithStatus>({
         id,
         status: 'missing',
         config: null,
       });
-      this.#uiElementTemplateMap[id] = newUIElementTemplateSig;
-      return newUIElementTemplateSig.asReadonly();
+      this.#uiElementTemplateSubjectMap[id] = newUIElementTemplateSubject;
+      return newUIElementTemplateSubject.asObservable();
     }
-    return existingUIElementTemplateSig.asReadonly();
+    return existingUIElementTemplateSubject.asObservable();
   }
 
   updateUIElementTemplate(updatedUIElementTemplate: UIElementTemplate): void {
     const updatedUIElementTemplateId = updatedUIElementTemplate.id;
-    const existingUIElementTemplateSig = this.#uiElementTemplateMap[updatedUIElementTemplateId];
+    const existingUIElementTemplateSubject =
+      this.#uiElementTemplateSubjectMap[updatedUIElementTemplateId];
 
-    if (!existingUIElementTemplateSig) {
+    if (!existingUIElementTemplateSubject) {
       logError(
         `UIElementTemplate with id of "${updatedUIElementTemplateId}" has not been register. Please register it instead`
       );
       return;
     }
 
-    existingUIElementTemplateSig.set({
+    existingUIElementTemplateSubject.next({
       id: updatedUIElementTemplateId,
       status: 'loaded',
       config: updatedUIElementTemplate,

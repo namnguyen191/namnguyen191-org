@@ -1,8 +1,8 @@
 @if (!isInfinite()) {
   @if (!isWrongTypeError()) {
-    @if (uiElementComponent(); as component) {
-      @if (uiElementInputsSig$() | async; as componentInputs) {
-        <ng-container *ngComponentOutlet="component; inputs: componentInputs" />
+    @if (uiElementComponent()) {
+      @if (uiElementInputsSig$()) {
+        <ng-container #uiElementVCR></ng-container>
       } @else {
         <span>Loading component inputs....</span>
       }

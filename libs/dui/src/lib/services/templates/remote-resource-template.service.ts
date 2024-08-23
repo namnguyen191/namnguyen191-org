@@ -1,4 +1,5 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { FetchDataParams } from '../../internal/data-fetching.service';
 import { logError } from '../../utils/logging';
@@ -32,92 +33,91 @@ type RemoteResourceTemplateId = string;
 export class RemoteResourceTemplateService {
   readonly #eventsService = inject(EventsService);
 
-  #remoteResourceTemplateMap: Record<
+  #remoteResourceTemplateSubjectMap: Record<
     RemoteResourceTemplateId,
-    WritableSignal<RemoteResourceTemplateWithStatus>
+    BehaviorSubject<RemoteResourceTemplateWithStatus>
   > = {};
 
   startRegisteringRemoteResourceTemplate(id: string): void {
-    const existingRemoteResourceTemplateSig = this.#remoteResourceTemplateMap[id];
+    const existingRemoteResourceTemplateSubject = this.#remoteResourceTemplateSubjectMap[id];
     const registeringRemoteResourceTemplate: RemoteResourceTemplateWithStatus = {
       id,
       status: 'loading',
       config: null,
     };
-    if (!existingRemoteResourceTemplateSig) {
-      const newRemoteResourceTemplateSig: WritableSignal<RemoteResourceTemplateWithStatus> = signal(
-        registeringRemoteResourceTemplate
-      );
-      this.#remoteResourceTemplateMap[id] = newRemoteResourceTemplateSig;
+    if (!existingRemoteResourceTemplateSubject) {
+      const newRemoteResourceTemplateSubject =
+        new BehaviorSubject<RemoteResourceTemplateWithStatus>(registeringRemoteResourceTemplate);
+      this.#remoteResourceTemplateSubjectMap[id] = newRemoteResourceTemplateSubject;
       return;
     }
 
-    existingRemoteResourceTemplateSig.set(registeringRemoteResourceTemplate);
+    existingRemoteResourceTemplateSubject.next(registeringRemoteResourceTemplate);
   }
 
   registerRemoteResourceTemplate(remoteResourceTemplate: RemoteResourceTemplate): void {
     const remoteResourceTemplateId = remoteResourceTemplate.id;
-    const existingRemoteResourceTemplateSig =
-      this.#remoteResourceTemplateMap[remoteResourceTemplateId];
+    const existingRemoteResourceTemplateSubject =
+      this.#remoteResourceTemplateSubjectMap[remoteResourceTemplateId];
     const registeredRemoteResourceTemplate: RemoteResourceTemplateWithStatus = {
       id: remoteResourceTemplateId,
       status: 'loaded',
       config: remoteResourceTemplate,
     };
-    if (existingRemoteResourceTemplateSig) {
-      if (existingRemoteResourceTemplateSig().status === 'loaded') {
+    if (existingRemoteResourceTemplateSubject) {
+      if (existingRemoteResourceTemplateSubject.getValue().status === 'loaded') {
         logError(
           `RemoteResourceTemplate with id of "${remoteResourceTemplateId}" has already been register. Please update it instead`
         );
         return;
       }
 
-      existingRemoteResourceTemplateSig.set(registeredRemoteResourceTemplate);
+      existingRemoteResourceTemplateSubject.next(registeredRemoteResourceTemplate);
       return;
     }
 
-    const newRemoteResourceTemplateSig: WritableSignal<RemoteResourceTemplateWithStatus> = signal(
+    const newRemoteResourceTemplateSubject = new BehaviorSubject<RemoteResourceTemplateWithStatus>(
       registeredRemoteResourceTemplate
     );
 
-    this.#remoteResourceTemplateMap[remoteResourceTemplateId] = newRemoteResourceTemplateSig;
+    this.#remoteResourceTemplateSubjectMap[remoteResourceTemplateId] =
+      newRemoteResourceTemplateSubject;
   }
 
-  getRemoteResourceTemplate<T extends string>(id: T): Signal<RemoteResourceTemplateWithStatus> {
-    const existingRemoteResourceTemplateSig = this.#remoteResourceTemplateMap[id];
-    if (!existingRemoteResourceTemplateSig) {
+  getRemoteResourceTemplate<T extends string>(id: T): Observable<RemoteResourceTemplateWithStatus> {
+    const existingRemoteResourceTemplateSubject = this.#remoteResourceTemplateSubjectMap[id];
+    if (!existingRemoteResourceTemplateSubject) {
       this.#eventsService.emitEvent({
         type: 'MISSING_REMOTE_RESOURCE_TEMPLATE',
         payload: {
           id,
         },
       });
-      const newRemoteResourceTemplateSig: WritableSignal<RemoteResourceTemplateWithStatus> = signal(
-        {
+      const newRemoteResourceTemplateSubject =
+        new BehaviorSubject<RemoteResourceTemplateWithStatus>({
           id,
           status: 'missing',
           config: null,
-        }
-      );
-      this.#remoteResourceTemplateMap[id] = newRemoteResourceTemplateSig;
-      return newRemoteResourceTemplateSig.asReadonly();
+        });
+      this.#remoteResourceTemplateSubjectMap[id] = newRemoteResourceTemplateSubject;
+      return newRemoteResourceTemplateSubject.asObservable();
     }
-    return existingRemoteResourceTemplateSig.asReadonly();
+    return existingRemoteResourceTemplateSubject.asObservable();
   }
 
   updateRemoteResourceTemplate(updatedRemoteResourceTemplate: RemoteResourceTemplate): void {
     const updatedRemoteResourceTemplateId = updatedRemoteResourceTemplate.id;
-    const existingRemoteResourceTemplateSig =
-      this.#remoteResourceTemplateMap[updatedRemoteResourceTemplateId];
+    const existingRemoteResourceTemplateSubject =
+      this.#remoteResourceTemplateSubjectMap[updatedRemoteResourceTemplateId];
 
-    if (!existingRemoteResourceTemplateSig) {
+    if (!existingRemoteResourceTemplateSubject) {
       logError(
         `RemoteResourceTemplate with id of "${updatedRemoteResourceTemplateId}" has not been register. Please register it instead`
       );
       return;
     }
 
-    existingRemoteResourceTemplateSig.set({
+    existingRemoteResourceTemplateSubject.next({
       id: updatedRemoteResourceTemplateId,
       status: 'loaded',
       config: updatedRemoteResourceTemplate,

@@ -1,4 +1,5 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { logError } from '../../utils/logging';
 import { EventsService } from '../events-and-actions/events.service';
@@ -12,83 +13,85 @@ type LayoutTemplateId = string;
 export class LayoutTemplateService {
   readonly #eventsService = inject(EventsService);
 
-  #layoutMap: Record<LayoutTemplateId, WritableSignal<LayoutTemplateWithStatus>> = {};
+  #layoutObsMap: Record<LayoutTemplateId, BehaviorSubject<LayoutTemplateWithStatus>> = {};
 
   startRegisteringLayoutTemplate(id: string): void {
-    const existingLayoutTemplateSig = this.#layoutMap[id];
+    const existingLayoutTemplateSubject = this.#layoutObsMap[id];
     const registeringLayoutTemplate: LayoutTemplateWithStatus = {
       id,
       status: 'loading',
       config: null,
     };
-    if (!existingLayoutTemplateSig) {
-      const newLayoutTemplateSig: WritableSignal<LayoutTemplateWithStatus> =
-        signal(registeringLayoutTemplate);
-      this.#layoutMap[id] = newLayoutTemplateSig;
+    if (!existingLayoutTemplateSubject) {
+      const newLayoutTemplateSubject = new BehaviorSubject<LayoutTemplateWithStatus>(
+        registeringLayoutTemplate
+      );
+      this.#layoutObsMap[id] = newLayoutTemplateSubject;
       return;
     }
 
-    existingLayoutTemplateSig.set(registeringLayoutTemplate);
+    existingLayoutTemplateSubject.next(registeringLayoutTemplate);
   }
 
   registerLayoutTemplate(layout: LayoutTemplate): void {
     const layoutId = layout.id;
-    const existingLayoutTemplateSig = this.#layoutMap[layoutId];
+    const existingLayoutTemplateSubject = this.#layoutObsMap[layoutId];
     const registeredLayoutTemplate: LayoutTemplateWithStatus = {
       id: layoutId,
       status: 'loaded',
       config: layout,
     };
-    if (existingLayoutTemplateSig) {
-      if (existingLayoutTemplateSig().status === 'loaded') {
+    if (existingLayoutTemplateSubject) {
+      if (existingLayoutTemplateSubject.getValue().status === 'loaded') {
         logError(
           `LayoutTemplate with id of "${layoutId}" has already been register. Please update it instead`
         );
         return;
       }
 
-      existingLayoutTemplateSig.set(registeredLayoutTemplate);
+      existingLayoutTemplateSubject.next(registeredLayoutTemplate);
       return;
     }
 
-    const newLayoutTemplateSig: WritableSignal<LayoutTemplateWithStatus> =
-      signal(registeredLayoutTemplate);
+    const newLayoutTemplateSubject = new BehaviorSubject<LayoutTemplateWithStatus>(
+      registeredLayoutTemplate
+    );
 
-    this.#layoutMap[layoutId] = newLayoutTemplateSig;
+    this.#layoutObsMap[layoutId] = newLayoutTemplateSubject;
   }
 
-  getLayoutTemplate<T extends string>(id: T): Signal<LayoutTemplateWithStatus> {
-    const existingLayoutTemplateSig = this.#layoutMap[id];
-    if (!existingLayoutTemplateSig) {
+  getLayoutTemplate<T extends string>(id: T): Observable<LayoutTemplateWithStatus> {
+    const existingLayoutTemplateSubject = this.#layoutObsMap[id];
+    if (!existingLayoutTemplateSubject) {
       this.#eventsService.emitEvent({
         type: 'MISSING_LAYOUT_TEMPLATE',
         payload: {
           id,
         },
       });
-      const newLayoutTemplateSig: WritableSignal<LayoutTemplateWithStatus> = signal({
+      const newLayoutTemplateSubject = new BehaviorSubject<LayoutTemplateWithStatus>({
         id,
         status: 'missing',
         config: null,
       });
-      this.#layoutMap[id] = newLayoutTemplateSig;
-      return newLayoutTemplateSig.asReadonly();
+      this.#layoutObsMap[id] = newLayoutTemplateSubject;
+      return newLayoutTemplateSubject.asObservable();
     }
-    return existingLayoutTemplateSig.asReadonly();
+    return existingLayoutTemplateSubject.asObservable();
   }
 
   updateLayoutTemplate(updatedLayoutTemplate: LayoutTemplate): void {
     const updatedLayoutTemplateId = updatedLayoutTemplate.id;
-    const existingLayoutTemplateSig = this.#layoutMap[updatedLayoutTemplateId];
+    const existingLayoutTemplateSubject = this.#layoutObsMap[updatedLayoutTemplateId];
 
-    if (!existingLayoutTemplateSig) {
+    if (!existingLayoutTemplateSubject) {
       logError(
         `LayoutTemplate with id of "${updatedLayoutTemplateId}" has not been register. Please register it instead`
       );
       return;
     }
 
-    existingLayoutTemplateSig.set({
+    existingLayoutTemplateSubject.next({
       id: updatedLayoutTemplateId,
       status: 'loaded',
       config: updatedLayoutTemplate,

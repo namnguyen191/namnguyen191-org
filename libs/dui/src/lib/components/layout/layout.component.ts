@@ -8,6 +8,7 @@ import {
   InjectionToken,
   input,
   InputSignal,
+  Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -19,11 +20,13 @@ import {
   GridsterItemComponent,
   GridType,
 } from 'angular-gridster2';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { EventsService } from '../../services/events-and-actions/events.service';
 import { LayoutTemplateService } from '../../services/templates/layout-template.service';
 import {
   LayoutTemplate,
+  LayoutTemplateWithStatus,
   UIElementInstance,
 } from '../../services/templates/layout-template-interfaces';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
@@ -104,11 +107,14 @@ export class LayoutComponent {
   readonly #layoutService = inject(LayoutTemplateService);
   readonly #layoutsChain = inject(LAYOUTS_CHAIN_TOKEN);
 
+  #unsubscribeFromLayoutConfig = new Subject<void>();
+
   layoutId: InputSignal<string> = input.required<string>();
-  layoutConfig = computed(() => {
+  layoutConfig: Signal<Observable<LayoutTemplateWithStatus>> = computed(() => {
     const layoutId = this.layoutId();
-    return this.#layoutService.getLayoutTemplate(layoutId)();
+    return this.#layoutService.getLayoutTemplate(layoutId);
   });
+  #prevLayoutId: string | null = null;
 
   gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
 
@@ -122,36 +128,7 @@ export class LayoutComponent {
   #eventService: EventsService = inject(EventsService);
 
   constructor() {
-    effect(
-      (onCleanup) => {
-        const layoutConfigVal = this.layoutConfig();
-
-        if (layoutConfigVal.status !== 'loaded') {
-          return;
-        }
-
-        const gridItems = this.#createGridItems(layoutConfigVal.config);
-        this.gridItems.set(gridItems);
-
-        const isInfinite = this.#layoutsChain.has(layoutConfigVal.config.id);
-
-        if (isInfinite) {
-          console.error(
-            `Layout with id ${layoutConfigVal.config.id} has already existed in parents`
-          );
-        }
-
-        this.#layoutsChain.add(layoutConfigVal.config.id);
-        this.isInfinite.set(isInfinite);
-
-        onCleanup(() => {
-          this.#layoutsChain.delete(layoutConfigVal.config.id);
-        });
-      },
-      {
-        allowSignalWrites: true,
-      }
-    );
+    this.#onLayoutConfigStreamChangedEffect();
   }
 
   #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
@@ -184,5 +161,46 @@ export class LayoutComponent {
         },
       });
     }
+  }
+
+  #onLayoutConfigStreamChangedEffect(): void {
+    effect(
+      (onCleanup) => {
+        onCleanup(() => {
+          this.#unsubscribeFromLayoutConfig.next();
+          this.#unsubscribeFromLayoutConfig.complete();
+        });
+        const layoutConfigStream = this.layoutConfig();
+        this.#unsubscribeFromLayoutConfig.next();
+        layoutConfigStream
+          .pipe(takeUntil(this.#unsubscribeFromLayoutConfig))
+          .subscribe((layoutConfigVal) => {
+            if (!layoutConfigVal || layoutConfigVal.status !== 'loaded') {
+              return;
+            }
+
+            const gridItems = this.#createGridItems(layoutConfigVal.config);
+            this.gridItems.set(gridItems);
+
+            const currentLayoutId = layoutConfigVal.config.id;
+            if (this.#prevLayoutId) {
+              this.#layoutsChain.delete(this.#prevLayoutId);
+              this.#prevLayoutId = currentLayoutId;
+            }
+
+            const isInfinite = this.#layoutsChain.has(currentLayoutId);
+
+            if (isInfinite) {
+              console.error(`Layout with id ${currentLayoutId} has already existed in parents`);
+            }
+
+            this.#layoutsChain.add(currentLayoutId);
+            this.isInfinite.set(isInfinite);
+          });
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
   }
 }
