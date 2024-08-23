@@ -16,6 +16,7 @@ import {
   interpolateAndTriggerContextBasedActionHooks,
   parseZodWithDefault,
   UIElementImplementation,
+  UiElementWrapperComponent,
 } from '@namnguyen191/dui';
 import {
   PaginationModel,
@@ -39,7 +40,7 @@ import {
 @Component({
   selector: 'namnguyen191-carbon-table',
   standalone: true,
-  imports: [CommonModule, TableModule, PaginationModule],
+  imports: [CommonModule, TableModule, PaginationModule, UiElementWrapperComponent],
   templateUrl: './carbon-table.component.html',
   styleUrl: './carbon-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +61,12 @@ export class CarbonTableComponent
         val,
         this.defaultTitle
       ),
+  });
+
+  primaryButtonIdConfigOption: InputSignal<string> = input('', {
+    alias: 'primaryButtonId',
+    transform: (val) =>
+      parseZodWithDefault(ZodCarbonTableUIElementComponentConfigs.shape.primaryButtonId, val, ''),
   });
 
   headersConfigOption: InputSignal<TableHeadersConfig> = input([], {
@@ -148,6 +155,7 @@ export class CarbonTableComponent
       ...this.$context$(),
       $paginationContext: { pageLength, selectedPage },
     };
+
     runInInjectionContext(this.#environmentInjector, async () => {
       await interpolateAndTriggerContextBasedActionHooks({
         hooks: onPageChangeHooks,

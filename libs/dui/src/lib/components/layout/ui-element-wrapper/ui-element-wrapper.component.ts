@@ -3,12 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   EnvironmentInjector,
   inject,
+  InjectionToken,
   input,
   InputSignal,
   runInInjectionContext,
   Signal,
+  signal,
   Type,
 } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
@@ -38,7 +41,6 @@ import {
   StateMap,
   StateSubscriptionConfig,
 } from '../../../services/state-store.service';
-import { UIElementInstance } from '../../../services/templates/layout-template-interfaces';
 import {
   UIElementTemplateOptions,
   UIElementTemplateService,
@@ -74,11 +76,22 @@ export const getElementInputsInterpolationContext = (params: {
   );
 };
 
+const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
+
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './ui-element-wrapper.component.html',
+  providers: [
+    {
+      provide: UI_ELEMENTS_CHAIN_TOKEN,
+      useFactory: (): Set<string> => {
+        const existingToken = inject(UI_ELEMENTS_CHAIN_TOKEN, { optional: true, skipSelf: true });
+        return existingToken ? structuredClone(existingToken) : new Set();
+      },
+    },
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiElementWrapperComponent {
@@ -87,24 +100,23 @@ export class UiElementWrapperComponent {
   readonly #interpolationService = inject(InterpolationService);
   readonly #environmentInjector = inject(EnvironmentInjector);
 
-  uiElementInstance: InputSignal<UIElementInstance> = input.required();
+  uiElementTemplateId: InputSignal<string> = input.required();
+  requiredComponentType: InputSignal<string | undefined> = input<string>();
 
-  uiElementTemplate: Signal<UIElementTemplateWithStatus> = computed(() => {
-    return this.#uiElementTemplatesService.getUIElementTemplate(
-      this.uiElementInstance().uiElementTemplateId
-    )();
+  readonly #uiElementTemplate: Signal<UIElementTemplateWithStatus> = computed(() => {
+    return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId())();
   });
 
-  uiElementComponent: Signal<Type<unknown> | null> = computed(() => {
-    const templateConfig = this.uiElementTemplate();
+  readonly uiElementComponent: Signal<Type<unknown> | null> = computed(() => {
+    const templateConfig = this.#uiElementTemplate();
     if (templateConfig.status !== 'loaded') {
       return null;
     }
     return this.#uiElementFactoryService.getUIElement(templateConfig.config.type);
   });
 
-  uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
-    const template = this.uiElementTemplate();
+  readonly uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
+    const template = this.#uiElementTemplate();
 
     return of(template).pipe(
       filter((template) => template.status === 'loaded'),
@@ -120,6 +132,15 @@ export class UiElementWrapperComponent {
       )
     );
   });
+
+  readonly isInfinite = signal<boolean>(false);
+  readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
+  readonly isWrongTypeError = signal<string | null>(null);
+
+  constructor() {
+    this.#checkForInfiniteRenderEffect();
+    this.#checkForRequiredComponentTypeEffect();
+  }
 
   #generateComponentInputs(params: {
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
@@ -187,5 +208,62 @@ export class UiElementWrapperComponent {
 
   #isContextBased(component: Type<unknown>): boolean {
     return !!(component as unknown as { NEED_CONTEXT?: true })['NEED_CONTEXT'];
+  }
+
+  #checkForInfiniteRenderEffect(): void {
+    effect(
+      (onCleanup) => {
+        const uiElementTemplateId = this.uiElementTemplateId();
+
+        onCleanup(() => {
+          this.#uiElementChain.delete(uiElementTemplateId);
+        });
+
+        const isInfinite = this.#uiElementChain.has(uiElementTemplateId);
+
+        if (isInfinite) {
+          let chains = '';
+          this.#uiElementChain.forEach((elementInChainId) => {
+            chains += chains ? `->${elementInChainId}` : elementInChainId;
+          });
+          chains += `->${uiElementTemplateId}`;
+          console.error(
+            `UI element with id ${uiElementTemplateId} has already existed in parents: ${chains}`
+          );
+        } else {
+          this.#uiElementChain.add(uiElementTemplateId);
+        }
+
+        this.isInfinite.set(isInfinite);
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
+  #checkForRequiredComponentTypeEffect(): void {
+    effect(
+      () => {
+        const uiElementTemplate = this.#uiElementTemplate();
+        const requiredComponentType = this.requiredComponentType();
+
+        if (uiElementTemplate.status !== 'loaded' || !requiredComponentType) {
+          return;
+        }
+
+        const elementComponentType = uiElementTemplate.config.type;
+        if (elementComponentType !== requiredComponentType) {
+          this.isWrongTypeError.set(
+            `Wrong element type detected, expected: "${requiredComponentType}" but received "${elementComponentType}"`
+          );
+        } else {
+          this.isWrongTypeError.set(null);
+        }
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
   }
 }

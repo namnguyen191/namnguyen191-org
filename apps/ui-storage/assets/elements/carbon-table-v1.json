@@ -6,6 +6,7 @@
     "global": ["usPopulation", "page"]
   },
   "options": {
+    "primaryButtonId": "carbon-button-test",
     "title": "This is a different table",
     "headers": ["State", "Year", "Population"],
     "rows": "<${ const currentPage=this.state?.global?.page?.selectedPage??1;const currentPageLength=this.state?.global?.page?.pageLength??15;const startPageIndex=(currentPage-1)*currentPageLength;const endPageIndex=currentPage*currentPageLength;return this.state?.global?.usPopulation?.slice(startPageIndex,endPageIndex)?.map((({State:State,Year:Year,Population:Population})=>[State,Year,Population]))??[]; }$>",

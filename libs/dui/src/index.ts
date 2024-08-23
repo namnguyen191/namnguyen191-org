@@ -2,6 +2,7 @@ export * from './lib/components/base-ui-element.component';
 export * from './lib/components/base-ui-element-with-context.component';
 export * from './lib/components/dui/dui.component';
 export * from './lib/components/layout/layout.component';
+export * from './lib/components/layout/ui-element-wrapper/ui-element-wrapper.component';
 export * from './lib/global';
 export * from './lib/services/events-and-actions/action-hook.service';
 export * from './lib/services/events-and-actions/defaut-actions-hooks';

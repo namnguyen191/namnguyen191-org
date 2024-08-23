@@ -1,4 +1,9 @@
 <cds-table-container>
+  <namnguyen191-ui-element-wrapper
+    *ngIf="primaryButtonIdConfigOption() as primaryButtonId"
+    [uiElementTemplateId]="primaryButtonId"
+    requiredComponentType="CARBON_BUTTON"
+  ></namnguyen191-ui-element-wrapper>
   <cds-table-header>
     <h4 cdsTableHeaderTitle id="table-header">{{ titleConfigOption() }}</h4>
     <p

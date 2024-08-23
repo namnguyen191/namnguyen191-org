@@ -29,6 +29,7 @@ export const ZodCarbonTableUIElementComponentConfigs = z.object({
   rows: ZodTableRowsConfig,
   description: ZodTableDescriptionConfig,
   pagination: ZodTablePaginationConfigs,
+  primaryButtonId: z.string(),
 });
 
 export type CarbonTableUIElementComponentConfigs = z.infer<

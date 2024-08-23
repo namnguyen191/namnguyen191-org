@@ -1,9 +1,17 @@
-@if (uiElementComponent(); as component) {
-  @if (uiElementInputsSig$() | async; as componentInputs) {
-    <ng-container *ngComponentOutlet="component; inputs: componentInputs" />
+@if (!isInfinite()) {
+  @if (!isWrongTypeError()) {
+    @if (uiElementComponent(); as component) {
+      @if (uiElementInputsSig$() | async; as componentInputs) {
+        <ng-container *ngComponentOutlet="component; inputs: componentInputs" />
+      } @else {
+        <span>Loading component inputs....</span>
+      }
+    } @else {
+      <span>Loading UI component....</span>
+    }
   } @else {
-    <span>Loading component inputs....</span>
+    <span>{{ isWrongTypeError() }}</span>
   }
 } @else {
-  <span>Loading UI component....</span>
+  <span>Infinte loop in rendering element detected</span>
 }
