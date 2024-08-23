@@ -52,7 +52,11 @@ import {
   UIElementTemplateWithStatus,
 } from '../../../services/templates/ui-element-template.service';
 import { UIElementFactoryService } from '../../../services/ui-element-factory.service';
-import { ComponentContextPropertyKey } from '../../base-ui-element-with-context.component';
+import { BaseUIElementComponent } from '../../base-ui-element.component';
+import {
+  BaseUIElementWithContextComponent,
+  ComponentContextPropertyKey,
+} from '../../base-ui-element-with-context.component';
 
 type ElementInputsInterpolationContext = {
   remoteResourcesStates: null | RemoteResourcesStates;
@@ -60,6 +64,28 @@ type ElementInputsInterpolationContext = {
 };
 
 const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
+
+export const getElementInputsInterpolationContext = (params: {
+  remoteResourceIds?: string[];
+  stateSubscription?: StateSubscriptionConfig;
+}): Observable<ElementInputsInterpolationContext> => {
+  const { remoteResourceIds, stateSubscription = {} } = params;
+
+  const state = getStatesSubscriptionAsContext(stateSubscription);
+  const remoteResourcesStates = remoteResourceIds?.length
+    ? getRemoteResourcesStatesAsContext(remoteResourceIds)
+    : of(null);
+
+  return combineLatest({
+    remoteResourcesStates,
+    state,
+  }).pipe(
+    shareReplay({
+      refCount: true,
+      bufferSize: 1,
+    })
+  );
+};
 
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
@@ -86,23 +112,20 @@ export class UiElementWrapperComponent {
   uiElementTemplateId: InputSignal<string> = input.required();
   requiredComponentType: InputSignal<string | undefined> = input<string>();
 
-  #unsubscribeElementConfig = new Subject<void>();
-
-  #uiElementComponentRef: ComponentRef<unknown> | null = null;
   private readonly uiElementVCR: Signal<ViewContainerRef | undefined> = viewChild('uiElementVCR', {
     read: ViewContainerRef,
   });
-  #unsubscribeInputSubject = new Subject<void>();
+  #unsubscribeInputsSubject = new Subject<void>();
   #unsubscribeUiElementTemplate = new Subject<void>();
 
-  readonly #uiElementTemplate: Signal<Observable<UIElementTemplateWithStatus>> = computed(() => {
+  readonly uiElementTemplate: Signal<Observable<UIElementTemplateWithStatus>> = computed(() => {
     return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId());
   });
 
   readonly uiElementComponent = signal<Type<unknown> | null>(null);
 
   readonly uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
-    const template = this.#uiElementTemplate();
+    const template = this.uiElementTemplate();
 
     return template.pipe(
       filter((template) => template.status === 'loaded'),
@@ -121,14 +144,10 @@ export class UiElementWrapperComponent {
 
   readonly isInfinite = signal<boolean>(false);
   readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
-  readonly isWrongTypeError = signal<string | null>(null);
 
   constructor() {
-    this.#getUIElementComponentEffect();
     this.#checkForInfiniteRenderEffect();
-    this.#checkForRequiredComponentTypeEffect();
-    this.#onNewComponentEffect();
-    this.#onNewInputStreamEffect();
+    this.#constructComponentEffect();
   }
 
   #generateComponentInputs(params: {
@@ -140,7 +159,7 @@ export class UiElementWrapperComponent {
     const { templateOptions, remoteResourceIds, stateSubscription, component } = params;
     const interpolationContext: Observable<ElementInputsInterpolationContext> =
       runInInjectionContext(this.#environmentInjector, () =>
-        this.#getElementInputsInterpolationContext({
+        getElementInputsInterpolationContext({
           remoteResourceIds,
           stateSubscription,
         })
@@ -193,8 +212,7 @@ export class UiElementWrapperComponent {
 
     return combineLatest(inputsObservableMap).pipe(
       distinctUntilChanged(isEqual),
-      debounceTime(100),
-      takeUntil(this.#unsubscribeInputSubject)
+      debounceTime(100)
     );
   }
 
@@ -234,114 +252,63 @@ export class UiElementWrapperComponent {
     );
   }
 
-  #checkForRequiredComponentTypeEffect(): void {
+  #setupComponentInputs(params: {
+    inputsStream: Observable<ObjectType>;
+    componentRef: ComponentRef<BaseUIElementComponent | BaseUIElementWithContextComponent>;
+  }): void {
+    const { inputsStream, componentRef } = params;
+    this.#unsubscribeInputsSubject.next();
+    inputsStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((inputs) => {
+      for (const [inputName, inputVal] of Object.entries(inputs)) {
+        componentRef.setInput(inputName, inputVal);
+      }
+    });
+  }
+
+  #constructComponentEffect(): void {
     effect((onCleanup) => {
       onCleanup(() => {
         this.#unsubscribeUiElementTemplate.next();
         this.#unsubscribeUiElementTemplate.complete();
+        this.#unsubscribeInputsSubject.next();
+        this.#unsubscribeInputsSubject.complete();
       });
-      const uiElementTemplate$ = this.#uiElementTemplate();
-      const requiredComponentType = this.requiredComponentType();
+
+      const uiElementVCR = this.uiElementVCR();
+
+      if (!uiElementVCR) {
+        return;
+      }
+
+      const uiElementTemplate$ = this.uiElementTemplate();
 
       this.#unsubscribeUiElementTemplate.next();
       uiElementTemplate$
-        .pipe(takeUntil(this.#unsubscribeUiElementTemplate))
+        .pipe(
+          filter((uiElementTemplate) => uiElementTemplate.status === 'loaded'),
+          takeUntil(this.#unsubscribeUiElementTemplate)
+        )
         .subscribe((uiElementTemplate) => {
-          if (uiElementTemplate.status !== 'loaded' || !requiredComponentType) {
-            return;
-          }
-
-          const elementComponentType = uiElementTemplate.config.type;
-          if (elementComponentType !== requiredComponentType) {
-            this.isWrongTypeError.set(
-              `Wrong element type detected, expected: "${requiredComponentType}" but received "${elementComponentType}"`
-            );
-          } else {
-            this.isWrongTypeError.set(null);
-          }
-        });
-    });
-  }
-
-  #onNewComponentEffect(): void {
-    effect(() => {
-      const newComponent = this.uiElementComponent();
-      const uiElementVCR = this.uiElementVCR();
-
-      if (!newComponent || !uiElementVCR) {
-        return;
-      }
-
-      uiElementVCR.clear();
-
-      this.#uiElementComponentRef = uiElementVCR.createComponent(newComponent);
-    });
-  }
-
-  #onNewInputStreamEffect(): void {
-    effect((onCleanup) => {
-      onCleanup(() => {
-        this.#unsubscribeInputSubject.next();
-        this.#unsubscribeInputSubject.complete();
-      });
-      const inputsStream = this.uiElementInputsSig$();
-      this.#setupComponentInputs(inputsStream);
-    });
-  }
-
-  #setupComponentInputs(inputsStream: Observable<ObjectType>): void {
-    // clear any previous subscription
-    this.#unsubscribeInputSubject.next();
-    inputsStream.subscribe((inputs) => {
-      if (!this.#uiElementComponentRef) {
-        return;
-      }
-
-      for (const [inputName, inputVal] of Object.entries(inputs)) {
-        this.#uiElementComponentRef.setInput(inputName, inputVal);
-      }
-    });
-  }
-
-  #getElementInputsInterpolationContext = (params: {
-    remoteResourceIds?: string[];
-    stateSubscription?: StateSubscriptionConfig;
-  }): Observable<ElementInputsInterpolationContext> => {
-    const { remoteResourceIds, stateSubscription = {} } = params;
-
-    const state = getStatesSubscriptionAsContext(stateSubscription);
-    const remoteResourcesStates = remoteResourceIds?.length
-      ? getRemoteResourcesStatesAsContext(remoteResourceIds)
-      : of(null);
-
-    return combineLatest({
-      remoteResourcesStates,
-      state,
-    }).pipe(
-      shareReplay({
-        refCount: true,
-        bufferSize: 1,
-      })
-    );
-  };
-
-  #getUIElementComponentEffect(): void {
-    effect((onCleanup) => {
-      onCleanup(() => {
-        this.#unsubscribeElementConfig.next();
-        this.#unsubscribeElementConfig.complete();
-      });
-      const templateConfig$ = this.#uiElementTemplate();
-      templateConfig$
-        .pipe(takeUntil(this.#unsubscribeElementConfig))
-        .subscribe((templateConfig) => {
-          if (templateConfig.status !== 'loaded') {
-            return;
-          }
           const uiElementComponent = this.#uiElementFactoryService.getUIElement(
-            templateConfig.config.type
+            uiElementTemplate.config.type
           );
-          this.uiElementComponent.set(uiElementComponent);
+
+          uiElementVCR.clear();
+          const componentRef = uiElementVCR.createComponent(uiElementComponent) as ComponentRef<
+            BaseUIElementComponent | BaseUIElementWithContextComponent
+          >;
+
+          const inputsStream = this.#generateComponentInputs({
+            templateOptions: uiElementTemplate.config.options,
+            remoteResourceIds: uiElementTemplate.config.remoteResourceIds,
+            stateSubscription: uiElementTemplate.config.stateSubscription,
+            component: uiElementComponent,
+          });
+
+          this.#setupComponentInputs({
+            componentRef,
+            inputsStream,
+          });
         });
     });
   }

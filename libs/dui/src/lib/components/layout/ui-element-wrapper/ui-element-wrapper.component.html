@@ -1,17 +1,18 @@
 @if (!isInfinite()) {
-  @if (!isWrongTypeError()) {
-    @if (uiElementComponent()) {
-      @if (uiElementInputsSig$()) {
-        <ng-container #uiElementVCR></ng-container>
+  <ng-container *ngIf="uiElementTemplate() | async as uiElementTemplate">
+    @if (uiElementTemplate.status === 'loaded') {
+      @if (requiredComponentType() && requiredComponentType() !== uiElementTemplate.config.type) {
+        <span
+          >Required: {{ requiredComponentType() }} but received
+          {{ uiElementTemplate.config.type }}</span
+        >
       } @else {
-        <span>Loading component inputs....</span>
+        <ng-container #uiElementVCR></ng-container>
       }
     } @else {
       <span>Loading UI component....</span>
     }
-  } @else {
-    <span>{{ isWrongTypeError() }}</span>
-  }
+  </ng-container>
 } @else {
   <span>Infinte loop in rendering element detected</span>
 }
