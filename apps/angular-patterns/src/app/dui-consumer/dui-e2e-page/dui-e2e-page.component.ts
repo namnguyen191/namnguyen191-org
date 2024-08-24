@@ -16,7 +16,6 @@ import {
   EventsService,
   getDefaultActionsHooksMap,
   getDefaultActionsHooksParsersMap,
-  getHttpFetcher,
   LayoutTemplateService,
   missingLayoutTemplateEvent,
   missingRemoteResourceTemplateEvent,
@@ -27,6 +26,7 @@ import {
   UIElementRepositionEvent,
   UIElementTemplateService,
 } from '@namnguyen191/dui';
+import { getHttpFetcher } from '@namnguyen191/dui-common';
 import { NotificationModule, ToastContent } from 'carbon-components-angular';
 import { set } from 'lodash-es';
 import { buffer, debounceTime, forkJoin, map, mergeMap, switchMap, tap } from 'rxjs';

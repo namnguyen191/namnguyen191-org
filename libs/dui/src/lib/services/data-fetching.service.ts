@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 
-import { logError, logWarning } from '../../utils/logging';
+import { logError, logWarning } from '../utils/logging';
 
 export type DataFetcher<TOptions extends ObjectType = ObjectType, TReturn = unknown> = (
   options: TOptions

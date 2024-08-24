@@ -23,7 +23,7 @@ import {
 } from 'rxjs';
 
 import { logSubscription } from '../utils/logging';
-import { DataFetchingService } from './data-fetching/data-fetching.service';
+import { DataFetchingService } from './data-fetching.service';
 import { ActionHook, ActionHookService } from './events-and-actions/action-hook.service';
 import { InterpolationService } from './interpolation.service';
 import {

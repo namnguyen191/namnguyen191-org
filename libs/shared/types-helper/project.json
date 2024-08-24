@@ -18,5 +18,5 @@
       "executor": "@nx/eslint:lint"
     }
   },
-  "tags": ["missing-tag"]
+  "tags": ["missing-tag", "scope:shared-lib"]
 }

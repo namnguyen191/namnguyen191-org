@@ -23,6 +23,10 @@
                 "onlyDependOnLibsWithTags": ["*"]
               },
               {
+                "sourceTag": "scope:shared-lib:angular",
+                "onlyDependOnLibsWithTags": ["scope:shared-lib", "scope:shared-lib:angular"]
+              },
+              {
                 "sourceTag": "scope:shrimping-around:main",
                 "onlyDependOnLibsWithTags": ["/^scope:shrimping-around:feature:.*/"]
               }

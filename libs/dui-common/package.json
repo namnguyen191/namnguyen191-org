@@ -1,0 +1,10 @@
+{
+  "name": "@namnguyen191/dui-common",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^18.1.0",
+    "@angular/core": "^18.1.0",
+    "@namnguyen191/dui": "*"
+  },
+  "sideEffects": false
+}

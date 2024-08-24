@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
-
-import { DataFetcher } from '../data-fetching.service';
+import { DataFetcher } from '@namnguyen191/dui';
 
 export type HttpFetcherConfigs = {
   endpoint: string;
