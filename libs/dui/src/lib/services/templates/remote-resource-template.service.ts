@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { FetchDataParams } from '../../internal/data-fetching.service';
 import { logError } from '../../utils/logging';
 import { ActionHook } from '../events-and-actions/action-hook.service';
 import { EventsService } from '../events-and-actions/events.service';
@@ -9,7 +8,8 @@ import { StateSubscriptionConfig } from '../state-store.service';
 import { ConfigWithStatus } from './shared-types';
 
 export type Request = {
-  configs: FetchDataParams;
+  fetcherId: string;
+  configs: unknown;
   interpolation?: string;
 };
 

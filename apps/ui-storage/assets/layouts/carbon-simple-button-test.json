@@ -4,6 +4,10 @@
     {
       "id": "instance-1",
       "uiElementTemplateId": "carbon-button-test"
+    },
+    {
+      "id": "instance-2",
+      "uiElementTemplateId": "carbon-button-no-response"
     }
   ]
 }

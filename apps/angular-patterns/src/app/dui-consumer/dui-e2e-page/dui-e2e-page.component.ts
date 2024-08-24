@@ -12,9 +12,11 @@ import { RouterModule } from '@angular/router';
 import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/carbon-components';
 import {
   ActionHookService,
+  DataFetchingService,
   EventsService,
   getDefaultActionsHooksMap,
   getDefaultActionsHooksParsersMap,
+  getHttpFetcher,
   LayoutTemplateService,
   missingLayoutTemplateEvent,
   missingRemoteResourceTemplateEvent,
@@ -53,6 +55,7 @@ export class DuiE2EPageComponent {
   readonly #remoteResourcesServiceAPI = inject(RemoteResourcesServiceAPI);
   readonly #destroyRef = inject(DestroyRef);
   readonly #injector = inject(EnvironmentInjector);
+  readonly #dataFetchingService = inject(DataFetchingService);
 
   isNotificationDisplayed = signal<boolean>(false);
   notificationConfig: ToastContent = {
@@ -80,6 +83,8 @@ export class DuiE2EPageComponent {
     this.#actionHookService.registerHooks(getDefaultActionsHooksMap(this.#injector));
     this.#actionHookService.registerHookParsers(getDefaultActionsHooksParsersMap());
     this.#actionHookService.registerHook('showTestNotification', () => this.#showNotification());
+
+    this.#dataFetchingService.registerFetcher('httpFetcher', getHttpFetcher(this.#injector));
   }
 
   #showNotification(): void {

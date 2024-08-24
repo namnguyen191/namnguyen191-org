@@ -1,0 +1,14 @@
+{
+  "id": "no-response-body",
+  "options": {
+    "requests": [
+      {
+        "fetcherId": "httpFetcher",
+        "configs": {
+          "endpoint": "http://localhost:8080/health",
+          "method": "GET"
+        }
+      }
+    ]
+  }
+}

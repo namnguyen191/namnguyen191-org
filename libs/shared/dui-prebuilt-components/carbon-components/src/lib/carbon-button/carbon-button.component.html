@@ -14,7 +14,9 @@
       [loadingText]="'Loading data...'"
     >
     </cds-inline-loading>
-  } @else {
+  } @else if (!isErrorConfigOption()) {
     {{ textConfigOption() }}
+  } @else {
+    Something went wrong loading data
   }
 </button>

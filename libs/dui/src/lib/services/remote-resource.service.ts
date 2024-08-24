@@ -1,4 +1,5 @@
 import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
+import { ObjectType } from '@namnguyen191/types-helper';
 import {
   BehaviorSubject,
   catchError,
@@ -21,8 +22,8 @@ import {
   tap,
 } from 'rxjs';
 
-import { DataFetchingService, FetchDataParams } from '../internal/data-fetching.service';
 import { logSubscription } from '../utils/logging';
+import { DataFetchingService } from './data-fetching/data-fetching.service';
 import { ActionHook, ActionHookService } from './events-and-actions/action-hook.service';
 import { InterpolationService } from './interpolation.service';
 import {
@@ -172,6 +173,11 @@ const getResourceRequestHooksInterpolationContext = (
   );
 };
 
+type FetcherIdToConfigMap = {
+  fetcherId: string;
+  configs: ObjectType;
+}[];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -225,7 +231,7 @@ export class RemoteResourceService {
           this.#interpolateSequencedRequestOptions(curReq, accumulatedRequestsResults)
         ).pipe(
           switchMap((interpolatedRequestOptions) =>
-            this.#dataFetchingService.fetchData(interpolatedRequestOptions)
+            this.#dataFetchingService.fetchData(curReq.fetcherId, interpolatedRequestOptions)
           ),
           switchMap((requestResult) =>
             from(
@@ -250,9 +256,11 @@ export class RemoteResourceService {
 
   #processRequestsInParallel(requests: Request[]): Observable<unknown[]> {
     return from(this.#interpolateParallelRequestOptions(requests)).pipe(
-      switchMap((interpolatedRequestOptions) =>
+      switchMap((fetcherIdToConfigMap) =>
         forkJoin(
-          interpolatedRequestOptions.map((request) => this.#dataFetchingService.fetchData(request))
+          fetcherIdToConfigMap.map(({ fetcherId, configs }) =>
+            this.#dataFetchingService.fetchData(fetcherId, configs)
+          )
         )
       ),
       switchMap((responses) => this.#interpolateParallelRequestsResult(requests, responses))
@@ -332,7 +340,7 @@ export class RemoteResourceService {
   async #interpolateSequencedRequestOptions(
     req: Request,
     accumulatedRequestsResults: unknown[]
-  ): Promise<FetchDataParams> {
+  ): Promise<ObjectType> {
     const requestConfigInterpolationContext = await firstValueFrom(
       runInInjectionContext(this.#environmentInjector, () =>
         getResourceRequestConfigInterpolationContext(accumulatedRequestsResults)
@@ -342,7 +350,7 @@ export class RemoteResourceService {
       const interpolatedRequestOptions = (await this.#interpolationService.interpolate({
         value: req.configs,
         context: requestConfigInterpolationContext,
-      })) as FetchDataParams;
+      })) as ObjectType;
 
       return interpolatedRequestOptions;
     } catch (error) {
@@ -351,16 +359,16 @@ export class RemoteResourceService {
     }
   }
 
-  async #interpolateParallelRequestOptions(reqs: Request[]): Promise<FetchDataParams[]> {
+  async #interpolateParallelRequestOptions(reqs: Request[]): Promise<FetcherIdToConfigMap> {
     const currentState = await firstValueFrom(
       runInInjectionContext(this.#environmentInjector, () => getStatesAsContext())
     );
-    const requestsConfigs = reqs.map((req) => req.configs);
+    const requestsConfigs = reqs.map((req) => ({ fetcherId: req.fetcherId, configs: req.configs }));
     try {
       const interpolatedRequestOptions = (await this.#interpolationService.interpolate({
         value: requestsConfigs,
         context: currentState,
-      })) as FetchDataParams[];
+      })) as FetcherIdToConfigMap;
 
       return interpolatedRequestOptions;
     } catch (error) {

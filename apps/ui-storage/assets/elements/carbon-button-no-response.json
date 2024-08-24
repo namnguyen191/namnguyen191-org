@@ -1,0 +1,8 @@
+{
+  "id": "carbon-button-no-response",
+  "type": "CARBON_BUTTON",
+  "remoteResourceIds": ["no-response-body"],
+  "options": {
+    "text": "No response resource"
+  }
+}

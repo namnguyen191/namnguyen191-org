@@ -6,6 +6,7 @@
   "options": {
     "requests": [
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "<${ return 'https://datausa.io/api/data?drilldowns=State&measures=Population&year=20' + (this.state.global.page?.pageSize ?? 20) }$>",
           "method": "GET"

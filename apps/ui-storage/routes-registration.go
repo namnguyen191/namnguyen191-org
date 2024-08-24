@@ -2,6 +2,7 @@ package main
 
 import (
 	"namnguyen191/uistorage/routes"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,4 +16,9 @@ func RegisterAllRoutes(r *gin.Engine) {
 
 	remoteResourceRoutes := routes.NewRemoteResourceRoutes(&App.RemoteResourcesRepo)
 	remoteResourceRoutes.RegisterRemoteResourceRoutes(r)
+
+	// Health
+	r.GET("/health", func(ctx *gin.Context) {
+		ctx.Status(http.StatusOK)
+	})
 }

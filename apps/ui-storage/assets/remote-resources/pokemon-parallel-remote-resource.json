@@ -7,6 +7,7 @@
     "parallel": true,
     "requests": [
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "https://pokeapi.co/api/v2/pokemon/1",
           "method": "GET"
@@ -14,6 +15,7 @@
         "interpolation": "<${ return this.$current }$>"
       },
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "https://pokeapi.co/api/v2/pokemon/2",
           "method": "GET"
@@ -21,6 +23,7 @@
         "interpolation": "<${ return this.$current }$>"
       },
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "https://pokeapi.co/api/v2/pokemon/3",
           "method": "GET"

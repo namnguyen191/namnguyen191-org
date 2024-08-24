@@ -3,6 +3,7 @@
   "options": {
     "requests": [
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "https://datausa.io/api/data?drilldowns=State&measures=Population&year=2020",
           "method": "GET"

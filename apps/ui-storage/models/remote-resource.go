@@ -8,6 +8,7 @@ type FetchDataParams struct {
 }
 
 type Request struct {
+	FetcherId     *string          `json:"fetcherId,omitempty" bson:"id,omitempty"`
 	Configs       *FetchDataParams `json:"configs,omitempty" bson:"configs,omitempty"`
 	Interpolation *string          `json:"interpolation,omitempty" bson:"interpolation,omitempty"`
 }

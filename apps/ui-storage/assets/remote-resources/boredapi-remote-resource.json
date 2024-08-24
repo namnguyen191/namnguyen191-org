@@ -6,6 +6,7 @@
   "options": {
     "requests": [
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "https://www.boredapi.com/api/activity",
           "method": "GET"
@@ -13,6 +14,7 @@
         "interpolation": "<${ return this.$current }$>"
       },
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
           "method": "GET"
@@ -20,6 +22,7 @@
         "interpolation": "<${ return this.$current }$>"
       },
       {
+        "fetcherId": "httpFetcher",
         "configs": {
           "endpoint": "<${ console.log(`Prev request: ${JSON.stringify(this.$requests)}`); return 'https://www.boredapi.com/api/activity';  }$>",
           "method": "GET"
