@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { UIElementRequiredConfigs } from '../../components/base-ui-element.component';
 import { logError } from '../../utils/logging';
+import { ActionHook } from '../events-and-actions/action-hook.service';
 import { EventsService } from '../events-and-actions/events.service';
 import { StateSubscriptionConfig } from '../state-store.service';
 import { ConfigWithStatus } from './shared-types';
@@ -11,12 +12,16 @@ import { ConfigWithStatus } from './shared-types';
 export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
   Partial<UIElementRequiredConfigs> & T;
 
+export type EventsToHooksMap = {
+  [eventId: string]: ActionHook[];
+};
 export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
   id: string;
   type: string;
   remoteResourceIds?: string[];
   stateSubscription?: StateSubscriptionConfig;
   options: UIElementTemplateOptions<T>;
+  eventsHooks?: EventsToHooksMap;
 };
 
 export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;

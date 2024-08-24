@@ -7,15 +7,16 @@ import { StateStoreService, ZodAvailableStateScope } from '../state-store.servic
 import {
   ActionHookHandler,
   ActionHooksHandlersMap,
+  ActionHooksZodParsersMap,
   createHookWithInjectionContext,
 } from './action-hook.service';
 
 const ZodDefaultActionHookType = z.enum(['triggerRemoteResource', 'addToState']);
 
-const ZodTriggerRemoteResourceActionHook = z.object(
+const ZodTriggerRemoteResourceActionHook = z.strictObject(
   {
     type: z.literal(ZodDefaultActionHookType.enum.triggerRemoteResource),
-    payload: z.object({
+    payload: z.strictObject({
       remoteResourceId: z.string(),
     }),
   },
@@ -28,10 +29,10 @@ const ZodTriggerRemoteResourceActionHook = z.object(
 );
 type TriggerRemoteResourceActionHook = z.infer<typeof ZodTriggerRemoteResourceActionHook>;
 
-const ZodAddToStateActionHook = z.object(
+const ZodAddToStateActionHook = z.strictObject(
   {
     type: z.literal(ZodDefaultActionHookType.enum.addToState),
-    payload: z.object({
+    payload: z.strictObject({
       scope: ZodAvailableStateScope,
       data: ZodObjectType,
     }),
@@ -87,4 +88,11 @@ export const getDefaultActionsHooksMap = (
       defaultActionsHandlersMap.handleTriggerRemoteResource
     ),
   } as ActionHooksHandlersMap;
+};
+
+export const getDefaultActionsHooksParsersMap = (): ActionHooksZodParsersMap => {
+  return {
+    addToState: ZodAddToStateActionHook,
+    triggerRemoteResource: ZodTriggerRemoteResourceActionHook,
+  } as ActionHooksZodParsersMap;
 };

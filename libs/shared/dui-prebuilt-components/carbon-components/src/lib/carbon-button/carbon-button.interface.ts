@@ -1,4 +1,3 @@
-import { ZodContextBasedActionHooks } from '@namnguyen191/dui';
 import { z } from 'zod';
 
 export const ZodButtonTypeConfig = z.enum([
@@ -17,9 +16,12 @@ export type ButtonTypeConfig = z.infer<typeof ZodButtonTypeConfig>;
 export const ZodCarbonButtonUIElementComponentConfigs = z.object({
   text: z.string(),
   type: ZodButtonTypeConfig,
-  onClick: ZodContextBasedActionHooks,
 });
 
 export type CarbonButtonUIElementComponentConfigs = z.infer<
   typeof ZodCarbonButtonUIElementComponentConfigs
 >;
+
+export type CarbonButtonUIElementComponentEvents = {
+  buttonClicked: void;
+};

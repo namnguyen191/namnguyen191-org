@@ -14,6 +14,7 @@ import {
   ActionHookService,
   EventsService,
   getDefaultActionsHooksMap,
+  getDefaultActionsHooksParsersMap,
   LayoutTemplateService,
   missingLayoutTemplateEvent,
   missingRemoteResourceTemplateEvent,
@@ -77,6 +78,7 @@ export class DuiE2EPageComponent {
     });
 
     this.#actionHookService.registerHooks(getDefaultActionsHooksMap(this.#injector));
+    this.#actionHookService.registerHookParsers(getDefaultActionsHooksParsersMap());
     this.#actionHookService.registerHook('showTestNotification', () => this.#showNotification());
   }
 

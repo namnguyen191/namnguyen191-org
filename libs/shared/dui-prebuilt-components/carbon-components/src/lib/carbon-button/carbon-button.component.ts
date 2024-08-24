@@ -1,18 +1,7 @@
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, InputSignal, output } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  EnvironmentInjector,
-  inject,
-  input,
-  InputSignal,
-  runInInjectionContext,
-} from '@angular/core';
-import {
-  ActionHook,
-  BaseUIElementWithContextComponent,
-  ContextBasedActionHooks,
-  interpolateAndTriggerContextBasedActionHooks,
+  BaseUIElementComponent,
   parseZodWithDefault,
   UIElementImplementation,
 } from '@namnguyen191/dui';
@@ -21,6 +10,7 @@ import { ButtonModule, InlineLoadingModule } from 'carbon-components-angular';
 import {
   ButtonTypeConfig,
   CarbonButtonUIElementComponentConfigs,
+  CarbonButtonUIElementComponentEvents,
   ZodCarbonButtonUIElementComponentConfigs,
 } from './carbon-button.interface';
 
@@ -33,11 +23,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarbonButtonComponent
-  extends BaseUIElementWithContextComponent
-  implements UIElementImplementation<CarbonButtonUIElementComponentConfigs>
+  extends BaseUIElementComponent
+  implements
+    UIElementImplementation<
+      CarbonButtonUIElementComponentConfigs,
+      CarbonButtonUIElementComponentEvents
+    >
 {
-  static readonly NEED_CONTEXT = true;
   static readonly ELEMENT_TYPE = 'CARBON_BUTTON';
+  override getElementType(): string {
+    return CarbonButtonComponent.ELEMENT_TYPE;
+  }
 
   defaultText = 'Default text';
   textConfigOption: InputSignal<string> = input(this.defaultText, {
@@ -61,30 +57,9 @@ export class CarbonButtonComponent
       ),
   });
 
-  onClickConfigOption: InputSignal<ContextBasedActionHooks> = input([] as ContextBasedActionHooks, {
-    alias: 'onClick',
-    transform: (val) =>
-      parseZodWithDefault(ZodCarbonButtonUIElementComponentConfigs.shape.onClick, val, []),
-  });
-
-  readonly #environmentInjector = inject(EnvironmentInjector);
+  buttonClicked = output<void>();
 
   onClick(): void {
-    const onClickHooks: ActionHook[] | undefined | string = this.onClickConfigOption();
-
-    if (!onClickHooks) {
-      return;
-    }
-
-    const context = {
-      ...this.$context$(),
-    };
-
-    runInInjectionContext(this.#environmentInjector, async () => {
-      await interpolateAndTriggerContextBasedActionHooks({
-        hooks: onClickHooks,
-        context,
-      });
-    });
+    this.buttonClicked.emit();
   }
 }

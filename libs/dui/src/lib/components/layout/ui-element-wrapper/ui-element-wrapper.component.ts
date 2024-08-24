@@ -10,6 +10,7 @@ import {
   InjectionToken,
   input,
   InputSignal,
+  OutputEmitterRef,
   runInInjectionContext,
   Signal,
   signal,
@@ -33,9 +34,14 @@ import {
   shareReplay,
   Subject,
   switchMap,
+  take,
   takeUntil,
 } from 'rxjs';
 
+import {
+  ActionHook,
+  ActionHookService,
+} from '../../../services/events-and-actions/action-hook.service';
 import { InterpolationService } from '../../../services/interpolation.service';
 import {
   getRemoteResourcesStatesAsContext,
@@ -47,16 +53,14 @@ import {
   StateSubscriptionConfig,
 } from '../../../services/state-store.service';
 import {
+  EventsToHooksMap,
   UIElementTemplateOptions,
   UIElementTemplateService,
   UIElementTemplateWithStatus,
 } from '../../../services/templates/ui-element-template.service';
 import { UIElementFactoryService } from '../../../services/ui-element-factory.service';
+import { logWarning } from '../../../utils/logging';
 import { BaseUIElementComponent } from '../../base-ui-element.component';
-import {
-  BaseUIElementWithContextComponent,
-  ComponentContextPropertyKey,
-} from '../../base-ui-element-with-context.component';
 
 type ElementInputsInterpolationContext = {
   remoteResourcesStates: null | RemoteResourcesStates;
@@ -65,7 +69,7 @@ type ElementInputsInterpolationContext = {
 
 const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
 
-export const getElementInputsInterpolationContext = (params: {
+export const getElementInterpolationContext = (params: {
   remoteResourceIds?: string[];
   stateSubscription?: StateSubscriptionConfig;
 }): Observable<ElementInputsInterpolationContext> => {
@@ -108,6 +112,7 @@ export class UiElementWrapperComponent {
   readonly #uiElementTemplatesService = inject(UIElementTemplateService);
   readonly #interpolationService = inject(InterpolationService);
   readonly #environmentInjector = inject(EnvironmentInjector);
+  readonly #actionHookService = inject(ActionHookService);
 
   uiElementTemplateId: InputSignal<string> = input.required();
   requiredComponentType: InputSignal<string | undefined> = input<string>();
@@ -124,24 +129,6 @@ export class UiElementWrapperComponent {
 
   readonly uiElementComponent = signal<Type<unknown> | null>(null);
 
-  readonly uiElementInputsSig$: Signal<Observable<ObjectType>> = computed(() => {
-    const template = this.uiElementTemplate();
-
-    return template.pipe(
-      filter((template) => template.status === 'loaded'),
-      switchMap((template) =>
-        runInInjectionContext(this.#environmentInjector, () =>
-          this.#generateComponentInputs({
-            templateOptions: template.config.options,
-            remoteResourceIds: template.config.remoteResourceIds,
-            stateSubscription: template.config.stateSubscription,
-            component: this.#uiElementFactoryService.getUIElement(template.config.type),
-          })
-        )
-      )
-    );
-  });
-
   readonly isInfinite = signal<boolean>(false);
   readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
 
@@ -151,19 +138,11 @@ export class UiElementWrapperComponent {
   }
 
   #generateComponentInputs(params: {
+    interpolationContext: Observable<ElementInputsInterpolationContext>;
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
-    remoteResourceIds?: string[];
-    stateSubscription?: StateSubscriptionConfig;
-    component: Type<unknown>;
+    withRemoteResource: boolean;
   }): Observable<ObjectType> {
-    const { templateOptions, remoteResourceIds, stateSubscription, component } = params;
-    const interpolationContext: Observable<ElementInputsInterpolationContext> =
-      runInInjectionContext(this.#environmentInjector, () =>
-        getElementInputsInterpolationContext({
-          remoteResourceIds,
-          stateSubscription,
-        })
-      );
+    const { templateOptions, withRemoteResource, interpolationContext } = params;
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
     for (const [key, val] of Object.entries(templateOptions)) {
@@ -191,11 +170,7 @@ export class UiElementWrapperComponent {
           );
     }
 
-    if (this.#isContextBased(component)) {
-      (inputsObservableMap[ComponentContextPropertyKey] as unknown) = interpolationContext;
-    }
-
-    if (remoteResourceIds) {
+    if (withRemoteResource) {
       // Only automatically set isLoading and isError if the user does not provide any override for them
       if (templateOptions.isLoading === undefined) {
         inputsObservableMap['isLoading'] = interpolationContext.pipe(
@@ -214,10 +189,6 @@ export class UiElementWrapperComponent {
       distinctUntilChanged(isEqual),
       debounceTime(100)
     );
-  }
-
-  #isContextBased(component: Type<unknown>): boolean {
-    return !!(component as unknown as { NEED_CONTEXT?: true })['NEED_CONTEXT'];
   }
 
   #checkForInfiniteRenderEffect(): void {
@@ -252,17 +223,50 @@ export class UiElementWrapperComponent {
     );
   }
 
-  #setupComponentInputs(params: {
+  #setupComponent(params: {
     inputsStream: Observable<ObjectType>;
-    componentRef: ComponentRef<BaseUIElementComponent | BaseUIElementWithContextComponent>;
+    componentRef: ComponentRef<BaseUIElementComponent>;
+    eventsHooks?: EventsToHooksMap;
+    interpolationContext: Observable<ElementInputsInterpolationContext>;
   }): void {
-    const { inputsStream, componentRef } = params;
+    const { inputsStream, componentRef, eventsHooks, interpolationContext } = params;
     this.#unsubscribeInputsSubject.next();
     inputsStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((inputs) => {
       for (const [inputName, inputVal] of Object.entries(inputs)) {
         componentRef.setInput(inputName, inputVal);
       }
     });
+
+    if (eventsHooks) {
+      for (const [eventName, hooks] of Object.entries(eventsHooks)) {
+        const componentOutput = (componentRef.instance as unknown as ObjectType)[eventName] as
+          | undefined
+          | OutputEmitterRef<unknown>;
+
+        if (!componentOutput || !(componentOutput instanceof OutputEmitterRef)) {
+          logWarning(
+            `Element ${componentRef.instance.getElementType()} has no support for event "${eventName}"`
+          );
+        } else {
+          const latestContext = interpolationContext.pipe(take(1));
+
+          componentOutput.subscribe((outputVal) => {
+            latestContext
+              .pipe(
+                switchMap((latestContextVal) =>
+                  this.#interpolationService.interpolate({
+                    value: hooks,
+                    context: { ...latestContextVal, ...(outputVal ?? {}) },
+                  })
+                )
+              )
+              .subscribe((interpolatedHooks) =>
+                this.#actionHookService.triggerActionHooks(interpolatedHooks as ActionHook[])
+              );
+          });
+        }
+      }
+    }
   }
 
   #constructComponentEffect(): void {
@@ -289,25 +293,35 @@ export class UiElementWrapperComponent {
           takeUntil(this.#unsubscribeUiElementTemplate)
         )
         .subscribe((uiElementTemplate) => {
-          const uiElementComponent = this.#uiElementFactoryService.getUIElement(
-            uiElementTemplate.config.type
-          );
+          const {
+            config: { type, remoteResourceIds, eventsHooks, stateSubscription, options },
+          } = uiElementTemplate;
+          const uiElementComponent = this.#uiElementFactoryService.getUIElement(type);
 
           uiElementVCR.clear();
-          const componentRef = uiElementVCR.createComponent(uiElementComponent) as ComponentRef<
-            BaseUIElementComponent | BaseUIElementWithContextComponent
-          >;
+          const componentRef = uiElementVCR.createComponent(
+            uiElementComponent
+          ) as ComponentRef<BaseUIElementComponent>;
+
+          const interpolationContext: Observable<ElementInputsInterpolationContext> =
+            runInInjectionContext(this.#environmentInjector, () =>
+              getElementInterpolationContext({
+                remoteResourceIds,
+                stateSubscription,
+              })
+            );
 
           const inputsStream = this.#generateComponentInputs({
-            templateOptions: uiElementTemplate.config.options,
-            remoteResourceIds: uiElementTemplate.config.remoteResourceIds,
-            stateSubscription: uiElementTemplate.config.stateSubscription,
-            component: uiElementComponent,
+            templateOptions: options,
+            interpolationContext,
+            withRemoteResource: !!remoteResourceIds?.length,
           });
 
-          this.#setupComponentInputs({
+          this.#setupComponent({
             componentRef,
             inputsStream,
+            eventsHooks,
+            interpolationContext,
           });
         });
     });

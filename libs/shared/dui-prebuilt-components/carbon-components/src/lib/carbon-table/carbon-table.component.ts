@@ -3,17 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  EnvironmentInjector,
-  inject,
   input,
   InputSignal,
-  runInInjectionContext,
+  output,
   Signal,
 } from '@angular/core';
 import {
-  ActionHook,
-  BaseUIElementWithContextComponent,
-  interpolateAndTriggerContextBasedActionHooks,
+  BaseUIElementComponent,
   parseZodWithDefault,
   UIElementImplementation,
   UiElementWrapperComponent,
@@ -30,6 +26,8 @@ import { isEmpty } from 'lodash-es';
 
 import {
   CarbonTableUIElementComponentConfigs,
+  CarbonTableUIElementComponentEvents,
+  PaginationChangedPayload,
   TableDescriptionConfig,
   TableHeadersConfig,
   TablePaginationConfigs,
@@ -46,11 +44,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarbonTableComponent
-  extends BaseUIElementWithContextComponent
-  implements UIElementImplementation<CarbonTableUIElementComponentConfigs>
+  extends BaseUIElementComponent
+  implements
+    UIElementImplementation<
+      CarbonTableUIElementComponentConfigs,
+      CarbonTableUIElementComponentEvents
+    >
 {
-  static readonly NEED_CONTEXT = true;
   static readonly ELEMENT_TYPE = 'CARBON_TABLE';
+  override getElementType(): string {
+    return CarbonTableComponent.ELEMENT_TYPE;
+  }
 
   defaultTitle = 'Default title';
   titleConfigOption: InputSignal<string> = input(this.defaultTitle, {
@@ -139,28 +143,13 @@ export class CarbonTableComponent
     return pgModel;
   });
 
-  readonly #environmentInjector = inject(EnvironmentInjector);
+  paginationChanged = output<PaginationChangedPayload>();
 
   selectPage(selectedPage: number): void {
     this.paginationModel().currentPage = selectedPage;
-    const onPageChangeHooks: ActionHook[] | undefined | string =
-      this.paginationConfigOption().onPageChange;
 
-    if (!onPageChangeHooks) {
-      return;
-    }
+    const pageLength = this.paginationModel().pageLength ?? 0;
 
-    const pageLength = this.paginationModel().pageLength;
-    const context = {
-      ...this.$context$(),
-      $paginationContext: { pageLength, selectedPage },
-    };
-
-    runInInjectionContext(this.#environmentInjector, async () => {
-      await interpolateAndTriggerContextBasedActionHooks({
-        hooks: onPageChangeHooks,
-        context,
-      });
-    });
+    this.paginationChanged.emit({ $paginationContext: { pageLength, selectedPage } });
   }
 }

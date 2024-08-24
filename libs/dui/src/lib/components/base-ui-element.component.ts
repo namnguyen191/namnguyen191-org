@@ -1,4 +1,10 @@
-import { Component, input, InputSignal, InputSignalWithTransform } from '@angular/core';
+import {
+  Component,
+  input,
+  InputSignal,
+  InputSignalWithTransform,
+  OutputEmitterRef,
+} from '@angular/core';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { Observable } from 'rxjs';
 import { z } from 'zod';
@@ -30,16 +36,27 @@ export type UIElementRequiredInputs = {
     | Observable<UIElementRequiredConfigs[K]>;
 };
 
-export type UIElementImplementation<TConfigs extends ObjectType> = UIElementRequiredInputOptions &
-  CreateUIElementInputOptions<TConfigs>;
+type CreateUIElementEventsOutputs<TEvents extends ObjectType> = Required<{
+  [K in keyof TEvents]: OutputEmitterRef<TEvents[K]>;
+}>;
+
+export type UIElementImplementation<
+  TConfigs extends ObjectType,
+  TEvents extends ObjectType = NonNullable<unknown>,
+> = UIElementRequiredInputOptions &
+  CreateUIElementInputOptions<TConfigs> &
+  CreateUIElementEventsOutputs<TEvents>;
 
 @Component({
-  selector: 'namnguyen191-abstract-base-ui-element',
   template: '',
 })
 export abstract class BaseUIElementComponent
   implements UIElementImplementation<UIElementRequiredConfigs>
 {
+  getElementType(): string {
+    return 'DEFAULT TYPE';
+  }
+
   isErrorConfigOption: InputSignal<boolean> = input(false, {
     alias: 'isError',
     transform: (val) => ZodIsError.parse(val),

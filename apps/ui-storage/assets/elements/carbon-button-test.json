@@ -3,8 +3,10 @@
   "type": "CARBON_BUTTON",
   "remoteResourceIds": ["pokemon-server-pagination"],
   "options": {
-    "text": "<${ return this.remoteResourcesStates?.results?.[\"pokemon-server-pagination\"]?.result?.pokemons?.[0]?.name ?? 'No pokemon yet' }$>",
-    "onClick": [
+    "text": "<${ return this.remoteResourcesStates?.results?.[\"pokemon-server-pagination\"]?.result?.pokemons?.[0]?.name ?? 'No pokemon yet' }$>"
+  },
+  "eventsHooks": {
+    "buttonClicked": [
       {
         "type": "addToState",
         "payload": {

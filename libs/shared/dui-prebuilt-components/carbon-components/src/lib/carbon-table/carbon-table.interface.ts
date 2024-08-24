@@ -1,4 +1,4 @@
-import { ZodContextBasedActionHooks, ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
+import { ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
 import { z } from 'zod';
 
 export const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);
@@ -17,7 +17,6 @@ export type TableDescriptionConfig = z.infer<typeof ZodTableDescriptionConfig>;
 
 export const ZodTablePaginationConfigs = z.object({
   pageSizes: z.array(z.number()).optional(),
-  onPageChange: ZodContextBasedActionHooks.optional(),
   pageInputDisabled: z.boolean().optional(),
   totalDataLength: z.number().optional(),
 });
@@ -35,3 +34,11 @@ export const ZodCarbonTableUIElementComponentConfigs = z.object({
 export type CarbonTableUIElementComponentConfigs = z.infer<
   typeof ZodCarbonTableUIElementComponentConfigs
 >;
+
+export type PaginationChangedPayload = {
+  $paginationContext: { pageLength: number; selectedPage: number };
+};
+
+export type CarbonTableUIElementComponentEvents = {
+  paginationChanged: PaginationChangedPayload;
+};

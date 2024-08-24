@@ -7,19 +7,17 @@ import {
   inject,
   input,
   InputSignal,
-  runInInjectionContext,
 } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
-  BaseUIElementWithContextComponent,
+  BaseUIElementComponent,
   InterpolationService,
   UIElementImplementation,
 } from '@namnguyen191/dui';
 import {
   ActionHookService,
-  DefaultActionHook,
   parseZodWithDefault,
   ZodStringOrNumberOrBoolean,
 } from '@namnguyen191/dui';
@@ -67,7 +65,7 @@ export type SimpleTableUIElementComponentConfigs = z.infer<
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleTableComponent
-  extends BaseUIElementWithContextComponent
+  extends BaseUIElementComponent
   implements UIElementImplementation<SimpleTableUIElementComponentConfigs>
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
@@ -119,25 +117,8 @@ export class SimpleTableComponent
   readonly #environmentInjector = inject(EnvironmentInjector);
 
   async onPageChange(event: PageEvent): Promise<void> {
-    const { pageSize, pageIndex: currentPage } = event;
-    const onPageChange: DefaultActionHook[] | undefined =
-      this.paginationConfigOption().onPageChange;
-    if (!onPageChange || onPageChange.length === 0) {
-      return;
-    }
-
-    const context = this.$context$();
-    try {
-      const actions = (await this.#interpolationService.interpolate({
-        context: { ...context, $paginationContext: { pageSize, currentPage } },
-        value: onPageChange,
-      })) as DefaultActionHook[];
-
-      runInInjectionContext(this.#environmentInjector, () =>
-        this.#actionHookService.triggerActionHooks(actions)
-      );
-    } catch (error) {
-      console.warn('Failed to interpolate onPageChange config');
-    }
+    // const { pageSize, pageIndex: currentPage } = event;
+    console.log('Nam data is: ', event);
+    // TODO: implement on page changed envent
   }
 }
