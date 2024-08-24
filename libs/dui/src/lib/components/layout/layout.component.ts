@@ -29,6 +29,7 @@ import {
   LayoutTemplateWithStatus,
   UIElementInstance,
 } from '../../services/templates/layout-template-interfaces';
+import { logSubscription } from '../../utils/logging';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 type LayoutGridItem = GridsterItem & {
@@ -175,6 +176,7 @@ export class LayoutComponent {
         layoutConfigStream
           .pipe(takeUntil(this.#unsubscribeFromLayoutConfig))
           .subscribe((layoutConfigVal) => {
+            logSubscription(`Layout config stream for ${layoutConfigVal.id}`);
             if (!layoutConfigVal || layoutConfigVal.status !== 'loaded') {
               return;
             }

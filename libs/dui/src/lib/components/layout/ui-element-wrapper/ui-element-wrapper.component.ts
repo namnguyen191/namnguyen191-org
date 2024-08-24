@@ -59,7 +59,7 @@ import {
   UIElementTemplateWithStatus,
 } from '../../../services/templates/ui-element-template.service';
 import { UIElementFactoryService } from '../../../services/ui-element-factory.service';
-import { logWarning } from '../../../utils/logging';
+import { logSubscription, logWarning } from '../../../utils/logging';
 import { BaseUIElementComponent } from '../../base-ui-element.component';
 
 type ElementInputsInterpolationContext = {
@@ -232,6 +232,7 @@ export class UiElementWrapperComponent {
     const { inputsStream, componentRef, eventsHooks, interpolationContext } = params;
     this.#unsubscribeInputsSubject.next();
     inputsStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((inputs) => {
+      logSubscription(`Inputs stream for ${this.uiElementTemplateId()}`);
       for (const [inputName, inputVal] of Object.entries(inputs)) {
         componentRef.setInput(inputName, inputVal);
       }
@@ -260,9 +261,10 @@ export class UiElementWrapperComponent {
                   })
                 )
               )
-              .subscribe((interpolatedHooks) =>
-                this.#actionHookService.triggerActionHooks(interpolatedHooks as ActionHook[])
-              );
+              .subscribe((interpolatedHooks) => {
+                logSubscription(`Output stream for ${this.uiElementTemplateId()}`);
+                this.#actionHookService.triggerActionHooks(interpolatedHooks as ActionHook[]);
+              });
           });
         }
       }
@@ -293,6 +295,7 @@ export class UiElementWrapperComponent {
           takeUntil(this.#unsubscribeUiElementTemplate)
         )
         .subscribe((uiElementTemplate) => {
+          logSubscription(`UI element template stream for ${this.uiElementTemplateId()}`);
           const {
             config: { type, remoteResourceIds, eventsHooks, stateSubscription, options },
           } = uiElementTemplate;
