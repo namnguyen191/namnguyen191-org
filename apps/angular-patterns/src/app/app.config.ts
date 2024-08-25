@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
-import { JS_RUNNER_WORKER } from '@namnguyen191/dui';
+import { JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
 
 import { appRoutes } from './app.routes';
 

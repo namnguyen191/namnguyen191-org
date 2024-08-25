@@ -1,5 +1,5 @@
 {
-  "name": "@namnguyen191/dui",
+  "name": "@namnguyen191/dui-core",
   "version": "0.0.8-4",
   "publishConfig": {
     "access": "public"

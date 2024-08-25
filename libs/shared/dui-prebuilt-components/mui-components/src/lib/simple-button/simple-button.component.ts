@@ -15,7 +15,7 @@ import {
   BaseUIElementComponent,
   DefaultActionHook,
   UIElementImplementation,
-} from '@namnguyen191/dui';
+} from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {

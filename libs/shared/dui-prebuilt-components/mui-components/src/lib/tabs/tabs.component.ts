@@ -5,7 +5,7 @@ import {
   BaseUIElementComponent,
   LayoutComponent,
   UIElementImplementation,
-} from '@namnguyen191/dui';
+} from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 const ZodTabConfigObject = z.object({

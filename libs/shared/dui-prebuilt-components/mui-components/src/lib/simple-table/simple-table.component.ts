@@ -12,15 +12,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import {
+  ActionHookService,
   BaseUIElementComponent,
   InterpolationService,
-  UIElementImplementation,
-} from '@namnguyen191/dui';
-import {
-  ActionHookService,
   parseZodWithDefault,
+  UIElementImplementation,
   ZodStringOrNumberOrBoolean,
-} from '@namnguyen191/dui';
+} from '@namnguyen191/dui-core';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';
 

@@ -4,7 +4,7 @@ import {
   BaseUIElementComponent,
   parseZodWithDefault,
   UIElementImplementation,
-} from '@namnguyen191/dui';
+} from '@namnguyen191/dui-core';
 import { ButtonModule, InlineLoadingModule } from 'carbon-components-angular';
 
 import {

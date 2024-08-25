@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/carbon-components';
+import { getHttpFetcher } from '@namnguyen191/dui-common';
 import {
   ActionHookService,
   DataFetchingService,
@@ -25,8 +26,7 @@ import {
   UIElementPositionAndSize,
   UIElementRepositionEvent,
   UIElementTemplateService,
-} from '@namnguyen191/dui';
-import { getHttpFetcher } from '@namnguyen191/dui-common';
+} from '@namnguyen191/dui-core';
 import { NotificationModule, ToastContent } from 'carbon-components-angular';
 import { set } from 'lodash-es';
 import { buffer, debounceTime, forkJoin, map, mergeMap, switchMap, tap } from 'rxjs';

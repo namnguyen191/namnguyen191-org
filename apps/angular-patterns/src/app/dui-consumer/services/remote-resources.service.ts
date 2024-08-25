@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RemoteResourceTemplate } from '@namnguyen191/dui';
+import { RemoteResourceTemplate } from '@namnguyen191/dui-core';
 import { Observable, shareReplay } from 'rxjs';
 
 const BASE_REMOTE_RESOURCE_URL = 'http://localhost:8080/remote-resources';

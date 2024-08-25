@@ -1,7 +1,7 @@
 {
-  "name": "dui",
+  "name": "dui-core",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/dui/src",
+  "sourceRoot": "libs/dui-core/src",
   "prefix": "namnguyen191",
   "tags": ["scope:shared-lib:angular"],
   "projectType": "library",
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/dui/ng-package.json"
+        "project": "libs/dui-core/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/dui/tsconfig.lib.prod.json"
+          "tsConfig": "libs/dui-core/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/dui/tsconfig.lib.json"
+          "tsConfig": "libs/dui-core/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,21 +26,21 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/dui/jest.config.ts"
+        "jestConfig": "libs/dui-core/jest.config.ts"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/dui/**/*.{ts,tsx,js,jsx}", "libs/dui/package.json"]
+        "lintFilePatterns": ["libs/dui-core/**/*.{ts,tsx,js,jsx}", "libs/dui-core/package.json"]
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
-        "cwd": "libs/dui"
+        "cwd": "libs/dui-core"
       }
     }
   }

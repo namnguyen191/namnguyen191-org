@@ -21,7 +21,7 @@
       "@namnguyen191/carbon-components": [
         "libs/shared/dui-prebuilt-components/carbon-components/src/index.ts"
       ],
-      "@namnguyen191/dui": ["libs/dui/src/index.ts"],
+      "@namnguyen191/dui-core": ["libs/dui-core/src/index.ts"],
       "@namnguyen191/dui-common": ["libs/dui-common/src/index.ts"],
       "@namnguyen191/mui-components": [
         "libs/shared/dui-prebuilt-components/mui-components/src/index.ts"

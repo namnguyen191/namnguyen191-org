@@ -1,4 +1,4 @@
-import { ZodStringOrNumberOrBoolean } from '@namnguyen191/dui';
+import { ZodStringOrNumberOrBoolean } from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 export const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);

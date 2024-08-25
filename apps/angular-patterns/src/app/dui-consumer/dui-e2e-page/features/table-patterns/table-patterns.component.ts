@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
-import { DuiComponent } from '@namnguyen191/dui';
+import { DuiComponent } from '@namnguyen191/dui-core';
 
 @Component({
   selector: 'namnguyen191-table-patterns',

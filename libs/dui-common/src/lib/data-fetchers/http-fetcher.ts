@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
-import { DataFetcher } from '@namnguyen191/dui';
+import { DataFetcher } from '@namnguyen191/dui-core';
 
 export type HttpFetcherConfigs = {
   endpoint: string;

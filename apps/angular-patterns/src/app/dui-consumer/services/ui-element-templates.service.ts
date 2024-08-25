@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UIElementTemplate } from '@namnguyen191/dui';
+import { UIElementTemplate } from '@namnguyen191/dui-core';
 import { Observable, shareReplay } from 'rxjs';
 
 const BASE_UI_ELEMENT_TEMPLATE_URL = 'http://localhost:8080/ui-element-templates';

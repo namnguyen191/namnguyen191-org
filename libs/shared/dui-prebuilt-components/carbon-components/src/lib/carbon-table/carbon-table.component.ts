@@ -13,7 +13,7 @@ import {
   parseZodWithDefault,
   UIElementImplementation,
   UiElementWrapperComponent,
-} from '@namnguyen191/dui';
+} from '@namnguyen191/dui-core';
 import {
   PaginationModel,
   PaginationModule,

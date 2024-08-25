@@ -9,7 +9,7 @@
         "@nx/dependency-checks": [
           "error",
           {
-            "ignoredDependencies": ["@nx/playwright", "@playwright/test", "@nx/devkit"] // these libs will be omitted from checks
+            "ignoredDependencies": ["@nx/devkit"] // these libs will be omitted from checks
           }
         ]
       }
