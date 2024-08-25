@@ -69,28 +69,6 @@ type ElementInputsInterpolationContext = {
 
 const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
 
-export const getElementInterpolationContext = (params: {
-  remoteResourceIds?: string[];
-  stateSubscription?: StateSubscriptionConfig;
-}): Observable<ElementInputsInterpolationContext> => {
-  const { remoteResourceIds, stateSubscription = {} } = params;
-
-  const state = getStatesSubscriptionAsContext(stateSubscription);
-  const remoteResourcesStates = remoteResourceIds?.length
-    ? getRemoteResourcesStatesAsContext(remoteResourceIds)
-    : of(null);
-
-  return combineLatest({
-    remoteResourcesStates,
-    state,
-  }).pipe(
-    shareReplay({
-      refCount: true,
-      bufferSize: 1,
-    })
-  );
-};
-
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
   standalone: true,
@@ -308,7 +286,7 @@ export class UiElementWrapperComponent {
 
           const interpolationContext: Observable<ElementInputsInterpolationContext> =
             runInInjectionContext(this.#environmentInjector, () =>
-              getElementInterpolationContext({
+              this.#getElementInterpolationContext({
                 remoteResourceIds,
                 stateSubscription,
               })
@@ -328,5 +306,27 @@ export class UiElementWrapperComponent {
           });
         });
     });
+  }
+
+  #getElementInterpolationContext(params: {
+    remoteResourceIds?: string[];
+    stateSubscription?: StateSubscriptionConfig;
+  }): Observable<ElementInputsInterpolationContext> {
+    const { remoteResourceIds, stateSubscription = {} } = params;
+
+    const state = getStatesSubscriptionAsContext(stateSubscription);
+    const remoteResourcesStates = remoteResourceIds?.length
+      ? getRemoteResourcesStatesAsContext(remoteResourceIds)
+      : of(null);
+
+    return combineLatest({
+      remoteResourcesStates,
+      state,
+    }).pipe(
+      shareReplay({
+        refCount: true,
+        bufferSize: 1,
+      })
+    );
   }
 }

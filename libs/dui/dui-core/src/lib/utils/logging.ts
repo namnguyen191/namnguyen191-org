@@ -1,15 +1,15 @@
 export const logInfo = (msg: string): void => {
-  console.info(`[INFO LOG] ${msg}`);
+  console.info(`[DUI INFO LOG] ${msg}`);
 };
 
 export const logError = (msg: string): void => {
-  console.error(`[ERROR LOG] ${msg}`);
+  console.error(`[DUI ERROR LOG] ${msg}`);
 };
 
 export const logWarning = (msg: string): void => {
-  console.warn(`[WARNING LOG] ${msg}`);
+  console.warn(`[DUI WARNING LOG] ${msg}`);
 };
 
 export const logSubscription = (msg: string): void => {
-  console.info(`[SUBSCRIPTION] ${msg}`);
+  console.info(`[DUI SUBSCRIPTION LOG] ${msg}`);
 };

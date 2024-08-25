@@ -11,9 +11,9 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
+  ActionHook,
   ActionHookService,
   BaseUIElementComponent,
-  DefaultActionHook,
   UIElementImplementation,
 } from '@namnguyen191/dui-core';
 import { z } from 'zod';
@@ -67,7 +67,7 @@ export class SimpleButtonComponent
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.color.parse(val),
   });
 
-  onClickConfigOption: InputSignal<DefaultActionHook[]> = input([], {
+  onClickConfigOption: InputSignal<ActionHook[]> = input([], {
     alias: 'onClick',
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.onClick.parse(val),
   });

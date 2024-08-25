@@ -7,7 +7,10 @@
   "peerDependencies": {
     "@angular/common": "^18.1.0",
     "@angular/core": "^18.1.0",
-    "@namnguyen191/dui-core": "*"
+    "rxjs": "~7.8.1",
+    "zod": "^3.22.4",
+    "@namnguyen191/dui-core": "*",
+    "@namnguyen191/types-helper": "*"
   },
   "sideEffects": false
 }

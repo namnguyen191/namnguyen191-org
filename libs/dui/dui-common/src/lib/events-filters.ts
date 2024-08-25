@@ -1,6 +1,5 @@
+import { EventObject } from '@namnguyen191/dui-core';
 import { filter, Observable, pipe, UnaryFunction } from 'rxjs';
-
-import { EventObject } from './events.service';
 
 export const missingLayoutTemplateEvent = (): UnaryFunction<
   Observable<EventObject>,

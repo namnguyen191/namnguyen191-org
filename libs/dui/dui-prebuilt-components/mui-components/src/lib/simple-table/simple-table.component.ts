@@ -15,16 +15,15 @@ import {
   ActionHookService,
   BaseUIElementComponent,
   InterpolationService,
-  parseZodWithDefault,
   UIElementImplementation,
-  ZodStringOrNumberOrBoolean,
 } from '@namnguyen191/dui-core';
+import { parseZodWithDefault, ZodNonEmptyPrimitive } from '@namnguyen191/types-helper';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';
 
 import { PluckPipe } from './pluck.pipe';
 
-const ZodTableRowObject = z.record(z.string(), ZodStringOrNumberOrBoolean);
+const ZodTableRowObject = z.record(z.string(), ZodNonEmptyPrimitive);
 export type TableRowObject = z.infer<typeof ZodTableRowObject>;
 
 const ZodTableColumnObject = z.object({

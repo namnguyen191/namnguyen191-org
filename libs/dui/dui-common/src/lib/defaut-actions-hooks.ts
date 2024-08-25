@@ -1,21 +1,18 @@
 import { EnvironmentInjector, inject } from '@angular/core';
-import { z } from 'zod';
-
-import { ZodObjectType } from '../../utils/zod-types';
-import { RemoteResourceService } from '../remote-resource.service';
-import { StateStoreService, ZodAvailableStateScope } from '../state-store.service';
 import {
-  ActionHookHandler,
   ActionHooksHandlersMap,
   ActionHooksZodParsersMap,
   createHookWithInjectionContext,
-} from './action-hook.service';
-
-const ZodDefaultActionHookType = z.enum(['triggerRemoteResource', 'addToState']);
+  RemoteResourceService,
+  StateStoreService,
+  ZodAvailableStateScope,
+} from '@namnguyen191/dui-core';
+import { ZodObjectType } from '@namnguyen191/types-helper';
+import { z } from 'zod';
 
 const ZodTriggerRemoteResourceActionHook = z.strictObject(
   {
-    type: z.literal(ZodDefaultActionHookType.enum.triggerRemoteResource),
+    type: z.literal('triggerRemoteResource'),
     payload: z.strictObject({
       remoteResourceId: z.string(),
     }),
@@ -31,7 +28,7 @@ type TriggerRemoteResourceActionHook = z.infer<typeof ZodTriggerRemoteResourceAc
 
 const ZodAddToStateActionHook = z.strictObject(
   {
-    type: z.literal(ZodDefaultActionHookType.enum.addToState),
+    type: z.literal('addToState'),
     payload: z.strictObject({
       scope: ZodAvailableStateScope,
       data: ZodObjectType,
@@ -46,19 +43,6 @@ const ZodAddToStateActionHook = z.strictObject(
 );
 type AddToStateActionHook = z.infer<typeof ZodAddToStateActionHook>;
 
-const ZodDefaultActionHook = z.discriminatedUnion('type', [
-  ZodTriggerRemoteResourceActionHook,
-  ZodAddToStateActionHook,
-]);
-
-export type DefaultActionHook = z.infer<typeof ZodDefaultActionHook>;
-
-type DefaultActionHooksHandlers = {
-  [K in DefaultActionHook['type'] as `handle${Capitalize<K>}`]: ActionHookHandler<
-    Extract<DefaultActionHook, { type: K }>
-  >;
-};
-
 const handleTriggerRemoteResource = (action: TriggerRemoteResourceActionHook): void => {
   const {
     payload: { remoteResourceId },
@@ -70,7 +54,7 @@ const handleAddToState = (action: AddToStateActionHook): void => {
   inject(StateStoreService).addToState(action.payload);
 };
 
-export const defaultActionsHandlersMap: DefaultActionHooksHandlers = {
+export const defaultActionsHandlersMap = {
   handleAddToState,
   handleTriggerRemoteResource,
 };

@@ -1,13 +1,13 @@
-import { ZodStringOrNumberOrBoolean } from '@namnguyen191/dui-core';
+import { ZodNonEmptyPrimitive } from '@namnguyen191/types-helper';
 import { z } from 'zod';
 
-export const ZodTableRowObject = z.array(ZodStringOrNumberOrBoolean);
+export const ZodTableRowObject = z.array(ZodNonEmptyPrimitive);
 export type TableRowObject = z.infer<typeof ZodTableRowObject>;
 
 export const ZodTableRowsConfig = z.array(ZodTableRowObject);
 export type TableRowsConfig = z.infer<typeof ZodTableRowsConfig>;
 
-export const ZodTableHeadersConfig = z.array(ZodStringOrNumberOrBoolean);
+export const ZodTableHeadersConfig = z.array(ZodNonEmptyPrimitive);
 export type TableHeadersConfig = z.infer<typeof ZodTableHeadersConfig>;
 
 export const ZodTableDescriptionConfig = z.string({

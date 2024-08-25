@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import {
   BaseUIElementComponent,
-  parseZodWithDefault,
   UIElementImplementation,
   UiElementWrapperComponent,
 } from '@namnguyen191/dui-core';
+import { parseZodWithDefault } from '@namnguyen191/types-helper';
 import {
   PaginationModel,
   PaginationModule,

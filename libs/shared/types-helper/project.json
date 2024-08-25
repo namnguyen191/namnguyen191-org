@@ -16,7 +16,14 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.lib.json --noEmit"],
+        "cwd": "libs/shared/types-helper"
+      }
     }
   },
-  "tags": ["missing-tag", "scope:shared-lib"]
+  "tags": ["scope:shared-lib"]
 }
