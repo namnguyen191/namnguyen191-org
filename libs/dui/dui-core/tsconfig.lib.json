@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declarationMap": true,
     "declaration": true,
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../../dist/out-tsc",
     "inlineSources": true,
     "types": []
   },

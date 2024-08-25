@@ -1,6 +1,6 @@
 {
   "$schema": "../../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../../dist/libs/shared/dui-prebuilt-components/carbon-components",
+  "dest": "../../../../dist/libs/dui/dui-prebuilt-components/carbon-components",
   "lib": {
     "entryFile": "src/index.ts"
   }

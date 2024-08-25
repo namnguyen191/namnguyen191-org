@@ -1,7 +1,7 @@
 {
   "name": "carbon-components",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/dui-prebuilt-components/carbon-components/src",
+  "sourceRoot": "libs/dui/dui-prebuilt-components/carbon-components/src",
   "prefix": "lib",
   "tags": ["missing-tag"],
   "projectType": "library",
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/shared/dui-prebuilt-components/carbon-components/ng-package.json"
+        "project": "libs/dui/dui-prebuilt-components/carbon-components/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/shared/dui-prebuilt-components/carbon-components/tsconfig.lib.prod.json"
+          "tsConfig": "libs/dui/dui-prebuilt-components/carbon-components/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/shared/dui-prebuilt-components/carbon-components/tsconfig.lib.json"
+          "tsConfig": "libs/dui/dui-prebuilt-components/carbon-components/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,7 +26,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/shared/dui-prebuilt-components/carbon-components/jest.config.ts"
+        "jestConfig": "libs/dui/dui-prebuilt-components/carbon-components/jest.config.ts"
       }
     },
     "lint": {
@@ -34,8 +34,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/shared/dui-prebuilt-components/carbon-components/**/*.{ts,tsx,js,jsx}",
-          "libs/shared/dui-prebuilt-components/carbon-components/package.json"
+          "libs/dui/dui-prebuilt-components/carbon-components/**/*.{ts,tsx,js,jsx}",
+          "libs/dui/dui-prebuilt-components/carbon-components/package.json"
         ]
       }
     },
@@ -43,7 +43,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
-        "cwd": "libs/shared/dui-prebuilt-components/carbon-components"
+        "cwd": "libs/dui/dui-prebuilt-components/carbon-components"
       }
     }
   }

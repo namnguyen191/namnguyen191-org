@@ -1,9 +1,10 @@
 /* eslint-disable */
 export default {
-  displayName: 'mui-components',
-  preset: '../../../../jest.preset.cjs',
+  displayName: 'dui',
+  preset: '../../../jest.preset.mjs',
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../../../coverage/libs/shared/dui-prebuilt-components/mui-components',
+  coverageDirectory: '../../../coverage/libs/dui',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

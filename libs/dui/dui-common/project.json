@@ -1,7 +1,7 @@
 {
   "name": "dui-common",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/dui-common/src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dui/dui-common/src",
   "prefix": "lib",
   "projectType": "library",
   "tags": ["scope:shared-lib:angular"],
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/dui-common/ng-package.json"
+        "project": "libs/dui/dui-common/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/dui-common/tsconfig.lib.prod.json"
+          "tsConfig": "libs/dui/dui-common/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/dui-common/tsconfig.lib.json"
+          "tsConfig": "libs/dui/dui-common/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,14 +26,17 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/dui-common/**/*.{ts,tsx,js,jsx}", "libs/dui-common/package.json"]
+        "lintFilePatterns": [
+          "libs/dui/dui-common/**/*.{ts,tsx,js,jsx}",
+          "libs/dui/dui-common/package.json"
+        ]
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
-        "cwd": "libs/dui-common"
+        "cwd": "libs/dui/dui-common"
       }
     }
   }
