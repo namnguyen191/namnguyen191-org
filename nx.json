@@ -1,7 +1,10 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "release": {
-    "projects": ["libs/dui/*", "libs/shared/types-helper"]
+    "projectsRelationship": "independent",
+    "changelog": {
+      "projectChangelogs": true
+    }
   },
   "targetDefaults": {
     "build": {
