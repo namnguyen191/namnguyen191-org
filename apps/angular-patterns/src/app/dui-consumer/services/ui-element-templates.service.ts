@@ -13,7 +13,7 @@ export class UIElementTemplateService {
 
   #uiElementTemplatesCache: Record<string, Observable<UIElementTemplate>> = {};
 
-  getUIElementTemplateById(id: string): Observable<UIElementTemplate> {
+  getUIElementTemplateById = (id: string): Observable<UIElementTemplate> => {
     let uiElementTemplate$ = this.#uiElementTemplatesCache[id];
     if (!uiElementTemplate$) {
       uiElementTemplate$ = this.#fetchUIElementTemplateById(id).pipe(shareReplay(1));
@@ -21,7 +21,7 @@ export class UIElementTemplateService {
     }
 
     return uiElementTemplate$;
-  }
+  };
 
   #fetchUIElementTemplateById(id: string): Observable<UIElementTemplate> {
     return this.#httpClient.get<UIElementTemplate>(`${BASE_UI_ELEMENT_TEMPLATE_URL}/${id}`);

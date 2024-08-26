@@ -13,7 +13,7 @@ export class LayoutsService {
 
   readonly #layoutsCache: Record<string, Observable<LayoutTemplate>> = {};
 
-  getLayoutById(id: string): Observable<LayoutTemplate> {
+  getLayoutById = (id: string): Observable<LayoutTemplate> => {
     let layout$ = this.#layoutsCache[id];
     if (!layout$) {
       layout$ = this.#fetchLayoutById(id).pipe(shareReplay(1));
@@ -21,7 +21,7 @@ export class LayoutsService {
     }
 
     return layout$;
-  }
+  };
 
   updateLayout(updatedLayout: LayoutTemplate): Observable<void> {
     return this.#httpClient
@@ -29,10 +29,10 @@ export class LayoutsService {
       .pipe(tap(() => (this.#layoutsCache[updatedLayout.id] = of(updatedLayout))));
   }
 
-  updateLayoutElementPositionAndSize(
+  updateLayoutElementPositionAndSize = (
     layoutId: string,
     elementsWithNewPosAndSize: Record<string, UIElementPositionAndSize>
-  ): Observable<void> {
+  ): Observable<void> => {
     const layoutInCache$ = this.#layoutsCache[layoutId];
     if (!layoutInCache$) {
       throw new Error(
@@ -53,7 +53,7 @@ export class LayoutsService {
         return this.updateLayout(layout);
       })
     );
-  }
+  };
 
   #fetchLayoutById(id: string): Observable<LayoutTemplate> {
     return this.#httpClient.get<LayoutTemplate>(`${BASE_LAYOUT_URL}/${id}`);

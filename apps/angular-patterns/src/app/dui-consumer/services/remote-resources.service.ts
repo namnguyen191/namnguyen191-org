@@ -13,7 +13,7 @@ export class RemoteResourcesService {
 
   #remoteResourcesCache: Record<string, Observable<RemoteResourceTemplate>> = {};
 
-  getRemoteResourceById(id: string): Observable<RemoteResourceTemplate> {
+  getRemoteResourceById = (id: string): Observable<RemoteResourceTemplate> => {
     let remoteResource$ = this.#remoteResourcesCache[id];
     if (!remoteResource$) {
       remoteResource$ = this.#fetchRemoteResourceById(id).pipe(shareReplay(1));
@@ -21,7 +21,7 @@ export class RemoteResourcesService {
     }
 
     return remoteResource$;
-  }
+  };
 
   #fetchRemoteResourceById(id: string): Observable<RemoteResourceTemplate> {
     return this.#httpClient.get<RemoteResourceTemplate>(`${BASE_REMOTE_RESOURCE_URL}/${id}`);

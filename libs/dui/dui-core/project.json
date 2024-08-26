@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dui/dui-core/src",
   "prefix": "namnguyen191",
-  "tags": ["scope:shared-lib:angular"],
+  "tags": ["scope:dui-core"],
   "projectType": "library",
   "targets": {
     "build": {

@@ -1,21 +1,8 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EnvironmentInjector,
-  inject,
-  input,
-  InputSignal,
-  runInInjectionContext,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {
-  ActionHook,
-  ActionHookService,
-  BaseUIElementComponent,
-  UIElementImplementation,
-} from '@namnguyen191/dui-core';
+import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {
@@ -31,12 +18,15 @@ const ZodSimpleButtonUIElementComponentConfigs = z.object({
   }),
   color: ZodButtonColor,
   disabled: z.boolean(),
-  onClick: z.array(z.any()),
 });
 
 export type SimpleButtonUIElementComponentConfigs = z.infer<
   typeof ZodSimpleButtonUIElementComponentConfigs
 >;
+
+export type SimpleButtonUIElementComponentEvents = {
+  buttonClicked: void;
+};
 
 @Component({
   selector: 'namnguyen191-simple-button',
@@ -48,7 +38,11 @@ export type SimpleButtonUIElementComponentConfigs = z.infer<
 })
 export class SimpleButtonComponent
   extends BaseUIElementComponent
-  implements UIElementImplementation<SimpleButtonUIElementComponentConfigs>
+  implements
+    UIElementImplementation<
+      SimpleButtonUIElementComponentConfigs,
+      SimpleButtonUIElementComponentEvents
+    >
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_BUTTON';
 
@@ -67,20 +61,9 @@ export class SimpleButtonComponent
     transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.color.parse(val),
   });
 
-  onClickConfigOption: InputSignal<ActionHook[]> = input([], {
-    alias: 'onClick',
-    transform: (val) => ZodSimpleButtonUIElementComponentConfigs.shape.onClick.parse(val),
-  });
-
-  readonly #actionHookService = inject(ActionHookService);
-  readonly #environmentInjector = inject(EnvironmentInjector);
+  buttonClicked = output<void>();
 
   handleButtonClick(): void {
-    const onclickActions = this.onClickConfigOption();
-    if (onclickActions.length > 0) {
-      runInInjectionContext(this.#environmentInjector, () =>
-        this.#actionHookService.triggerActionHooks(onclickActions)
-      );
-    }
+    this.buttonClicked.emit();
   }
 }

@@ -23,6 +23,18 @@
                 "onlyDependOnLibsWithTags": ["*"]
               },
               {
+                "sourceTag": "scope:dui-core",
+                "onlyDependOnLibsWithTags": ["scope:shared-lib", "scope:shared-lib:angular"]
+              },
+              {
+                "sourceTag": "scope:dui-extensions",
+                "onlyDependOnLibsWithTags": [
+                  "scope:dui-core",
+                  "scope:shared-lib",
+                  "scope:shared-lib:angular"
+                ]
+              },
+              {
                 "sourceTag": "scope:shared-lib:angular",
                 "onlyDependOnLibsWithTags": ["scope:shared-lib", "scope:shared-lib:angular"]
               },

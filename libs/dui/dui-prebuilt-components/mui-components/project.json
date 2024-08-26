@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dui/dui-prebuilt-components/mui-components/src",
   "prefix": "lib",
-  "tags": ["missing-tag"],
+  "tags": ["scope:dui-extensions"],
   "projectType": "library",
   "targets": {
     "build": {

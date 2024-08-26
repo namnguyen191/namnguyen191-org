@@ -10,7 +10,8 @@
     "rxjs": "~7.8.1",
     "zod": "^3.22.4",
     "@namnguyen191/dui-core": "*",
-    "@namnguyen191/types-helper": "*"
+    "@namnguyen191/types-helper": "*",
+    "lodash-es": "^4.17.21"
   },
   "sideEffects": false
 }

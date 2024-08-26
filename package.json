@@ -6,7 +6,8 @@
   "scripts": {
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm",
-    "release": "nx release",
+    "release-all": "nx release --skip-publish",
+    "publish-all": "nx release publish",
     "check-circular-dep": "madge --circular --exclude 'dist' --extensions ts ./apps ./libs",
     "lint:affected": "pnpm nx affected -t lint",
     "lint:all": "pnpm nx run-many --all --skip-nx-cache --parallel=12 -t lint",

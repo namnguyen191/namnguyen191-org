@@ -3,20 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  EnvironmentInjector,
-  inject,
   input,
   InputSignal,
+  output,
 } from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import {
-  ActionHookService,
-  BaseUIElementComponent,
-  InterpolationService,
-  UIElementImplementation,
-} from '@namnguyen191/dui-core';
+import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
 import { parseZodWithDefault, ZodNonEmptyPrimitive } from '@namnguyen191/types-helper';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';
@@ -53,6 +47,14 @@ export type SimpleTableUIElementComponentConfigs = z.infer<
   typeof ZodSimpleTableUIElementComponentConfigs
 >;
 
+export type PaginationChangedPayload = {
+  $pageEvent: PageEvent;
+};
+
+export type SimpleTableUIElementComponentEvents = {
+  paginationChanged: PaginationChangedPayload;
+};
+
 @Component({
   selector: 'namnguyen191-simple-table',
   standalone: true,
@@ -63,7 +65,11 @@ export type SimpleTableUIElementComponentConfigs = z.infer<
 })
 export class SimpleTableComponent
   extends BaseUIElementComponent
-  implements UIElementImplementation<SimpleTableUIElementComponentConfigs>
+  implements
+    UIElementImplementation<
+      SimpleTableUIElementComponentConfigs,
+      SimpleTableUIElementComponentEvents
+    >
 {
   static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
   static readonly NEED_CONTEXT = true;
@@ -109,13 +115,11 @@ export class SimpleTableComponent
   );
   shouldDisplayPagination = computed(() => !isEmpty(this.paginationConfigOption()));
 
-  readonly #interpolationService = inject(InterpolationService);
-  readonly #actionHookService = inject(ActionHookService);
-  readonly #environmentInjector = inject(EnvironmentInjector);
+  paginationChanged = output<PaginationChangedPayload>();
 
   async onPageChange(event: PageEvent): Promise<void> {
-    // const { pageSize, pageIndex: currentPage } = event;
-    console.log('Nam data is: ', event);
-    // TODO: implement on page changed envent
+    this.paginationChanged.emit({
+      $pageEvent: event,
+    });
   }
 }

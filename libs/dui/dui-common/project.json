@@ -4,7 +4,7 @@
   "sourceRoot": "libs/dui/dui-common/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:shared-lib:angular"],
+  "tags": ["scope:dui-extensions"],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
