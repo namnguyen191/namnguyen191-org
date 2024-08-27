@@ -1,4 +1,4 @@
-# carbon-components
+# dui-carbon-components
 
 ## Intergration with DUI:
 
@@ -11,7 +11,7 @@
 - Register a use these components are per DUI guideline:
 
 ```ts
-import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/carbon-components';
+import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/dui-carbon-components';
 
 this.#uiElementFactoryService.registerUIElement({
   type: CarbonTableComponent.ELEMENT_TYPE,

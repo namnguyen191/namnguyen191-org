@@ -1,9 +1,9 @@
 {
-  "name": "@namnguyen191/carbon-components",
+  "name": "@namnguyen191/dui-carbon-components",
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.2",
+  "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "18.X.X",
     "@angular/core": "18.X.X",

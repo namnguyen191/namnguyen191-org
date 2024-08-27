@@ -1,4 +1,4 @@
-# mui-components
+# dui-mui-components
 
 ## Intergration with DUI:
 

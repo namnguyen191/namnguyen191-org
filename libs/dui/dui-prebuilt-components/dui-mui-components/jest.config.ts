@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'carbon-components',
+  displayName: 'dui-mui-components',
   preset: '../../../../jest.preset.cjs',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../../../coverage/libs/dui/dui-prebuilt-components/carbon-components',
+  coverageDirectory: '../../../../coverage/libs/dui/dui-prebuilt-components/dui-mui-components',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

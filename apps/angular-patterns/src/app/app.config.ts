@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
-import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/carbon-components';
+import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/dui-carbon-components';
 import { DUI_SETUP_CONFIGS, DUISetupConfigs } from '@namnguyen191/dui-common';
 import { JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
 

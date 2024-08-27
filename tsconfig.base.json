@@ -18,13 +18,13 @@
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "paths": {
-      "@namnguyen191/carbon-components": [
-        "libs/dui/dui-prebuilt-components/carbon-components/src/index.ts"
+      "@namnguyen191/dui-carbon-components": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/src/index.ts"
       ],
       "@namnguyen191/dui-common": ["libs/dui/dui-common/src/index.ts"],
       "@namnguyen191/dui-core": ["libs/dui/dui-core/src/index.ts"],
-      "@namnguyen191/mui-components": [
-        "libs/dui/dui-prebuilt-components/mui-components/src/index.ts"
+      "@namnguyen191/dui-mui-components": [
+        "libs/dui/dui-prebuilt-components/dui-mui-components/src/index.ts"
       ],
       "@namnguyen191/shrimping-around/features/home": [
         "libs/shrimping-around/features/home/src/index.ts"

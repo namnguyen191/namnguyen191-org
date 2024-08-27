@@ -1,7 +1,7 @@
 {
-  "name": "mui-components",
+  "name": "dui-carbon-components",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/dui/dui-prebuilt-components/mui-components/src",
+  "sourceRoot": "libs/dui/dui-prebuilt-components/dui-carbon-components/src",
   "prefix": "lib",
   "tags": ["scope:dui-extensions"],
   "projectType": "library",
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/dui/dui-prebuilt-components/mui-components/ng-package.json"
+        "project": "libs/dui/dui-prebuilt-components/dui-carbon-components/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/dui/dui-prebuilt-components/mui-components/tsconfig.lib.prod.json"
+          "tsConfig": "libs/dui/dui-prebuilt-components/dui-carbon-components/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/dui/dui-prebuilt-components/mui-components/tsconfig.lib.json"
+          "tsConfig": "libs/dui/dui-prebuilt-components/dui-carbon-components/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,7 +26,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/dui/dui-prebuilt-components/mui-components/jest.config.ts"
+        "jestConfig": "libs/dui/dui-prebuilt-components/dui-carbon-components/jest.config.ts"
       }
     },
     "lint": {
@@ -34,8 +34,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/dui/dui-prebuilt-components/mui-components/**/*.{ts,tsx,js,jsx}",
-          "libs/dui/dui-prebuilt-components/mui-components/package.json"
+          "libs/dui/dui-prebuilt-components/dui-carbon-components/**/*.{ts,tsx,js,jsx}",
+          "libs/dui/dui-prebuilt-components/dui-carbon-components/package.json"
         ]
       }
     },
@@ -43,7 +43,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
-        "cwd": "libs/dui/dui-prebuilt-components/mui-components"
+        "cwd": "libs/dui/dui-prebuilt-components/dui-carbon-components"
       }
     }
   }
