@@ -1,3 +1,3 @@
 # dui-common
 
-This library was generated with [Nx](https://nx.dev).
+Contains some common utils to setup DUI.
