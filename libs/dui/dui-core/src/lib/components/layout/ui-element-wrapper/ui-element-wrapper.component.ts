@@ -11,6 +11,7 @@ import {
   input,
   InputSignal,
   OutputEmitterRef,
+  reflectComponentType,
   runInInjectionContext,
   Signal,
   signal,
@@ -23,7 +24,6 @@ import { isEqual } from 'lodash-es';
 import {
   catchError,
   combineLatest,
-  debounceTime,
   distinctUntilChanged,
   EMPTY,
   filter,
@@ -36,6 +36,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  throttleTime,
 } from 'rxjs';
 
 import {
@@ -68,6 +69,10 @@ type ElementInputsInterpolationContext = {
 };
 
 const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
+
+type InputsStreams = {
+  [inputName: string]: Observable<unknown>;
+};
 
 @Component({
   selector: 'namnguyen191-ui-element-wrapper',
@@ -119,7 +124,7 @@ export class UiElementWrapperComponent {
     interpolationContext: Observable<ElementInputsInterpolationContext>;
     templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
     withRemoteResource: boolean;
-  }): Observable<ObjectType> {
+  }): InputsStreams {
     const { templateOptions, withRemoteResource, interpolationContext } = params;
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
@@ -143,8 +148,7 @@ export class UiElementWrapperComponent {
                   })
                 );
               }
-            }),
-            distinctUntilChanged(isEqual)
+            })
           );
     }
 
@@ -163,10 +167,17 @@ export class UiElementWrapperComponent {
       }
     }
 
-    return combineLatest(inputsObservableMap).pipe(
-      distinctUntilChanged(isEqual),
-      debounceTime(100)
+    const debouncedAndDistinctInputs = Object.fromEntries(
+      Object.entries(inputsObservableMap).map(([inputName, valObs]) => [
+        inputName,
+        valObs.pipe(
+          distinctUntilChanged(isEqual),
+          throttleTime(500, undefined, { leading: true, trailing: true })
+        ),
+      ])
     );
+
+    return debouncedAndDistinctInputs;
   }
 
   #checkForInfiniteRenderEffect(): void {
@@ -202,19 +213,26 @@ export class UiElementWrapperComponent {
   }
 
   #setupComponent(params: {
-    inputsStream: Observable<ObjectType>;
+    inputsStreams: InputsStreams;
     componentRef: ComponentRef<BaseUIElementComponent>;
     eventsHooks?: EventsToHooksMap;
     interpolationContext: Observable<ElementInputsInterpolationContext>;
   }): void {
-    const { inputsStream, componentRef, eventsHooks, interpolationContext } = params;
+    const { inputsStreams, componentRef, eventsHooks, interpolationContext } = params;
     this.#unsubscribeInputsSubject.next();
-    inputsStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((inputs) => {
-      logSubscription(`Inputs stream for ${this.uiElementTemplateId()}`);
-      for (const [inputName, inputVal] of Object.entries(inputs)) {
-        componentRef.setInput(inputName, inputVal);
+
+    for (const [inputName, valStream] of Object.entries(inputsStreams)) {
+      if (this.#checkInputExistsForComponent(componentRef.componentType, inputName)) {
+        valStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((val) => {
+          logSubscription(`[${this.uiElementTemplateId()}] Input stream for ${inputName}`);
+          componentRef.setInput(inputName, val);
+        });
+      } else {
+        logWarning(
+          `Input ${inputName} does not exist for component ${componentRef.instance.getElementType()}`
+        );
       }
-    });
+    }
 
     if (eventsHooks) {
       for (const [eventName, hooks] of Object.entries(eventsHooks)) {
@@ -292,7 +310,7 @@ export class UiElementWrapperComponent {
               })
             );
 
-          const inputsStream = this.#generateComponentInputs({
+          const inputsStreams = this.#generateComponentInputs({
             templateOptions: options,
             interpolationContext,
             withRemoteResource: !!remoteResourceIds?.length,
@@ -300,7 +318,7 @@ export class UiElementWrapperComponent {
 
           this.#setupComponent({
             componentRef,
-            inputsStream,
+            inputsStreams,
             eventsHooks,
             interpolationContext,
           });
@@ -327,6 +345,18 @@ export class UiElementWrapperComponent {
         refCount: true,
         bufferSize: 1,
       })
+    );
+  }
+
+  #checkInputExistsForComponent(componentClass: Type<unknown>, inputName: string): boolean {
+    const componentInputs = reflectComponentType(componentClass)?.inputs;
+
+    if (!componentInputs) {
+      throw new Error('Invalid component');
+    }
+
+    return !!componentInputs.find(
+      (input) => input.propName === inputName || input.templateName === inputName
     );
   }
 }

@@ -1,0 +1,51 @@
+@use 'carbon-components/scss/globals/scss/typography';
+@use 'carbon-components/scss/globals/scss/spacing';
+
+:host {
+  display: contents;
+
+  .card-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    gap: spacing.$spacing-md;
+
+    .card-header {
+      display: flex;
+      height: fit-content;
+      align-items: center;
+      gap: spacing.$spacing-sm;
+
+      &__avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+      }
+
+      &__text {
+        @include typography.type-style('productive-heading-03');
+
+        &__title {
+        }
+
+        &__sub-title {
+        }
+      }
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: spacing.$spacing-sm;
+
+      &__image {
+        aspect-ratio: 5 / 4;
+      }
+
+      &__text {
+        @include typography.type-style('body-long-02');
+        white-space: pre-wrap;
+      }
+    }
+  }
+}

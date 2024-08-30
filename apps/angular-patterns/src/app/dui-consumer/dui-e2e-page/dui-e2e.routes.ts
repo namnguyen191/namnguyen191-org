@@ -21,6 +21,13 @@ export const duiE2ERoutes: Route[] = [
             (m) => m.TablePatternsComponent
           ),
       },
+      {
+        path: 'text-card-patterns',
+        loadComponent: () =>
+          import('./features/text-card-patterns/text-card-patterns.component').then(
+            (m) => m.TextCardPatternsComponent
+          ),
+      },
       { path: '**', redirectTo: 'button-patterns', pathMatch: 'full' },
     ],
   },

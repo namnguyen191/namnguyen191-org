@@ -1,0 +1,12 @@
+{
+  "id": "carbon_text_card_test",
+  "type": "CARBON_TEXT_CARD",
+  "remoteResourceIds": ["randomJoke1"],
+  "options": {
+    "title": "Neocaridina",
+    "subTitle": "Beginner level species",
+    "avatarUrl": "https://cdn-icons-png.flaticon.com/512/2347/2347004.png",
+    "imageUrl": "https://coburgaquarium.com.au/cdn/shop/files/CoburgAquariumBloodyMaryAquariumShrimp.jpg?v=1697349869",
+    "body": "Neocaridina shrimp are a popular species of freshwater shrimp often kept in aquariums due to their small size, vibrant colors, and ease of care. The most famous type is the Neocaridina davidi, commonly known as the Cherry Shrimp because of its bright red coloration, though they come in many colors, including blue, yellow, and green.\n\nThey reproduce easily in the right conditions, which makes them a favorite for hobbyists looking to create a self-sustaining shrimp colony."
+  }
+}

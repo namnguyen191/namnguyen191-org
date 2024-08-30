@@ -1,0 +1,9 @@
+{
+  "id": "carbon_simple_text_card_layout",
+  "uiElementInstances": [
+    {
+      "id": "instance-1",
+      "uiElementTemplateId": "carbon_text_card_test"
+    }
+  ]
+}
