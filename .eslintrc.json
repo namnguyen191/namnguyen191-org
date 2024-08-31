@@ -41,6 +41,10 @@
               {
                 "sourceTag": "scope:shrimping-around:main",
                 "onlyDependOnLibsWithTags": ["/^scope:shrimping-around:feature:.*/"]
+              },
+              {
+                "sourceTag": "scope:shared-lib",
+                "onlyDependOnLibsWithTags": ["scope:shared-lib"]
               }
             ]
           }

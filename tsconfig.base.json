@@ -18,6 +18,7 @@
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "paths": {
+      "@namnguyen191/common-js-helper": ["libs/shared/common-js-helper/src/index.ts"],
       "@namnguyen191/dui-carbon-components": [
         "libs/dui/dui-prebuilt-components/dui-carbon-components/src/index.ts"
       ],

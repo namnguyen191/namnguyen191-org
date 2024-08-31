@@ -4,6 +4,9 @@
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true
+    },
+    "version": {
+      "preVersionCommand": "pnpm dlx nx run-many -t build"
     }
   },
   "targetDefaults": {
@@ -68,7 +71,7 @@
       "inputs": ["production", "^production"]
     },
     "nx-release-publish": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "test"],
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
