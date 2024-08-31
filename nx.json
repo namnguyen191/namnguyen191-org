@@ -72,6 +72,10 @@
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
+    },
+    "stylelint": {
+      "inputs": ["default", "{workspaceRoot}/.stylelintrc(.(json|yml|yaml|js))?"],
+      "cache": true
     }
   },
   "namedInputs": {
@@ -87,7 +91,8 @@
       "!{projectRoot}/cypress.config.[jt]s",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
-      "!{projectRoot}/test-setup.[jt]s"
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/.stylelintrc(.(json|yml|yaml|js))?"
     ],
     "sharedGlobals": ["{workspaceRoot}/go.work"]
   },

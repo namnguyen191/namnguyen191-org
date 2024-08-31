@@ -1,16 +1,18 @@
 @use 'carbon-components/scss/globals/scss/typography';
 @use 'carbon-components/scss/globals/scss/spacing';
 
+// use for left and right padding so that all the content blocks are aligned within the body
+$vertical-content-padding: spacing.$spacing-03;
+
 :host {
   display: flex;
   height: 100%;
   flex-direction: column;
-  gap: spacing.$spacing-md;
   border: 1px solid var(--cds-border-subtle);
   border-radius: 1rem;
 
   .card-header {
-    padding: spacing.$spacing-02 spacing.$spacing-05;
+    padding: $vertical-content-padding spacing.$spacing-05;
     display: flex;
     height: fit-content;
     align-items: center;
@@ -23,12 +25,12 @@
     }
 
     &__text {
-      @include typography.type-style('productive-heading-03');
-
       &__title {
+        @include typography.type-style('expressive-heading-03');
       }
 
       &__sub-title {
+        @include typography.type-style('label-02');
       }
     }
   }
@@ -45,7 +47,7 @@
     &__text {
       @include typography.type-style('body-long-02');
 
-      padding: spacing.$spacing-02 spacing.$spacing-05;
+      padding: $vertical-content-padding spacing.$spacing-05;
       white-space: pre-wrap;
     }
   }

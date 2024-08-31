@@ -3,8 +3,8 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dui/dui-prebuilt-components/dui-mui-components/src",
   "prefix": "lib",
-  "tags": ["scope:dui-extensions"],
   "projectType": "library",
+  "tags": ["scope:dui-extensions"],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
@@ -44,6 +44,16 @@
       "options": {
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
         "cwd": "libs/dui/dui-prebuilt-components/dui-mui-components"
+      }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/dui/dui-prebuilt-components/dui-mui-components/**/*.css",
+          "libs/dui/dui-prebuilt-components/dui-mui-components/**/*.scss"
+        ]
       }
     }
   }

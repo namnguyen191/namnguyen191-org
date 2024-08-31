@@ -38,6 +38,13 @@
         "commands": ["tsc -p tsconfig.lib.json --noEmit"],
         "cwd": "libs/dui/dui-common"
       }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/dui/dui-common/**/*.css", "libs/dui/dui-common/**/*.scss"]
+      }
     }
   }
 }
