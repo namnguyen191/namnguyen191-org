@@ -1,5 +1,5 @@
 const config = {
-  'package.json': ['pnpm typecheck:all', 'pnpm lint:all', 'pnpm stylelint:all', 'pnpm build:all'],
+  './package.json': ['pnpm typecheck:all', 'pnpm lint:all', 'pnpm stylelint:all', 'pnpm build:all'],
   '{apps,libs,tools}/**/*.{ts,tsx}': 'pnpm type-check:affected',
   '{apps,libs,tools}/**/*.{css,scss}': 'pnpm stylelint:affected',
   '{apps,libs,tools}/**': 'pnpm build:affected',

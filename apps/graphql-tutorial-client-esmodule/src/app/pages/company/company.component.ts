@@ -10,7 +10,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { fetchWithStatus } from '@namnguyen191/utils';
+import { fetchWithStatus } from '@namnguyen191/common-angular-helper';
 import { Apollo } from 'apollo-angular';
 
 import { JobListComponent } from '../../components/job-list/job-list.component';

@@ -11,7 +11,7 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { fetchWithStatus } from '@namnguyen191/utils';
+import { fetchWithStatus } from '@namnguyen191/common-angular-helper';
 
 import { JobListComponent } from '../../components/job-list/job-list.component';
 import { PaginationBarComponent } from '../../components/pagination-bar/pagination-bar.component';
