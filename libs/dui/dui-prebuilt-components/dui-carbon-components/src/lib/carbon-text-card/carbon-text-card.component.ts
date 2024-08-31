@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
 import { parseZodWithDefault } from '@namnguyen191/types-helper';
-import { TilesModule } from 'carbon-components-angular';
 
 import {
   AvatarUrlConfigOption,
@@ -20,7 +19,7 @@ import {
 @Component({
   selector: 'namnguyen191-carbon-text-card',
   standalone: true,
-  imports: [CommonModule, TilesModule],
+  imports: [CommonModule],
   templateUrl: './carbon-text-card.component.html',
   styleUrl: './carbon-text-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

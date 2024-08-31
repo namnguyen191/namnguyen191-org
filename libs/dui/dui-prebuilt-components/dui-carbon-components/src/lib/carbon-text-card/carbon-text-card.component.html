@@ -1,26 +1,24 @@
-<cds-tile class="card-container">
-  @if (isLoadingConfigOption()) {
-    <span>Loading...</span>
-  } @else if (isErrorConfigOption()) {
-    <span>Something went wrong</span>
-  } @else {
-    <section class="card-header">
-      <img
-        *ngIf="avatarUrlConfigOption() as avatarUrl"
-        [src]="avatarUrl"
-        class="card-header__avatar"
-      />
-      <div class="card-header__text">
-        <h4 class="card-header__text__title">{{ titleConfigOption() }}</h4>
-        <span class="card-header__text__sub-title">{{ subTitleConfigOption() }}</span>
-      </div>
-    </section>
+@if (isLoadingConfigOption()) {
+  <span>Loading...</span>
+} @else if (isErrorConfigOption()) {
+  <span>Something went wrong</span>
+} @else {
+  <section class="card-header">
+    <img
+      *ngIf="avatarUrlConfigOption() as avatarUrl"
+      [src]="avatarUrl"
+      class="card-header__avatar"
+    />
+    <div class="card-header__text">
+      <h4 class="card-header__text__title">{{ titleConfigOption() }}</h4>
+      <span class="card-header__text__sub-title">{{ subTitleConfigOption() }}</span>
+    </div>
+  </section>
 
-    <section class="card-body">
-      <img class="card-body__image" *ngIf="imageUrlConfigOption() as imgUrl" [src]="imgUrl" />
-      <div class="card-body__text">
-        {{ bodyConfigOption() }}
-      </div>
-    </section>
-  }
-</cds-tile>
+  <section class="card-body">
+    <img class="card-body__image" *ngIf="imageUrlConfigOption() as imgUrl" [src]="imgUrl" />
+    <div class="card-body__text">
+      {{ bodyConfigOption() }}
+    </div>
+  </section>
+}

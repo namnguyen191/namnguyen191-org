@@ -2,50 +2,51 @@
 @use 'carbon-components/scss/globals/scss/spacing';
 
 :host {
-  display: contents;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: spacing.$spacing-md;
+  border: 1px solid var(--cds-border-subtle);
+  border-radius: 1rem;
 
-  .card-container {
+  .card-header {
+    padding: spacing.$spacing-02 spacing.$spacing-05;
     display: flex;
-    height: 100%;
-    flex-direction: column;
-    gap: spacing.$spacing-md;
+    height: fit-content;
+    align-items: center;
+    gap: spacing.$spacing-sm;
 
-    .card-header {
-      display: flex;
-      height: fit-content;
-      align-items: center;
-      gap: spacing.$spacing-sm;
-
-      &__avatar {
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-      }
-
-      &__text {
-        @include typography.type-style('productive-heading-03');
-
-        &__title {
-        }
-
-        &__sub-title {
-        }
-      }
+    &__avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
     }
 
-    .card-body {
-      display: flex;
-      flex-direction: column;
-      gap: spacing.$spacing-sm;
+    &__text {
+      @include typography.type-style('productive-heading-03');
 
-      &__image {
-        aspect-ratio: 5 / 4;
+      &__title {
       }
 
-      &__text {
-        @include typography.type-style('body-long-02');
-        white-space: pre-wrap;
+      &__sub-title {
       }
+    }
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: spacing.$spacing-sm;
+
+    &__image {
+      aspect-ratio: 5 / 4;
+    }
+
+    &__text {
+      @include typography.type-style('body-long-02');
+
+      padding: spacing.$spacing-02 spacing.$spacing-05;
+      white-space: pre-wrap;
     }
   }
 }
