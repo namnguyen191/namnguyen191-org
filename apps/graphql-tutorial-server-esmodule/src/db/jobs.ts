@@ -1,4 +1,4 @@
-import { delay } from '@namnguyen191/utils';
+import { delay } from '@namnguyen191/common-js-helper';
 
 import { connection } from './connection.js';
 import { generateId } from './ids.js';

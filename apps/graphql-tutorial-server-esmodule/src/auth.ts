@@ -1,4 +1,4 @@
-import { delay } from '@namnguyen191/utils';
+import { delay } from '@namnguyen191/common-js-helper';
 import { Request, RequestHandler } from 'express';
 import { expressjwt } from 'express-jwt';
 import jwt from 'jsonwebtoken';
