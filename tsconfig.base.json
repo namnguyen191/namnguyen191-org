@@ -31,8 +31,7 @@
       "@namnguyen191/shrimping-around/features/home": [
         "libs/shrimping-around/features/home/src/index.ts"
       ],
-      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"],
-      "@namnguyen191/utils": ["libs/shared/utils/src/index.ts"]
+      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
