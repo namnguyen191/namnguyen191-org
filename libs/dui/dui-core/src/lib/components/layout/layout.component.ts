@@ -22,6 +22,7 @@ import {
 } from 'angular-gridster2';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
+import { DUI_CORE_CONFIG } from '../../global';
 import { EventsService } from '../../services/events-and-actions/events.service';
 import { LayoutTemplateService } from '../../services/templates/layout-template.service';
 import {
@@ -127,6 +128,8 @@ export class LayoutComponent {
   };
 
   #eventService: EventsService = inject(EventsService);
+
+  layoutLoadingComponent = inject(DUI_CORE_CONFIG, { optional: true })?.layoutLoadingComponent;
 
   constructor() {
     this.#onLayoutConfigStreamChangedEffect();

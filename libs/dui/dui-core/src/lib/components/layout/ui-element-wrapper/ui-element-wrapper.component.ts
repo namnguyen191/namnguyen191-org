@@ -39,6 +39,7 @@ import {
   throttleTime,
 } from 'rxjs';
 
+import { DUI_CORE_CONFIG } from '../../../global';
 import {
   ActionHook,
   ActionHookService,
@@ -114,6 +115,9 @@ export class UiElementWrapperComponent {
 
   readonly isInfinite = signal<boolean>(false);
   readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
+
+  readonly uiElementLoadingComponent = inject(DUI_CORE_CONFIG, { optional: true })
+    ?.uiElementLoadingComponent;
 
   constructor() {
     this.#checkForInfiniteRenderEffect();

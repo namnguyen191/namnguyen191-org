@@ -47,7 +47,9 @@ export type DUISetupConfigs = {
   templatesHandlers?: TemplatesHandlers;
   componentsMap?: ComponentsMap;
 };
-export const DUI_SETUP_CONFIGS = new InjectionToken<DUISetupConfigs>('DUI_SETUP_CONFIGS');
+export const DUI_COMMON_SETUP_CONFIG = new InjectionToken<DUISetupConfigs>(
+  'DUI_COMMON_SETUP_CONFIG'
+);
 
 export const defaultActionsHooksParsersMap = {
   addToState: ZodAddToStateActionHook,
@@ -176,10 +178,10 @@ export const registerComponents = (componentsMaps: ComponentsMap): void => {
 export const setupDefaultDUI = (): void => {
   let configs: DUISetupConfigs;
   try {
-    configs = inject(DUI_SETUP_CONFIGS);
+    configs = inject(DUI_COMMON_SETUP_CONFIG);
   } catch (error) {
     logWarning(
-      'No configs was provided for DUI default setup, please provide values for the DUI_SETUP_CONFIGS token'
+      'No configs was provided for DUI default setup, please provide values for the DUI_COMMON_SETUP_CONFIG token'
     );
     return;
   }

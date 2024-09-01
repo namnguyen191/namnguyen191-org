@@ -56,7 +56,7 @@ The way a web worker can be setup can be different between each projects. So fol
 import { handleRunJsMessage } from '@namnguyen191/dui-core';
 
 addEventListener('message', (e) => {
-  const allowList = new Set()<string>['console', 'JSON', 'Math'];
+  const allowList = new Set() < string > ['console', 'JSON', 'Math'];
   handleRunJsMessage(e, allowList);
 });
 ```
@@ -208,14 +208,14 @@ export class DUITemplatesService {
 
 ### 4. Provide DUI global configs:
 
-- Provide value for the injection token `DUI_SETUP_CONFIGS`:
+- Provide value for the injection token `DUI_COMMON_SETUP_CONFIG`:
 
 ```js
 import {
   ApplicationConfig,
   inject,
 } from '@angular/core';
-import { DUI_SETUP_CONFIGS, DUISetupConfigs } from '@namnguyen191/dui-common';
+import { DUI_COMMON_SETUP_CONFIG, DUISetupConfigs } from '@namnguyen191/dui-common';
 import {
   CarbonButtonComponent,
   CarbonTableComponent,
@@ -225,7 +225,7 @@ import { DUITemplatesService } from './dui-templates.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     {
-      provide: DUI_SETUP_CONFIGS,
+      provide: DUI_COMMON_SETUP_CONFIG,
       useFactory: (): DUISetupConfigs => {
         const duiTemplatesSerivce = inject(DUITemplatesService);
 

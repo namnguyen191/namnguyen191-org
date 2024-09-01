@@ -10,7 +10,11 @@
         <ng-container #uiElementVCR></ng-container>
       }
     } @else {
-      <span>Loading UI component....</span>
+      @if (uiElementLoadingComponent) {
+        <ng-container *ngComponentOutlet="uiElementLoadingComponent"></ng-container>
+      } @else {
+        <span>Loading UI component....</span>
+      }
     }
   </ng-container>
 } @else {

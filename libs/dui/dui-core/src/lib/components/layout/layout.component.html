@@ -5,7 +5,11 @@
         <span>No definition for layout with id {{ layoutConfig.id }}</span>
       }
       @case ('loading') {
-        <span>Loading layout with id {{ layoutConfig.id }}...</span>
+        @if (layoutLoadingComponent) {
+          <ng-container *ngComponentOutlet="layoutLoadingComponent"></ng-container>
+        } @else {
+          <span>Loading layout with id {{ layoutConfig.id }}...</span>
+        }
       }
       @case ('loaded') {
         <link
@@ -28,8 +32,6 @@
             } @else {
               <span>This layout is empty</span>
             }
-          } @else {
-            <span>Loading layout configs...</span>
           }
         </gridster>
       }
