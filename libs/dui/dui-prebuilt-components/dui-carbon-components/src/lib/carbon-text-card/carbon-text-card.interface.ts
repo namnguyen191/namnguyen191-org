@@ -25,11 +25,21 @@ export const ZBodyConfigOption = z.string({
 });
 export type BodyConfigOption = z.infer<typeof ZBodyConfigOption>;
 
+export const ZClickableConfigOption = z.boolean({
+  errorMap: () => ({ message: 'Card clickable config must be a boolean' }),
+});
+export type ClickableConfigOption = z.infer<typeof ZClickableConfigOption>;
+
 export const ZTextCardConfigs = z.object({
   title: ZTitleConfigOption,
   subTitle: ZSubTitleConfigOption,
   avatarUrl: ZAvatarUrlConfigOption,
   imageUrl: ZImageUrlConfigOption,
   body: ZBodyConfigOption,
+  clickable: ZClickableConfigOption,
 });
 export type TextCardConfigs = z.infer<typeof ZTextCardConfigs>;
+
+export type TextCardEvents = {
+  onCardClicked: void;
+};

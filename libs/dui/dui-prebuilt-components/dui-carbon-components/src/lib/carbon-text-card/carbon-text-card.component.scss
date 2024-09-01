@@ -11,6 +11,18 @@ $vertical-content-padding: spacing.$spacing-03;
   border: 1px solid var(--cds-border-subtle);
   border-radius: 1rem;
 
+  &.clickable {
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--cds-layer-hover);
+
+      img {
+        filter: drop-shadow(2px 4px 6px black);
+      }
+    }
+  }
+
   .card-header {
     padding: $vertical-content-padding spacing.$spacing-05;
     display: flex;

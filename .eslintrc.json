@@ -31,7 +31,8 @@
                 "onlyDependOnLibsWithTags": [
                   "scope:dui-core",
                   "scope:shared-lib",
-                  "scope:shared-lib:angular"
+                  "scope:shared-lib:angular",
+                  "scope:dui-extensions"
                 ]
               },
               {
