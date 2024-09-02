@@ -1,6 +1,9 @@
 {
   "name": "@namnguyen191/common-js-helper",
-  "version": "0.0.1",
+  "version": "0.0.0-1",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@namnguyen191/types-helper": "*",
     "lodash-es": "*"
