@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/the-wild-oasis/src",
   "projectType": "application",
+  "tags": ["missing-tag"],
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
@@ -50,7 +51,8 @@
         "production": {
           "buildTarget": "the-wild-oasis:build:production"
         }
-      }
+      },
+      "dependsOn": ["build"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
@@ -63,6 +65,5 @@
         "cwd": "apps/the-wild-oasis"
       }
     }
-  },
-  "tags": ["missing-tag"]
+  }
 }
