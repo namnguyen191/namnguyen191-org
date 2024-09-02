@@ -12,18 +12,20 @@
     "pagination": {
       "totalDataLength": "<${ return this.remoteResourcesStates?.results?.['us-pop-no-refresh']?.result?.length ?? 0 }$>",
       "pageSizes": [15, 20, 25, 50],
-      "onPageChange": [
-        {
-          "type": "addToState",
-          "payload": {
-            "scope": "global",
-            "data": {
-              "usPopPage": "<${ return this.$paginationContext }$>"
-            }
-          }
-        }
-      ],
       "pageInputDisabled": false
     }
+  },
+  "eventsHooks": {
+    "paginationChanged": [
+      {
+        "type": "addToState",
+        "payload": {
+          "scope": "global",
+          "data": {
+            "usPopPage": "<${ return this.$paginationContext }$>"
+          }
+        }
+      }
+    ]
   }
 }

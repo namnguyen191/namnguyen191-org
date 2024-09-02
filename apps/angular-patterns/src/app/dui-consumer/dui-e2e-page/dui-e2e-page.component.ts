@@ -28,7 +28,10 @@ export class DuiE2EPageComponent {
 
   constructor() {
     setupDefaultDUI();
-    this.#actionHookService.registerHook('showTestNotification', () => this.#showNotification());
+    this.#actionHookService.registerHook({
+      hookId: 'showTestNotification',
+      handler: () => this.#showNotification(),
+    });
   }
 
   #showNotification(): void {

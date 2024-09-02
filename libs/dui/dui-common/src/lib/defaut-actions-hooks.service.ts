@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import {
+  ActionHookHandler,
   RemoteResourceService,
   StateStoreService,
   ZodAvailableStateScope,
@@ -7,38 +9,46 @@ import {
 import { ZodObjectType } from '@namnguyen191/types-helper';
 import { z } from 'zod';
 
-export const ZodTriggerRemoteResourceActionHook = z.strictObject(
+export const ZTriggerRemoteResourceHookPayload = z.strictObject(
   {
-    type: z.literal('triggerRemoteResource'),
-    payload: z.strictObject({
-      remoteResourceId: z.string(),
-    }),
+    remoteResourceId: z.string(),
   },
   {
     errorMap: () => ({
       message:
-        'Invalid TriggerRemoteResourceActionHook, example: { "type": "triggerRemoteResource", "payload": { "remoteResourceId": "123" }  } ',
+        'Invalid triggerRemoteResource action hook payload, example: { "type": "triggerRemoteResource", "payload": { "remoteResourceId": "123" }  } ',
     }),
   }
 );
-export type TriggerRemoteResourceActionHook = z.infer<typeof ZodTriggerRemoteResourceActionHook>;
+export type TriggerRemoteResourceHookPayload = z.infer<typeof ZTriggerRemoteResourceHookPayload>;
 
-export const ZodAddToStateActionHook = z.strictObject(
+export const ZAddToStateActionHookPayload = z.strictObject(
   {
-    type: z.literal('addToState'),
-    payload: z.strictObject({
-      scope: ZodAvailableStateScope,
-      data: ZodObjectType,
-    }),
+    scope: ZodAvailableStateScope,
+    data: ZodObjectType,
   },
   {
     errorMap: () => ({
       message:
-        'Invalid AddToStateActionHook, example: { "type": "addToState", "payload": { "scope": "global", data: "{ "some": "data" }" }  } ',
+        'Invalid addToState action hook payload, example: { "type": "addToState", "payload": { "scope": "global", data: "{ "some": "data" }" }  } ',
     }),
   }
 );
-export type AddToStateActionHook = z.infer<typeof ZodAddToStateActionHook>;
+export type AddToStateActionHookPayload = z.infer<typeof ZAddToStateActionHookPayload>;
+
+export const ZNavigateHookPayload = z.strictObject(
+  {
+    navigationType: z.union([z.literal('internal'), z.literal('external')]),
+    url: z.string(),
+  },
+  {
+    errorMap: () => ({
+      message:
+        'Invalid navigate action hook payload, example: { "type": "navigate", "payload": { "navigationType": "internal", url: "/my/route" }  } ',
+    }),
+  }
+);
+export type NavigateHookPayload = z.infer<typeof ZNavigateHookPayload>;
 
 @Injectable({
   providedIn: 'root',
@@ -46,15 +56,23 @@ export type AddToStateActionHook = z.infer<typeof ZodAddToStateActionHook>;
 export class DefaultActionsHooksService {
   readonly #remoteResourceService = inject(RemoteResourceService);
   readonly #stateStoreService = inject(StateStoreService);
+  readonly #router = inject(Router);
 
-  handleTriggerRemoteResource = (action: TriggerRemoteResourceActionHook): void => {
-    const {
-      payload: { remoteResourceId },
-    } = action;
+  handleTriggerRemoteResource: ActionHookHandler<TriggerRemoteResourceHookPayload> = ({
+    remoteResourceId,
+  }): void => {
     this.#remoteResourceService.triggerResource(remoteResourceId);
   };
 
-  handleAddToState = (action: AddToStateActionHook): void => {
-    this.#stateStoreService.addToState(action.payload);
+  handleAddToState: ActionHookHandler<AddToStateActionHookPayload> = (payload): void => {
+    this.#stateStoreService.addToState(payload);
+  };
+
+  navigate: ActionHookHandler<NavigateHookPayload> = ({ navigationType, url }) => {
+    if (navigationType === 'internal') {
+      this.#router.navigateByUrl(url);
+    } else {
+      window.open(url, '_blank')?.focus();
+    }
   };
 }

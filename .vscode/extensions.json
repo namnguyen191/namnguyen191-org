@@ -8,7 +8,6 @@
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
     "ms-playwright.playwright",
-    "stylelint.vscode-stylelint",
-    "firsttris.vscode-jest-runner"
+    "stylelint.vscode-stylelint"
   ]
 }

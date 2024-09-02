@@ -14,6 +14,13 @@
     "onCardClicked": [
       {
         "type": "showTestNotification"
+      },
+      {
+        "type": "navigate",
+        "payload": {
+          "navigationType": "internal",
+          "url": "/dui-e2e/button-patterns"
+        }
       }
     ]
   }

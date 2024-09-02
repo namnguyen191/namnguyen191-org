@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/core": "^18.1.0",
-    "@namnguyen191/types-helper": "*"
+    "@namnguyen191/types-helper": "*",
+    "@angular/common": "*",
+    "rxjs": "*"
   },
   "sideEffects": false
 }

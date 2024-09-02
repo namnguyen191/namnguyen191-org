@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { globalDelayInterceptorFactory } from '@namnguyen191/common-angular-helper';
 import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/dui-carbon-components';
 import { DUI_COMMON_SETUP_CONFIG, DUISetupConfigs } from '@namnguyen191/dui-common';
 import { DUI_CORE_CONFIG, JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
@@ -16,11 +17,12 @@ import { DuiUiElementLoadingComponent } from './components/dui-ui-element-loadin
 import { LayoutsService } from './dui-consumer/services/layouts.service';
 import { RemoteResourcesService } from './dui-consumer/services/remote-resources.service';
 import { UIElementTemplateService } from './dui-consumer/services/ui-element-templates.service';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
     provideRouter(appRoutes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([globalDelayInterceptorFactory(1000)])),
     provideAnimationsAsync(),
     {
       provide: JS_RUNNER_WORKER,

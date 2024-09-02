@@ -1,9 +1,8 @@
 import { inject, InjectionToken, Type } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  ActionHookHandlerAndPayloadParserMap,
   ActionHookService,
-  ActionHooksHandlersMap,
-  ActionHooksZodParsersMap,
   BaseUIElementComponent,
   DataFetchingService,
   EventsService,
@@ -23,8 +22,9 @@ import { buffer, debounceTime, forkJoin, map, mergeMap, Observable, tap } from '
 import { HttpFetcherService } from './data-fetchers/http-fetcher.service';
 import {
   DefaultActionsHooksService,
-  ZodAddToStateActionHook,
-  ZodTriggerRemoteResourceActionHook,
+  ZAddToStateActionHookPayload,
+  ZNavigateHookPayload,
+  ZTriggerRemoteResourceHookPayload,
 } from './defaut-actions-hooks.service';
 import {
   missingLayoutTemplateEvent,
@@ -51,22 +51,26 @@ export const DUI_COMMON_SETUP_CONFIG = new InjectionToken<DUISetupConfigs>(
   'DUI_COMMON_SETUP_CONFIG'
 );
 
-export const defaultActionsHooksParsersMap = {
-  addToState: ZodAddToStateActionHook,
-  triggerRemoteResource: ZodTriggerRemoteResourceActionHook,
-} as ActionHooksZodParsersMap;
-
 export const registerDefaultDUIHook = (): void => {
   const defaultActionsHooksService = inject(DefaultActionsHooksService);
   const actionHookService = inject(ActionHookService);
 
-  const defaultHooksMap = {
-    addToState: defaultActionsHooksService.handleAddToState,
-    triggerRemoteResource: defaultActionsHooksService.handleTriggerRemoteResource,
-  } as ActionHooksHandlersMap;
+  const actionHookHandlerAndPayloadParserMap: ActionHookHandlerAndPayloadParserMap = {
+    addToState: {
+      handler: defaultActionsHooksService.handleAddToState,
+      payloadParser: ZAddToStateActionHookPayload,
+    },
+    triggerRemoteResource: {
+      handler: defaultActionsHooksService.handleTriggerRemoteResource,
+      payloadParser: ZTriggerRemoteResourceHookPayload,
+    },
+    navigate: {
+      handler: defaultActionsHooksService.navigate,
+      payloadParser: ZNavigateHookPayload,
+    },
+  };
 
-  actionHookService.registerHooks(defaultHooksMap);
-  actionHookService.registerHookParsers(defaultActionsHooksParsersMap);
+  actionHookService.registerHooks(actionHookHandlerAndPayloadParserMap);
 };
 
 export const registerDefaultDataFetcher = (): void => {

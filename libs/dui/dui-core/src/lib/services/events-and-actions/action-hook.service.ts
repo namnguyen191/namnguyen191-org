@@ -1,4 +1,4 @@
-import { EnvironmentInjector, Injectable, runInInjectionContext } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { z, ZodError, ZodType } from 'zod';
 
 export const ZodActionHook = z.object({
@@ -8,70 +8,62 @@ export const ZodActionHook = z.object({
 
 export type ActionHook = z.infer<typeof ZodActionHook>;
 
-export type ActionHookHandler<T extends ActionHook = ActionHook> = (action: T) => void;
+export type ActionHookHandler<T extends ActionHook['payload'] = unknown> = (payload: T) => void;
+export type ActionHookPayloadParser = ZodType;
 
-export type ActionHooksHandlersMap = { [hookId: string]: ActionHookHandler };
-
-export const createHookWithInjectionContext = <T extends ActionHook>(
-  injectionContext: EnvironmentInjector,
-  hook: ActionHookHandler<T>
-): ActionHookHandler<T> => {
-  return (action: T): void => runInInjectionContext(injectionContext, () => hook(action));
+export type ActionHookHandlerAndPayloadParserMap = {
+  [hookId: string]: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handler: ActionHookHandler<any>;
+    payloadParser?: ZodType;
+  };
 };
-
-export type ActionHooksZodParsersMap = { [hookType: string]: ZodType };
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActionHookService {
-  #actionHooksHandlersMap: ActionHooksHandlersMap = {};
-  #actionHooksZodParsersMap: ActionHooksZodParsersMap = {};
+  #actionHookHandlerAndPayloadParserMap: ActionHookHandlerAndPayloadParserMap = {};
 
-  registerHook(hookId: string, handler: ActionHookHandler): void {
-    const existingHandler = this.#actionHooksHandlersMap[hookId];
-    if (existingHandler) {
-      console.warn(
-        `A handler has already exists for the hook ${hookId}. Registering it again will override it`
-      );
+  registerHook<T>(params: {
+    hookId: string;
+    handler: ActionHookHandler<T>;
+    payloadParser?: ZodType;
+  }): void {
+    const { hookId, handler, payloadParser } = params;
+    const existing = this.#actionHookHandlerAndPayloadParserMap[hookId];
+    if (existing) {
+      console.warn(`The hook ${hookId} has already existed. Registering it again will override it`);
     }
-    this.#actionHooksHandlersMap[hookId] = handler;
+
+    this.#actionHookHandlerAndPayloadParserMap[hookId] = {
+      handler,
+      payloadParser,
+    };
   }
 
-  registerHooks(handlersMap: ActionHooksHandlersMap): void {
-    Object.entries(handlersMap).forEach(([hookId, handler]) => {
-      this.registerHook(hookId, handler);
-    });
-  }
-
-  registerHookParser(hookId: string, parser: ZodType): void {
-    const existingParser = this.#actionHooksZodParsersMap[hookId];
-    if (existingParser) {
-      console.warn(
-        `A parser has already exists for the hook ${hookId}. Registering it again will override it`
-      );
-    }
-    this.#actionHooksZodParsersMap[hookId] = parser;
-  }
-
-  registerHookParsers(parsersMap: ActionHooksZodParsersMap): void {
-    Object.entries(parsersMap).forEach(([hookId, parser]) => {
-      this.registerHookParser(hookId, parser);
+  registerHooks(handlersAndParsersMap: ActionHookHandlerAndPayloadParserMap): void {
+    Object.entries(handlersAndParsersMap).forEach(([hookId, { handler, payloadParser }]) => {
+      this.registerHook({
+        hookId,
+        handler,
+        payloadParser,
+      });
     });
   }
 
   triggerActionHook(hook: ActionHook): void {
-    const handler = this.#actionHooksHandlersMap[hook.type];
-    const parser = this.#actionHooksZodParsersMap[hook.type];
+    const handler = this.#actionHookHandlerAndPayloadParserMap[hook.type]?.handler;
     if (!handler) {
       console.warn(`No handler for hook ${hook.type}`);
 
       return;
     }
 
-    if (parser) {
+    const payloadParser = this.#actionHookHandlerAndPayloadParserMap[hook.type]?.payloadParser;
+    if (payloadParser) {
       try {
-        parser.parse(hook);
+        payloadParser.parse(hook.payload);
       } catch (error) {
         if (error instanceof ZodError) {
           console.warn(
@@ -87,7 +79,7 @@ export class ActionHookService {
       }
     }
 
-    handler(hook);
+    handler(hook.payload);
   }
 
   triggerActionHooks(hooks: ActionHook[]): void {
