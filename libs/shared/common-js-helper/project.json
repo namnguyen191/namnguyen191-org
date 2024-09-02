@@ -1,5 +1,5 @@
 {
-  "name": "js-helpers",
+  "name": "common-js-helper",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/common-js-helper/src",
   "projectType": "library",
