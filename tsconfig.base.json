@@ -23,8 +23,14 @@
       "@namnguyen191/dui-carbon-components": [
         "libs/dui/dui-prebuilt-components/dui-carbon-components/src/index.ts"
       ],
-      "@namnguyen191/dui-carbon-components/*": [
-        "libs/dui/dui-prebuilt-components/dui-carbon-components/src/*"
+      "@namnguyen191/dui-carbon-components/carbon-button": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-button/src/index.ts"
+      ],
+      "@namnguyen191/dui-carbon-components/carbon-table": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-table/src/index.ts"
+      ],
+      "@namnguyen191/dui-carbon-components/carbon-text-card": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-text-card/src/index.ts"
       ],
       "@namnguyen191/dui-common": ["libs/dui/dui-common/src/index.ts"],
       "@namnguyen191/dui-core": ["libs/dui/dui-core/src/index.ts"],

@@ -1,3 +1,4 @@
-export * from './lib/carbon-button/carbon-button.component';
-export * from './lib/carbon-table/carbon-table.component';
-export * from './lib/carbon-text-card/carbon-text-card.component';
+/* eslint-disable @nx/enforce-module-boundaries */
+export * from '@namnguyen191/dui-carbon-components/carbon-button';
+export * from '@namnguyen191/dui-carbon-components/carbon-table';
+export * from '@namnguyen191/dui-carbon-components/carbon-text-card';

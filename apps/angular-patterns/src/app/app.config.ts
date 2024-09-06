@@ -56,17 +56,13 @@ export const appConfig: ApplicationConfig = {
           },
           componentLoadersMap: {
             CARBON_BUTTON: () =>
-              import(
-                '@namnguyen191/dui-carbon-components/lib/carbon-button/carbon-button.component'
-              ).then((m) => m.CarbonButtonComponent),
+              import('@namnguyen191/dui-carbon-components').then((m) => m.CarbonButtonComponent),
             CARBON_TABLE: () =>
-              import(
-                '@namnguyen191/dui-carbon-components/lib/carbon-table/carbon-table.component'
-              ).then((m) => m.CarbonTableComponent),
+              import('@namnguyen191/dui-carbon-components/carbon-table').then(
+                (m) => m.CarbonTableComponent
+              ),
             CARBON_TEXT_CARD: () =>
-              import(
-                '@namnguyen191/dui-carbon-components/lib/carbon-text-card/carbon-text-card.component'
-              ).then((m) => m.CarbonTextCardComponent),
+              import('@namnguyen191/dui-carbon-components').then((m) => m.CarbonTextCardComponent),
           },
         };
       },
