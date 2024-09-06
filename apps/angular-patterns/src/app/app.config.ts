@@ -7,7 +7,6 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { globalDelayInterceptorFactory } from '@namnguyen191/common-angular-helper';
-import { CarbonButtonComponent, CarbonTableComponent } from '@namnguyen191/dui-carbon-components';
 import { DUI_COMMON_SETUP_CONFIG, DUISetupConfigs } from '@namnguyen191/dui-common';
 import { DUI_CORE_CONFIG, JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
 
@@ -55,9 +54,19 @@ export const appConfig: ApplicationConfig = {
             getRemoteResourceTemplate: remoteResourcesService.getRemoteResourceById,
             updateElementsPositionsHandler: layoutsServiceAPI.updateLayoutElementPositionAndSize,
           },
-          componentsMap: {
-            [CarbonButtonComponent.ELEMENT_TYPE]: CarbonButtonComponent,
-            [CarbonTableComponent.ELEMENT_TYPE]: CarbonTableComponent,
+          componentLoadersMap: {
+            CARBON_BUTTON: () =>
+              import(
+                '@namnguyen191/dui-carbon-components/lib/carbon-button/carbon-button.component'
+              ).then((m) => m.CarbonButtonComponent),
+            CARBON_TABLE: () =>
+              import(
+                '@namnguyen191/dui-carbon-components/lib/carbon-table/carbon-table.component'
+              ).then((m) => m.CarbonTableComponent),
+            CARBON_TEXT_CARD: () =>
+              import(
+                '@namnguyen191/dui-carbon-components/lib/carbon-text-card/carbon-text-card.component'
+              ).then((m) => m.CarbonTextCardComponent),
           },
         };
       },

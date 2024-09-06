@@ -292,14 +292,18 @@ export class UiElementWrapperComponent {
       uiElementTemplate$
         .pipe(
           filter((uiElementTemplate) => uiElementTemplate.status === 'loaded'),
+          switchMap((uiElementTemplate) =>
+            from(this.#uiElementFactoryService.getUIElement(uiElementTemplate.config.type)).pipe(
+              map((uiElementComponent) => ({ uiElementComponent, uiElementTemplate }))
+            )
+          ),
           takeUntil(this.#unsubscribeUiElementTemplate)
         )
-        .subscribe((uiElementTemplate) => {
+        .subscribe(({ uiElementTemplate, uiElementComponent }) => {
           logSubscription(`UI element template stream for ${this.uiElementTemplateId()}`);
           const {
-            config: { type, remoteResourceIds, eventsHooks, stateSubscription, options },
+            config: { remoteResourceIds, eventsHooks, stateSubscription, options },
           } = uiElementTemplate;
-          const uiElementComponent = this.#uiElementFactoryService.getUIElement(type);
 
           uiElementVCR.clear();
           const componentRef = uiElementVCR.createComponent(

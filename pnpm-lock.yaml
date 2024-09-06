@@ -190,7 +190,7 @@ importers:
         specifier: 18.0.1
         version: 18.0.1(eslint@8.57.0)(typescript@5.5.3)
       '@angular/cli':
-        specifier: ~18.2.0
+        specifier: ~18.2.2
         version: 18.2.2(chokidar@3.6.0)
       '@angular/compiler-cli':
         specifier: 18.2.2
@@ -265,7 +265,7 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       '@playwright/test':
-        specifier: ^1.36.0
+        specifier: ^1.44.0
         version: 1.44.0
       '@pmmmwh/react-refresh-webpack-plugin':
         specifier: ^0.5.11
@@ -439,13 +439,13 @@ importers:
         specifier: ^1.72.0
         version: 1.72.0
       stylelint:
-        specifier: ^15.0.0
+        specifier: ^15.11.0
         version: 15.11.0(typescript@5.5.3)
       stylelint-config-standard:
         specifier: ^34.0.0
         version: 34.0.0(stylelint@15.11.0(typescript@5.5.3))
       stylelint-config-standard-scss:
-        specifier: ^11.0.0
+        specifier: ^11.1.0
         version: 11.1.0(postcss@8.4.38)(stylelint@15.11.0(typescript@5.5.3))
       tailwindcss:
         specifier: 3.4.3
@@ -466,7 +466,7 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1(file-loader@6.2.0(webpack@5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.20.2)))(webpack@5.92.1(@swc/core@1.5.7(@swc/helpers@0.5.11))(esbuild@0.20.2))
       verdaccio:
-        specifier: ^5.0.4
+        specifier: ^5.32.1
         version: 5.32.1(encoding@0.1.13)(typanion@3.14.0)
       vite:
         specifier: ^5.1.6
@@ -5761,14 +5761,8 @@ packages:
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
 
-  caniuse-lite@1.0.30001597:
-    resolution: {integrity: sha512-7LjJvmQU6Sj7bL0j5b5WY/3n7utXUJvAe1lxhsHDbLmwX9mdL86Yjtr+5SRCyf8qME4M7pU2hswj0FpyBVCv9w==}
-
-  caniuse-lite@1.0.30001634:
-    resolution: {integrity: sha512-fbBYXQ9q3+yp1q1gBk86tOFs4pyn/yxFm5ZNP18OXJDfA3txImOY9PhfxVggZ4vRHDqoU8NrKU81eN0OtzOgRA==}
-
-  caniuse-lite@1.0.30001655:
-    resolution: {integrity: sha512-jRGVy3iSGO5Uutn2owlb5gR6qsGngTw9ZTb4ali9f3glshcNmJ2noam4Mo9zia5P9Dk3jNNydy7vQjuE5dQmfg==}
+  caniuse-lite@1.0.30001657:
+    resolution: {integrity: sha512-DPbJAlP8/BAXy3IgiWmZKItubb3TYGP0WscQQlVGIfT4s/YlFYVuJgyOsQNP7rJRChx/qdMeLJQJP0Sgg2yjNA==}
 
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -19758,7 +19752,7 @@ snapshots:
   autoprefixer@10.4.18(postcss@8.4.38):
     dependencies:
       browserslist: 4.23.0
-      caniuse-lite: 1.0.30001597
+      caniuse-lite: 1.0.30001657
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -19768,7 +19762,7 @@ snapshots:
   autoprefixer@10.4.19(postcss@8.4.38):
     dependencies:
       browserslist: 4.23.0
-      caniuse-lite: 1.0.30001634
+      caniuse-lite: 1.0.30001657
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.1
@@ -19778,7 +19772,7 @@ snapshots:
   autoprefixer@10.4.20(postcss@8.4.41):
     dependencies:
       browserslist: 4.23.3
-      caniuse-lite: 1.0.30001655
+      caniuse-lite: 1.0.30001657
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.1
@@ -20134,14 +20128,14 @@ snapshots:
 
   browserslist@4.23.0:
     dependencies:
-      caniuse-lite: 1.0.30001597
+      caniuse-lite: 1.0.30001657
       electron-to-chromium: 1.4.708
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
 
   browserslist@4.23.3:
     dependencies:
-      caniuse-lite: 1.0.30001655
+      caniuse-lite: 1.0.30001657
       electron-to-chromium: 1.5.13
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.3)
@@ -20261,15 +20255,11 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.23.0
-      caniuse-lite: 1.0.30001634
+      caniuse-lite: 1.0.30001657
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
-  caniuse-lite@1.0.30001597: {}
-
-  caniuse-lite@1.0.30001634: {}
-
-  caniuse-lite@1.0.30001655: {}
+  caniuse-lite@1.0.30001657: {}
 
   capital-case@1.0.4:
     dependencies:

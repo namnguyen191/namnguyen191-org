@@ -12,6 +12,7 @@ import {
   RemoteResourceTemplate,
   RemoteResourceTemplateService,
   UIElementFactoryService,
+  UIElementLoader,
   UIElementPositionAndSize,
   UIElementTemplate,
   UIElementTemplateService,
@@ -43,9 +44,11 @@ export type TemplatesHandlers = {
   ) => Observable<void>;
 };
 export type ComponentsMap = { [componentType: string]: Type<BaseUIElementComponent> };
+export type ComponentLoadersMap = { [componentType: string]: UIElementLoader };
 export type DUISetupConfigs = {
   templatesHandlers?: TemplatesHandlers;
   componentsMap?: ComponentsMap;
+  componentLoadersMap?: ComponentLoadersMap;
 };
 export const DUI_COMMON_SETUP_CONFIG = new InjectionToken<DUISetupConfigs>(
   'DUI_COMMON_SETUP_CONFIG'
@@ -179,6 +182,17 @@ export const registerComponents = (componentsMaps: ComponentsMap): void => {
   }
 };
 
+export const registerComponentLoaders = (componentLoadersMap: ComponentLoadersMap): void => {
+  const uiElementFactoryService = inject(UIElementFactoryService);
+
+  for (const [componentType, loader] of Object.entries(componentLoadersMap)) {
+    uiElementFactoryService.registerUIElementLoader({
+      type: componentType,
+      loader,
+    });
+  }
+};
+
 export const setupDefaultDUI = (): void => {
   let configs: DUISetupConfigs;
   try {
@@ -193,7 +207,7 @@ export const setupDefaultDUI = (): void => {
   registerDefaultDUIHook();
   registerDefaultDataFetcher();
 
-  const { templatesHandlers, componentsMap } = configs;
+  const { templatesHandlers, componentsMap, componentLoadersMap } = configs;
 
   if (templatesHandlers) {
     setupEventsListener(templatesHandlers);
@@ -201,5 +215,9 @@ export const setupDefaultDUI = (): void => {
 
   if (componentsMap) {
     registerComponents(componentsMap);
+  }
+
+  if (componentLoadersMap) {
+    registerComponentLoaders(componentLoadersMap);
   }
 };

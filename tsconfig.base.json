@@ -20,6 +20,9 @@
     "paths": {
       "@namnguyen191/common-angular-helper": ["libs/shared/common-angular-helper/src/index.ts"],
       "@namnguyen191/common-js-helper": ["libs/shared/common-js-helper/src/index.ts"],
+      "@namnguyen191/dui-carbon-components/*": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/src/*"
+      ],
       "@namnguyen191/dui-carbon-components": [
         "libs/dui/dui-prebuilt-components/dui-carbon-components/src/index.ts"
       ],
