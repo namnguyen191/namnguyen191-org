@@ -1,3 +1,7 @@
+## 0.0.0-4 (2024-09-06)
+
+This was a version bump only for dui-core to align it with other projects, there were no code changes.
+
 ## 0.0.0-3 (2024-09-06)
 
 
