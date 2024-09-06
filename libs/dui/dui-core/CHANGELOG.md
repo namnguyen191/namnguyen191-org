@@ -1,3 +1,15 @@
+## 0.0.0-3 (2024-09-06)
+
+
+### 🚀 Features
+
+- dui core add support for component loaders
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-2 (2024-09-03)
 
 
