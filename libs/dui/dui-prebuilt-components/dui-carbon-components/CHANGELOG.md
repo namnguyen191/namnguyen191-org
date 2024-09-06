@@ -1,3 +1,15 @@
+## 0.0.0-2 (2024-09-06)
+
+
+### 🚀 Features
+
+- refactor dui-carbon-component to have multiple entry points
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-1 (2024-09-03)
 
 
