@@ -37,6 +37,15 @@
       "@namnguyen191/dui-mui-components": [
         "libs/dui/dui-prebuilt-components/dui-mui-components/src/index.ts"
       ],
+      "@namnguyen191/dui-mui-components/simple-button": [
+        "libs/dui/dui-prebuilt-components/dui-mui-components/simple-button/src/index.ts"
+      ],
+      "@namnguyen191/dui-mui-components/simple-table": [
+        "libs/dui/dui-prebuilt-components/dui-mui-components/simple-table/src/index.ts"
+      ],
+      "@namnguyen191/dui-mui-components/tabs": [
+        "libs/dui/dui-prebuilt-components/dui-mui-components/tabs/src/index.ts"
+      ],
       "@namnguyen191/shrimping-around/features/home": [
         "libs/shrimping-around/features/home/src/index.ts"
       ],

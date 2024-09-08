@@ -1,3 +1,4 @@
-export * from './lib/simple-button/simple-button.component';
-export * from './lib/simple-table/simple-table.component';
-export * from './lib/tabs/tabs.component';
+export * from './loaders';
+export * from '@namnguyen191/dui-mui-components/simple-button';
+export * from '@namnguyen191/dui-mui-components/simple-table';
+export * from '@namnguyen191/dui-mui-components/tabs';
