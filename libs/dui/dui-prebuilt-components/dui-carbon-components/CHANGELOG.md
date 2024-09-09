@@ -1,3 +1,17 @@
+## 0.0.0-4 (2024-09-09)
+
+
+### 🚀 Features
+
+- **dui-mui-components:** add support for multiple entries
+
+- **dui-carbon-components:** addjust simple text css - add background that match current theme - add text color that match current theme - change hover background color
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-3 (2024-09-07)
 
 
