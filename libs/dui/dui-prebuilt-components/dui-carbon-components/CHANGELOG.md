@@ -1,3 +1,15 @@
+## 0.0.0-5 (2024-09-13)
+
+
+### 🚀 Features
+
+- change element wrapper logic to check for required element
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-4 (2024-09-09)
 
 
