@@ -15,4 +15,11 @@
     right: 0;
     z-index: 9999;
   }
+
+  /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+  ::ng-deep {
+    gridster-item {
+      background-color: var(--cds-background);
+    }
+  }
 }

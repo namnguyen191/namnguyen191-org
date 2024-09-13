@@ -3,12 +3,12 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterModule } from '@angular/router';
 import { setupDefaultDUI } from '@namnguyen191/dui-common';
 import { ActionHookService } from '@namnguyen191/dui-core';
-import { NotificationModule, ToastContent } from 'carbon-components-angular';
+import { NotificationModule, ThemeModule, ToastContent } from 'carbon-components-angular';
 
 @Component({
   selector: 'namnguyen191-dui-e2e-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, NotificationModule],
+  imports: [CommonModule, RouterModule, NotificationModule, ThemeModule],
   templateUrl: './dui-e2e-page.component.html',
   styleUrl: './dui-e2e-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

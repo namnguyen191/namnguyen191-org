@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptors([globalDelayInterceptorFactory(1000)])),
+    provideHttpClient(withInterceptors([globalDelayInterceptorFactory(100)])),
     provideAnimationsAsync(),
     {
       provide: JS_RUNNER_WORKER,
@@ -56,13 +56,17 @@ export const appConfig: ApplicationConfig = {
           },
           componentLoadersMap: {
             CARBON_BUTTON: () =>
-              import('@namnguyen191/dui-carbon-components').then((m) => m.CarbonButtonComponent),
+              import('@namnguyen191/dui-carbon-components/carbon-button').then(
+                (m) => m.CarbonButtonComponent
+              ),
             CARBON_TABLE: () =>
               import('@namnguyen191/dui-carbon-components/carbon-table').then(
                 (m) => m.CarbonTableComponent
               ),
             CARBON_TEXT_CARD: () =>
-              import('@namnguyen191/dui-carbon-components').then((m) => m.CarbonTextCardComponent),
+              import('@namnguyen191/dui-carbon-components/carbon-text-card').then(
+                (m) => m.CarbonTextCardComponent
+              ),
           },
         };
       },

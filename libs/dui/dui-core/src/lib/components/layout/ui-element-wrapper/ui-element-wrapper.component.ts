@@ -99,7 +99,7 @@ export class UiElementWrapperComponent {
   readonly #actionHookService = inject(ActionHookService);
 
   uiElementTemplateId: InputSignal<string> = input.required();
-  requiredComponentType: InputSignal<string | undefined> = input<string>();
+  requiredComponentSymbol = input<symbol | undefined>();
 
   private readonly uiElementVCR: Signal<ViewContainerRef | undefined> = viewChild('uiElementVCR', {
     read: ViewContainerRef,
@@ -287,6 +287,7 @@ export class UiElementWrapperComponent {
       }
 
       const uiElementTemplate$ = this.uiElementTemplate();
+      const requiredComponentSymbol = this.requiredComponentSymbol();
 
       this.#unsubscribeUiElementTemplate.next();
       uiElementTemplate$
@@ -309,6 +310,17 @@ export class UiElementWrapperComponent {
           const componentRef = uiElementVCR.createComponent(
             uiElementComponent
           ) as ComponentRef<BaseUIElementComponent>;
+
+          if (
+            requiredComponentSymbol &&
+            requiredComponentSymbol !== componentRef.instance.getSymbol()
+          ) {
+            uiElementVCR.clear();
+            logWarning(
+              `Wrong element received: expect ${String(requiredComponentSymbol)} but got ${String(componentRef.instance.getSymbol())}`
+            );
+            return;
+          }
 
           const interpolationContext: Observable<ElementInputsInterpolationContext> =
             runInInjectionContext(this.#environmentInjector, () =>

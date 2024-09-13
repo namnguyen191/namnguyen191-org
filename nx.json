@@ -9,6 +9,7 @@
       "preVersionCommand": "pnpm dlx nx run-many -t build"
     }
   },
+  "neverConnectToCloud": true,
   "targetDefaults": {
     "build": {
       "cache": true,

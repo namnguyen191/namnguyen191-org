@@ -1,13 +1,15 @@
-<div class="links-container">
-  <a [routerLink]="['./table-patterns']"> Go to table patterns e2e </a>
-  <a [routerLink]="['./button-pattenrs']"> Go to button patterns e2e </a>
-  <a [routerLink]="['./text-card-patterns']"> Go to text card patterns e2e </a>
-</div>
-<router-outlet></router-outlet>
+<div cdsTheme="g100">
+  <div class="links-container">
+    <a [routerLink]="['./table-patterns']"> Go to table patterns e2e </a>
+    <a [routerLink]="['./button-pattenrs']"> Go to button patterns e2e </a>
+    <a [routerLink]="['./text-card-patterns']"> Go to text card patterns e2e </a>
+  </div>
+  <router-outlet></router-outlet>
 
-<cds-toast
-  *ngIf="isNotificationDisplayed()"
-  class="toast-container"
-  [notificationObj]="notificationConfig"
-  (close)="isNotificationDisplayed.set(false)"
-></cds-toast>
+  <cds-toast
+    *ngIf="isNotificationDisplayed()"
+    class="toast-container"
+    [notificationObj]="notificationConfig"
+    (close)="isNotificationDisplayed.set(false)"
+  ></cds-toast>
+</div>

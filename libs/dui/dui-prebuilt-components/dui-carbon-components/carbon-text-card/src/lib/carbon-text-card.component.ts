@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, InputSignal } from '@angular/core';
+import { CarbonTextCardSymbol } from '@namnguyen191/dui-carbon-components/shared';
 import { EmitOnClickDirective } from '@namnguyen191/dui-common';
 import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
 import { parseZodWithDefault } from '@namnguyen191/types-helper';
@@ -36,9 +37,15 @@ export class CarbonTextCardComponent
   extends BaseUIElementComponent
   implements UIElementImplementation<TextCardConfigs, TextCardEvents>
 {
-  static readonly ELEMENT_TYPE = 'CARBON_TEXT_CARD';
+  static override readonly ELEMENT_TYPE = 'CARBON_TEXT_CARD';
+  static override readonly ELEMENT_SYMBOL = CarbonTextCardSymbol;
+
   override getElementType(): string {
     return CarbonTextCardComponent.ELEMENT_TYPE;
+  }
+
+  override getSymbol(): symbol {
+    return CarbonTextCardComponent.ELEMENT_SYMBOL;
   }
 
   readonly #defaultTitle = 'Default card title';

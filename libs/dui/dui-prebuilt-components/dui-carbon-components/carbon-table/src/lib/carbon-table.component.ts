@@ -8,6 +8,7 @@ import {
   output,
   Signal,
 } from '@angular/core';
+import { CarbonButtonSymbol, CarbonTableSymbol } from '@namnguyen191/dui-carbon-components/shared';
 import {
   BaseUIElementComponent,
   UIElementImplementation,
@@ -51,9 +52,15 @@ export class CarbonTableComponent
       CarbonTableUIElementComponentEvents
     >
 {
-  static readonly ELEMENT_TYPE = 'CARBON_TABLE';
+  static override readonly ELEMENT_TYPE = 'CARBON_TABLE';
+  static override readonly ELEMENT_SYMBOL = CarbonTableSymbol;
+
   override getElementType(): string {
     return CarbonTableComponent.ELEMENT_TYPE;
+  }
+
+  override getSymbol(): symbol {
+    return CarbonTableComponent.ELEMENT_SYMBOL;
   }
 
   defaultTitle = 'Default title';
@@ -144,6 +151,8 @@ export class CarbonTableComponent
   });
 
   paginationChanged = output<PaginationChangedPayload>();
+
+  carbonButtonSymbol = CarbonButtonSymbol;
 
   selectPage(selectedPage: number): void {
     this.paginationModel().currentPage = selectedPage;

@@ -47,14 +47,23 @@ export type UIElementImplementation<
   CreateUIElementInputOptions<TConfigs> &
   CreateUIElementEventsOutputs<TEvents>;
 
+const defaultElementSymbol = Symbol('Default element');
+
 @Component({
   template: '',
 })
 export abstract class BaseUIElementComponent
   implements UIElementImplementation<UIElementRequiredConfigs>
 {
+  static readonly ELEMENT_TYPE: string = 'DEFAULT_ABSTRACT_COMPONENT';
+  static readonly ELEMENT_SYMBOL: symbol = defaultElementSymbol;
+
   getElementType(): string {
     return 'DEFAULT TYPE';
+  }
+
+  getSymbol(): symbol {
+    return defaultElementSymbol;
   }
 
   isErrorConfigOption: InputSignal<boolean> = input(false, {

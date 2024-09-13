@@ -41,7 +41,7 @@ export class TabsComponent
   extends BaseUIElementComponent
   implements UIElementImplementation<TabsUIElementComponentConfigs>
 {
-  static readonly ELEMENT_TYPE = 'TABS';
+  static override readonly ELEMENT_TYPE = 'TABS';
 
   tabsConfigOption: InputSignal<TabsConfig> = input([], {
     alias: 'tabs',

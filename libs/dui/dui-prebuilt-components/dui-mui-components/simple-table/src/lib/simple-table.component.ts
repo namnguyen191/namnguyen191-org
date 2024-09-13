@@ -71,8 +71,7 @@ export class SimpleTableComponent
       SimpleTableUIElementComponentEvents
     >
 {
-  static readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
-  static readonly NEED_CONTEXT = true;
+  static override readonly ELEMENT_TYPE = 'SIMPLE_TABLE';
 
   defaultTitle = 'Default title';
   titleConfigOption: InputSignal<string> = input(this.defaultTitle, {

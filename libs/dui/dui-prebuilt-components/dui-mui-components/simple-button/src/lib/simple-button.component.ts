@@ -44,7 +44,7 @@ export class SimpleButtonComponent
       SimpleButtonUIElementComponentEvents
     >
 {
-  static readonly ELEMENT_TYPE = 'SIMPLE_BUTTON';
+  static override readonly ELEMENT_TYPE = 'SIMPLE_BUTTON';
 
   textConfigOption: InputSignal<string> = input('Default button text', {
     alias: 'text',
