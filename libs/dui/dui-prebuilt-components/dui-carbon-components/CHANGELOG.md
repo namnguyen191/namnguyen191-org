@@ -1,3 +1,15 @@
+## 0.0.0-6 (2024-09-14)
+
+
+### 🚀 Features
+
+- required component symbol now support multiple symbols
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-5 (2024-09-13)
 
 
