@@ -1,3 +1,15 @@
+## 0.0.0-7 (2024-09-14)
+
+
+### 🚀 Features
+
+- add json schema support
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-6 (2024-09-14)
 
 
