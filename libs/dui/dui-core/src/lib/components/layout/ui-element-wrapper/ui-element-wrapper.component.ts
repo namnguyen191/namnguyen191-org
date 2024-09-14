@@ -99,7 +99,7 @@ export class UiElementWrapperComponent {
   readonly #actionHookService = inject(ActionHookService);
 
   uiElementTemplateId: InputSignal<string> = input.required();
-  requiredComponentSymbol = input<symbol | undefined>();
+  requiredComponentSymbols = input<symbol[]>([]);
 
   private readonly uiElementVCR: Signal<ViewContainerRef | undefined> = viewChild('uiElementVCR', {
     read: ViewContainerRef,
@@ -287,7 +287,7 @@ export class UiElementWrapperComponent {
       }
 
       const uiElementTemplate$ = this.uiElementTemplate();
-      const requiredComponentSymbol = this.requiredComponentSymbol();
+      const requiredComponentSymbols = this.requiredComponentSymbols();
 
       this.#unsubscribeUiElementTemplate.next();
       uiElementTemplate$
@@ -312,12 +312,12 @@ export class UiElementWrapperComponent {
           ) as ComponentRef<BaseUIElementComponent>;
 
           if (
-            requiredComponentSymbol &&
-            requiredComponentSymbol !== componentRef.instance.getSymbol()
+            requiredComponentSymbols.length &&
+            !requiredComponentSymbols.includes(componentRef.instance.getSymbol())
           ) {
             uiElementVCR.clear();
             logWarning(
-              `Wrong element received: expect ${String(requiredComponentSymbol)} but got ${String(componentRef.instance.getSymbol())}`
+              `Wrong element received: expect ${requiredComponentSymbols.map((sym) => String(sym)).join('or ')} but got ${String(componentRef.instance.getSymbol())}`
             );
             return;
           }
