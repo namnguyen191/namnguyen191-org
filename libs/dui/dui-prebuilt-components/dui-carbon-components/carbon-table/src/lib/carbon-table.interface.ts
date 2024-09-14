@@ -1,3 +1,4 @@
+import { UIElementTemplate } from '@namnguyen191/dui-core';
 import { ZodNonEmptyPrimitive } from '@namnguyen191/types-helper';
 import { z } from 'zod';
 
@@ -42,3 +43,8 @@ export type PaginationChangedPayload = {
 export type CarbonTableUIElementComponentEvents = {
   paginationChanged: PaginationChangedPayload;
 };
+
+export type CarbonTableTypeForJsonSchema = UIElementTemplate<
+  CarbonTableUIElementComponentConfigs,
+  keyof CarbonTableUIElementComponentEvents
+>;

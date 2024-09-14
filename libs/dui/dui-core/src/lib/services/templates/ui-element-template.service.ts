@@ -10,19 +10,28 @@ import { StateSubscriptionConfig } from '../state-store.service';
 import { ConfigWithStatus } from './shared-types';
 
 export type UIElementTemplateOptions<T extends ObjectType = EmptyObject> =
-  Partial<UIElementRequiredConfigs> & T;
+  Partial<UIElementRequiredConfigs> & Partial<T>;
 
-export type EventsToHooksMap = {
-  [eventId: string]: ActionHook[];
+export type UnknownEvent = 'unknown-event';
+export type NoEvent = 'no-event';
+export type EventsToHooksMap<TEvents extends string = UnknownEvent> = {
+  [K in TEvents]?: ActionHook[];
 };
-export type UIElementTemplate<T extends ObjectType = EmptyObject> = {
+type HaveEventHooks<TEvents extends string = UnknownEvent> = TEvents extends UnknownEvent
+  ? { eventsHooks?: EventsToHooksMap }
+  : TEvents extends NoEvent
+    ? Record<string, never>
+    : { eventsHooks?: EventsToHooksMap<TEvents> };
+export type UIElementTemplate<
+  TConfigs extends ObjectType = EmptyObject,
+  TEvents extends string = UnknownEvent,
+> = {
   id: string;
   type: string;
   remoteResourceIds?: string[];
   stateSubscription?: StateSubscriptionConfig;
-  options: UIElementTemplateOptions<T>;
-  eventsHooks?: EventsToHooksMap;
-};
+  options: UIElementTemplateOptions<TConfigs>;
+} & HaveEventHooks<TEvents>;
 
 export type UIElementTemplateWithStatus = ConfigWithStatus<UIElementTemplate>;
 

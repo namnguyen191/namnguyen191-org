@@ -1,3 +1,4 @@
+import { UIElementTemplate } from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 export const ZTitleConfigOption = z.string({
@@ -43,3 +44,8 @@ export type TextCardConfigs = z.infer<typeof ZTextCardConfigs>;
 export type TextCardEvents = {
   onCardClicked: void;
 };
+
+export type CarbonTextCardTypeForJsonSchema = UIElementTemplate<
+  TextCardConfigs,
+  keyof TextCardEvents
+>;

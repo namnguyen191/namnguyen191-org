@@ -3,5 +3,6 @@
   "dest": "../../../../dist/libs/dui/dui-prebuilt-components/dui-carbon-components",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "assets": ["./generated-json-schemas"]
 }

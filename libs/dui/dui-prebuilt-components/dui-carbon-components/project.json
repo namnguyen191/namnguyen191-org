@@ -55,6 +55,14 @@
           "libs/dui/dui-prebuilt-components/dui-carbon-components/**/*.scss"
         ]
       }
+    },
+    "generate-json-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsx scripts/dui-gen-json-schem.ts libs/dui/dui-prebuilt-components/dui-carbon-components libs/dui/dui-prebuilt-components/dui-carbon-components/tsconfig.lib.json"
+        ]
+      }
     }
   }
 }

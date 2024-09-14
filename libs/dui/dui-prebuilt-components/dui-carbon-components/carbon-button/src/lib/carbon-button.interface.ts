@@ -1,3 +1,4 @@
+import { UIElementTemplate } from '@namnguyen191/dui-core';
 import { z } from 'zod';
 
 export const ZodButtonTypeConfig = z.enum([
@@ -25,3 +26,8 @@ export type CarbonButtonUIElementComponentConfigs = z.infer<
 export type CarbonButtonUIElementComponentEvents = {
   buttonClicked: void;
 };
+
+export type CarbonButtonTypeForJsonSchema = UIElementTemplate<
+  CarbonButtonUIElementComponentConfigs,
+  keyof CarbonButtonUIElementComponentEvents
+>;
