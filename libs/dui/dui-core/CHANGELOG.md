@@ -1,3 +1,15 @@
+## 0.0.0-10 (2024-09-15)
+
+
+### 🚀 Features
+
+- **dui-core:** separate js worker to a secondary entry point to get around esbuild prod issue
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-9 (2024-09-15)
 
 
