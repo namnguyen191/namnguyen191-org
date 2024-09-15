@@ -1,7 +1,4 @@
-import { InjectionToken } from '@angular/core';
 import { Brand, ObjectType } from '@namnguyen191/types-helper';
-
-export const JS_RUNNER_WORKER = new InjectionToken<Worker>('JS_RUNNER_WORKER');
 
 export type BaseWorkerEventPayload = {
   id: string;

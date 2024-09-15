@@ -4,11 +4,10 @@ import { has, isEmpty } from 'lodash-es';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 import { z } from 'zod';
 
-import { INTERPOLATION_REGEX } from '../global';
+import { INTERPOLATION_REGEX, JS_RUNNER_WORKER } from '../global';
 import { JSRunnerContext } from '../web-worker-helpers/js-runner-worker-helper';
 import {
   isFailedInterpolationResult,
-  JS_RUNNER_WORKER,
   RawJsString,
   WorkerEventObject,
   WorkerResponse,
