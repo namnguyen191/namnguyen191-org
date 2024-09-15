@@ -22,3 +22,5 @@ export type LayoutTemplate = {
 };
 
 export type LayoutTemplateWithStatus = ConfigWithStatus<LayoutTemplate>;
+
+export type LayoutTemplateTypeForJsonSchema = LayoutTemplate;

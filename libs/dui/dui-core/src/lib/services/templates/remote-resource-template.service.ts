@@ -23,6 +23,8 @@ export type RemoteResourceTemplate = {
   };
 };
 
+export type RemoteResourceTemplateTypeForJsonSchema = RemoteResourceTemplate;
+
 export type RemoteResourceTemplateWithStatus = ConfigWithStatus<RemoteResourceTemplate>;
 
 type RemoteResourceTemplateId = string;

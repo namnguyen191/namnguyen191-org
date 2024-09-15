@@ -52,6 +52,14 @@
       "options": {
         "lintFilePatterns": ["libs/dui/dui-core/**/*.css", "libs/dui/dui-core/**/*.scss"]
       }
+    },
+    "generate-json-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsx scripts/dui-gen-json-schem.ts libs/dui/dui-core libs/dui/dui-core/tsconfig.lib.json"
+        ]
+      }
     }
   }
 }
