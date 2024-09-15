@@ -1,3 +1,15 @@
+## 0.0.0-9 (2024-09-15)
+
+
+### 🚀 Features
+
+- **dui-core:** separate angular import from worker helper
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-8 (2024-09-15)
 
 
