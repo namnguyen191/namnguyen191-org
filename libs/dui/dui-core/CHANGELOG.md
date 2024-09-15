@@ -1,3 +1,15 @@
+## 0.0.0-8 (2024-09-15)
+
+
+### 🚀 Features
+
+- **dui-core:** add json schema for layout and rr template
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.0-7 (2024-09-14)
 
 
