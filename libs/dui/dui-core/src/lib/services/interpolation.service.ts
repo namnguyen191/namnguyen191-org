@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
+import {
+  isFailedInterpolationResult,
+  JSRunnerContext,
+  RawJsString,
+  WorkerEventObject,
+  WorkerResponse,
+} from '@namnguyen191/dui-core/js-interpolation-worker';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { has, isEmpty } from 'lodash-es';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 import { z } from 'zod';
 
 import { INTERPOLATION_REGEX, JS_RUNNER_WORKER } from '../global';
-import { JSRunnerContext } from '../web-worker-helpers/js-runner-worker-helper';
-import {
-  isFailedInterpolationResult,
-  RawJsString,
-  WorkerEventObject,
-  WorkerResponse,
-} from '../web-worker-helpers/worker-interfaces';
 
 export const ZodInterpolationString = z.string().regex(INTERPOLATION_REGEX);
 

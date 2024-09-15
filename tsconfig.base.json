@@ -37,6 +37,9 @@
       ],
       "@namnguyen191/dui-common": ["libs/dui/dui-common/src/index.ts"],
       "@namnguyen191/dui-core": ["libs/dui/dui-core/src/index.ts"],
+      "@namnguyen191/dui-core/js-interpolation-worker": [
+        "libs/dui/dui-core/js-interpolation-worker/src/index.ts"
+      ],
       "@namnguyen191/dui-mui-components": [
         "libs/dui/dui-prebuilt-components/dui-mui-components/src/index.ts"
       ],

@@ -15,5 +15,3 @@ export * from './lib/services/templates/remote-resource-template.service';
 export * from './lib/services/templates/ui-element-template.service';
 export * from './lib/services/ui-element-factory.service';
 export * from './lib/utils/logging';
-export * from './lib/web-worker-helpers/js-runner-worker-helper';
-export * from './lib/web-worker-helpers/worker-interfaces';

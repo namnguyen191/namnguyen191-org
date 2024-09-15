@@ -53,7 +53,7 @@ The way a web worker can be setup can be different between each projects. So fol
 ```js
 /// <reference lib="webworker" />
 
-import { handleRunJsMessage } from '@namnguyen191/dui-core';
+import { handleRunJsMessage } from '@namnguyen191/dui-core/js-interpolation-worker';
 
 addEventListener('message', (e) => {
   const allowList = new Set() < string > ['console', 'JSON', 'Math'];
