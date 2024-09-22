@@ -26,6 +26,12 @@
       "@namnguyen191/dui-carbon-components/carbon-button": [
         "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-button/src/index.ts"
       ],
+      "@namnguyen191/dui-carbon-components/carbon-carousel": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-carousel/src/index.ts"
+      ],
+      "@namnguyen191/dui-carbon-components/carbon-carousel-card": [
+        "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-carousel-card/src/index.ts"
+      ],
       "@namnguyen191/dui-carbon-components/carbon-table": [
         "libs/dui/dui-prebuilt-components/dui-carbon-components/carbon-table/src/index.ts"
       ],

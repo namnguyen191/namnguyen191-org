@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal, output } from '@angular/core';
-import { CarbonButtonSymbol } from '@namnguyen191/dui-carbon-components/shared';
+import {
+  CarbonButtonElementType,
+  CarbonButtonSymbol,
+} from '@namnguyen191/dui-carbon-components/shared';
 import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
 import { parseZodWithDefault } from '@namnguyen191/types-helper';
 import { ButtonModule, InlineLoadingModule } from 'carbon-components-angular';
@@ -28,7 +31,7 @@ export class CarbonButtonComponent
       CarbonButtonUIElementComponentEvents
     >
 {
-  static override readonly ELEMENT_TYPE = 'CARBON_BUTTON';
+  static override readonly ELEMENT_TYPE = CarbonButtonElementType;
   static override readonly ELEMENT_SYMBOL = CarbonButtonSymbol;
 
   override getElementType(): string {

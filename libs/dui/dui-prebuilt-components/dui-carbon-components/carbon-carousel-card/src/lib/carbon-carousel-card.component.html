@@ -1,0 +1,12 @@
+@if (isLoadingConfigOption()) {
+  <span>Loading...</span>
+} @else if (isErrorConfigOption()) {
+  <span>Something went wrong</span>
+} @else {
+  <section class="card-carousel"></section>
+
+  <section class="card-body">
+    <h4 class="card-body__text__title">{{ titleConfigOption() }}</h4>
+    <p class="card-body__text__description">{{ descriptionConfigOption() }}</p>
+  </section>
+}

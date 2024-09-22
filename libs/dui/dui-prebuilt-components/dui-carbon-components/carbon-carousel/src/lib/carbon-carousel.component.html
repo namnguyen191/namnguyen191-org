@@ -1,0 +1,31 @@
+@let carouselImages = imageUrlsConfigOption();
+
+@if (isLoadingConfigOption()) {
+  <span>Loading...</span>
+} @else if (isErrorConfigOption()) {
+  <span>Something went wrong</span>
+} @else {
+  <ol class="slides-container">
+    @for (image of carouselImages; let idx = $index; track image) {
+      <li
+        #carouselSlide
+        [id]="image.imageId"
+        [style.backgroundImage]="image.imageUrl"
+        class="slides-container__slide"
+      >
+        <div class="slides-container__slide__snapper"></div>
+      </li>
+    }
+  </ol>
+  <aside class="navigation-controls-container">
+    <ol class="navigation-controls-container__navigation-list">
+      @for (item of carouselImages; let idx = $index; track $index) {
+        <li
+          (click)="changeToSlide(item.imageId)"
+          role="button"
+          class="navigation-controls-container__navigation-list__item"
+        ></li>
+      }
+    </ol>
+  </aside>
+}

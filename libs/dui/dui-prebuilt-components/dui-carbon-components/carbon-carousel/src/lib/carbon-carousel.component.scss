@@ -1,0 +1,90 @@
+@use 'carbon-components/scss/globals/scss/spacing';
+
+:host {
+  display: block;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-color: transparent transparent;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel {
+    position: relative;
+    padding-top: 75%;
+    filter: drop-shadow(0 0 10px #0003);
+    perspective: 100px;
+  }
+
+  .slides-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    overflow-x: scroll;
+    counter-reset: item;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+
+    &__slide {
+      position: relative;
+      flex: 0 0 100%;
+      width: 100%;
+      counter-increment: item;
+      background-size: cover;
+      background-position: center;
+
+      &__snapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        scroll-snap-align: center;
+      }
+    }
+  }
+
+  .navigation-controls-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    &__navigation-list {
+      display: flex;
+      justify-content: center;
+      gap: spacing.$spacing-01;
+
+      &__item {
+        display: block;
+        background-color: var(--cds-background);
+        width: 1.5rem;
+        height: 1.5rem;
+        background-clip: content-box;
+        border: 0.25rem solid transparent;
+        border-radius: 50%;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--cds-background-hover);
+        }
+      }
+    }
+  }
+
+  .carousel::before,
+  .carousel::after {
+    content: '';
+    z-index: 1;
+    background-color: #333;
+    background-size: 1.5rem 1.5rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: #fff;
+    font-size: 2.5rem;
+    line-height: 4rem;
+    text-align: center;
+    pointer-events: none;
+  }
+}

@@ -8,7 +8,11 @@ import {
   output,
   Signal,
 } from '@angular/core';
-import { CarbonButtonSymbol, CarbonTableSymbol } from '@namnguyen191/dui-carbon-components/shared';
+import {
+  CarbonButtonSymbol,
+  CarbonTableElementType,
+  CarbonTableSymbol,
+} from '@namnguyen191/dui-carbon-components/shared';
 import {
   BaseUIElementComponent,
   UIElementImplementation,
@@ -52,7 +56,7 @@ export class CarbonTableComponent
       CarbonTableUIElementComponentEvents
     >
 {
-  static override readonly ELEMENT_TYPE = 'CARBON_TABLE';
+  static override readonly ELEMENT_TYPE = CarbonTableElementType;
   static override readonly ELEMENT_SYMBOL = CarbonTableSymbol;
 
   override getElementType(): string {

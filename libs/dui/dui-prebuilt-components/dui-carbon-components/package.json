@@ -10,6 +10,7 @@
     "carbon-components-angular": "^5.25.1",
     "lodash-es": "^4.17.21",
     "zod": "^3.22.4",
+    "@angular/router": "^18.2.2",
     "@namnguyen191/dui-core": "*",
     "@namnguyen191/types-helper": "*",
     "@namnguyen191/dui-common": "*"

@@ -1,0 +1,12 @@
+{
+  "id": "carbon-carousel-test",
+  "type": "CARBON_CAROUSEL",
+  "options": {
+    "imageUrls": [
+      "https://www.fishi-pedia.com/wp-content/uploads/2014/12/Caridina-woltareckae.jpg",
+      "https://www.fishi-pedia.com/wp-content/uploads/2017/10/Caridina-logemanni-Super-Crystal-Red-Double-Lines.jpg",
+      "https://aquaticarts.com/cdn/shop/files/SuperTigerShrimp_AABred3_1080x.jpg?v=1686854141",
+      "https://www.aquasabi.de/vcdn/images/item/large/TNqDLfnCz9/caridina-dennerli.jpg"
+    ]
+  }
+}

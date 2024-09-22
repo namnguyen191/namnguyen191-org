@@ -5,8 +5,9 @@ import {
   provideExperimentalZonelessChangeDetection,
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { globalDelayInterceptorFactory } from '@namnguyen191/common-angular-helper';
+import { DuiCarbonComponentLoader } from '@namnguyen191/dui-carbon-components';
 import { DUI_COMMON_SETUP_CONFIG, DUISetupConfigs } from '@namnguyen191/dui-common';
 import { DUI_CORE_CONFIG, JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
 
@@ -20,7 +21,13 @@ import { UIElementTemplateService } from './dui-consumer/services/ui-element-tem
 export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
-    provideRouter(appRoutes),
+    provideRouter(
+      appRoutes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      })
+    ),
     provideHttpClient(withInterceptors([globalDelayInterceptorFactory(100)])),
     provideAnimationsAsync(),
     {
@@ -54,20 +61,7 @@ export const appConfig: ApplicationConfig = {
             getRemoteResourceTemplate: remoteResourcesService.getRemoteResourceById,
             updateElementsPositionsHandler: layoutsServiceAPI.updateLayoutElementPositionAndSize,
           },
-          componentLoadersMap: {
-            CARBON_BUTTON: () =>
-              import('@namnguyen191/dui-carbon-components/carbon-button').then(
-                (m) => m.CarbonButtonComponent
-              ),
-            CARBON_TABLE: () =>
-              import('@namnguyen191/dui-carbon-components/carbon-table').then(
-                (m) => m.CarbonTableComponent
-              ),
-            CARBON_TEXT_CARD: () =>
-              import('@namnguyen191/dui-carbon-components/carbon-text-card').then(
-                (m) => m.CarbonTextCardComponent
-              ),
-          },
+          componentLoadersMap: DuiCarbonComponentLoader,
         };
       },
     },

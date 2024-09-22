@@ -25,7 +25,8 @@ export type UIElementRequiredConfigs = {
 type CreateUIElementInputOptions<TConfigs> = Required<{
   [K in keyof TConfigs as K extends string ? `${K}ConfigOption` : never]:
     | InputSignal<TConfigs[K]>
-    | InputSignalWithTransform<TConfigs[K], unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    | InputSignalWithTransform<any, TConfigs[K]>;
 }>;
 
 export type UIElementRequiredInputOptions = CreateUIElementInputOptions<UIElementRequiredConfigs>;
