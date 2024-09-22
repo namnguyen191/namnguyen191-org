@@ -17,6 +17,7 @@ export default [
       '**/prettier.config.js',
       '**/node_modules',
       '**/eslint*.js',
+      '**/lint-staged.config.js',
     ],
   },
   ...nx.configs['flat/base'],
