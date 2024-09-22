@@ -1,5 +1,6 @@
 {
   "name": "@namnguyen191/dui-carbon-components",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },

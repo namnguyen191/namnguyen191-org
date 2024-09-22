@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/graphql-tutorial-server-esmodule/src",
   "projectType": "application",
+  "tags": ["missing-tag"],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -78,6 +79,5 @@
         }
       }
     }
-  },
-  "tags": ["missing-tag"]
+  }
 }

@@ -27,7 +27,7 @@ export class BooksComponent {
   constructor() {
     const test = this.resourceState();
     if (typeof test === 'object') {
-      test.error;
+      console.log('Nam data is: ', test);
     }
   }
 }

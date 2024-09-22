@@ -1,14 +1,22 @@
 <form (ngSubmit)="handleSubmit()">
   <div class="field">
-    <label class="label"> Email </label>
+    <label for="email" class="label"> Email </label>
     <div class="control">
-      <input class="input" type="email" required name="email" [(ngModel)]="loginFormModel.email" />
+      <input
+        id="email"
+        class="input"
+        type="email"
+        required
+        name="email"
+        [(ngModel)]="loginFormModel.email"
+      />
     </div>
   </div>
   <div class="field">
-    <label class="label"> Password </label>
+    <label for="password" class="label"> Password </label>
     <div class="control">
       <input
+        id="password"
         class="input"
         type="password"
         required

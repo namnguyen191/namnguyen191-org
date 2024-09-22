@@ -3,16 +3,23 @@
 <div class="box">
   <form (ngSubmit)="handleSubmit()">
     <div class="field">
-      <label class="label"> Title </label>
+      <label for="title" class="label"> Title </label>
       <div class="control">
-        <input class="input" type="text" name="title" [(ngModel)]="creatJobFormModel.title" />
+        <input
+          id="title"
+          class="input"
+          type="text"
+          name="title"
+          [(ngModel)]="creatJobFormModel.title"
+        />
       </div>
     </div>
 
     <div class="field">
-      <label class="label"> Description </label>
+      <label for="description" class="label"> Description </label>
       <div class="control">
         <textarea
+          id="description"
           class="textarea"
           rows="10"
           name="description"

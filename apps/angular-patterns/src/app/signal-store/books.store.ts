@@ -65,7 +65,7 @@ export const BooksStore = signalStore(
       try {
         const allBooks = await booksService.loadAllBooks();
         patchState(store, setAllEntities(allBooks), setFulfilled());
-      } catch (error) {
+      } catch (_error) {
         setError('Something went wrong fetching books');
       }
     },

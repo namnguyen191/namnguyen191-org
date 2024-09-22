@@ -53,7 +53,6 @@ export const REQUIRED_ALLOW_LIST = new Set<string>(['undefined', 'null']);
 export const restrictCurrentExecutionContextGlobal = (allowList: Set<string>): string => {
   const seenProperties: Set<string> = new Set<string>();
 
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
   let currentContext: unknown = globalThis;
   do {
     const props = Object.getOwnPropertyNames(currentContext);

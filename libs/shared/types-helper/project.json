@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/types-helper/src",
   "projectType": "library",
+  "tags": ["scope:shared-lib"],
   "targets": {
     "build": {
       "executor": "@nx/js:swc",
@@ -24,6 +25,5 @@
         "cwd": "libs/shared/types-helper"
       }
     }
-  },
-  "tags": ["scope:shared-lib"]
+  }
 }

@@ -5,6 +5,7 @@ import { useKeyWatch } from './useKeyWatch';
 export type SearchBarProps = {
   onSearch?: (searchValue: string) => void;
 };
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 export const SearchBar: FC<SearchBarProps> = ({ onSearch = (): void => {} }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 

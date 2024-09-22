@@ -197,7 +197,7 @@ export const setupDefaultDUI = (): void => {
   let configs: DUISetupConfigs;
   try {
     configs = inject(DUI_COMMON_SETUP_CONFIG);
-  } catch (error) {
+  } catch (_error) {
     logWarning(
       'No configs was provided for DUI default setup, please provide values for the DUI_COMMON_SETUP_CONFIG token'
     );

@@ -89,7 +89,7 @@ export async function updateOrder(id: string, updateObj: unknown): Promise<void>
 
     if (!res.ok) throw Error();
     // We don't need the data, so we don't return anything
-  } catch (err) {
+  } catch (_err) {
     throw Error('Failed updating your order');
   }
 }

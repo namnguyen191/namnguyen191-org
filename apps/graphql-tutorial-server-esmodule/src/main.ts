@@ -29,7 +29,7 @@ app.use(cors(), express.json(), authMiddleware);
 
 app.post('/login', handleLogin);
 
-app.get('/api', (req, res) => {
+app.get('/api', (_req, res) => {
   res.send({ message: 'Welcome to graphql-tutorial-server-esmodule!' });
 });
 

@@ -61,6 +61,6 @@ export class PaginationBarComponent {
   }
 
   range(count: number, start = 1): string[] {
-    return Array.from(new Array(count), (x, i) => (i + start).toString());
+    return Array.from(new Array(count), (_x, i) => (i + start).toString());
   }
 }

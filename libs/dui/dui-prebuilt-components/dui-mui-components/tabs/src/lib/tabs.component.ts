@@ -23,7 +23,7 @@ const ZodTabsConfig = z.array(ZodTabConfigObject);
 
 type TabsConfig = z.infer<typeof ZodTabsConfig>;
 
-const ZodTabsUIElementComponentConfigs = z.object({
+export const ZodTabsUIElementComponentConfigs = z.object({
   tabs: ZodTabsConfig,
 });
 

@@ -25,7 +25,7 @@ export class InterpolationService {
   constructor() {
     try {
       this.#jsRunnerWorker = inject(JS_RUNNER_WORKER);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         'You will need to provide a worker through the JS_RUNNER_WORKER token. Please refer to the docs on how to do this'
       );

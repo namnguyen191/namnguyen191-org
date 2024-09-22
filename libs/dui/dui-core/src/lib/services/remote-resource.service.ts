@@ -331,7 +331,7 @@ export class RemoteResourceService {
       })) as ActionHook[];
 
       return interpolatedHooks;
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to interpolate resource hooks');
       return [];
     }

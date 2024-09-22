@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'dui-carbon-components',
   preset: '../../../../jest.preset.cjs',

@@ -54,7 +54,7 @@ export class JobComponent implements OnInit {
       try {
         const job = await getJobById(jobId);
         this.jobLoader.set({ job, isError: false, isLoading: false });
-      } catch (error) {
+      } catch (_error) {
         this.jobLoader.update((prev) => ({ ...prev, isError: true, isLoading: false }));
       }
     });

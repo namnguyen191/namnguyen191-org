@@ -22,6 +22,8 @@
       @for (item of carouselImages; let idx = $index; track $index) {
         <li
           (click)="changeToSlide(item.imageId)"
+          (keypress)="changeToSlide(item.imageId)"
+          aria-hidden="true"
           role="button"
           class="navigation-controls-container__navigation-list__item"
         ></li>

@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'angular-patterns',
   preset: '../../jest.preset.mjs',

@@ -7,6 +7,7 @@
     <img
       *ngIf="avatarUrlConfigOption() as avatarUrl"
       [src]="avatarUrl"
+      alt="card avatar"
       class="card-header__avatar"
     />
     <div class="card-header__text">
@@ -16,7 +17,12 @@
   </section>
 
   <section class="card-body">
-    <img class="card-body__image" *ngIf="imageUrlConfigOption() as imgUrl" [src]="imgUrl" />
+    <img
+      alt="card main image"
+      class="card-body__image"
+      *ngIf="imageUrlConfigOption() as imgUrl"
+      [src]="imgUrl"
+    />
     <div class="card-body__text">
       {{ bodyConfigOption() }}
     </div>

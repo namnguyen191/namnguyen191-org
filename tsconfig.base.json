@@ -64,5 +64,5 @@
       "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "**/eslint**.js"]
 }

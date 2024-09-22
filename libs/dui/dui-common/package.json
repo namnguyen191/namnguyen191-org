@@ -1,5 +1,6 @@
 {
   "name": "@namnguyen191/dui-common",
+  "type": "module",
   "publishConfig": {
     "access": "public"
   },
