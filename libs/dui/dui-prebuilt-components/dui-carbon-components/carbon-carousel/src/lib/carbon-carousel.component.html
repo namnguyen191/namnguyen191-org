@@ -8,9 +8,9 @@
   <ol class="slides-container">
     @for (image of carouselImages; let idx = $index; track image) {
       <li
+        [backgroundImage]="image.imageUrl"
         #carouselSlide
         [id]="image.imageId"
-        [style.backgroundImage]="image.imageUrl"
         class="slides-container__slide"
       >
         <div class="slides-container__slide__snapper"></div>

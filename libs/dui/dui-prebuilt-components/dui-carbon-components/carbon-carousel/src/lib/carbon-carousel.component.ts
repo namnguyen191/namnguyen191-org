@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
+  BackgroundImageDirective,
   CarbonCarouselElementType,
   CarbonCarouselSymbol,
 } from '@namnguyen191/dui-carbon-components/shared';
@@ -38,7 +39,7 @@ type CarouselImage = {
 @Component({
   selector: 'namnguyen191-carbon-carousel',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconModule],
+  imports: [CommonModule, RouterModule, IconModule, BackgroundImageDirective],
   templateUrl: './carbon-carousel.component.html',
   styleUrl: './carbon-carousel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,7 +67,7 @@ export class CarbonCarouselComponent
     transform: (val) => {
       const ulrs = parseZodWithDefault<ImageUrlsConfigOption>(ZImageUrlsConfigOption, val, []);
       return ulrs.map((url, idx) => ({
-        imageUrl: `url(${url})`,
+        imageUrl: url,
         imageId: `carousel-slide-${idx}`,
       }));
     },
@@ -83,12 +84,15 @@ export class CarbonCarouselComponent
       ),
   });
 
-  carouselSlides: Signal<readonly ElementRef<HTMLLIElement>[]> = viewChildren('carouselSlide', {
-    read: ElementRef,
-  });
+  private readonly _carouselSlides: Signal<readonly ElementRef<HTMLLIElement>[]> = viewChildren(
+    'carouselSlide',
+    {
+      read: ElementRef,
+    }
+  );
 
   changeToSlide(id: string): void {
-    const slideElement = this.carouselSlides().find(
+    const slideElement = this._carouselSlides().find(
       (ele) => ele.nativeElement.id === id
     )?.nativeElement;
     if (!slideElement) {

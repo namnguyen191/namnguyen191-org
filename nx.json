@@ -132,6 +132,10 @@
       "changeDetection": "OnPush",
       "displayBlock": true,
       "skipTests": true
+    },
+    "@nx/angular:directive": {
+      "skipTests": true,
+      "standalone": true
     }
   },
   "plugins": ["@nx-go/nx-go"]
