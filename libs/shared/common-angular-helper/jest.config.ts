@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'common-angular-helper',
   preset: '../../../jest.preset.cjs',

@@ -1,15 +1,15 @@
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+<nav aria-label="pagination" class="pagination is-centered" role="navigation">
   <button
-    class="pagination-previous"
     aria-label="Previous page"
+    class="pagination-previous"
     [disabled]="currentPage() === 1"
     (click)="setPage(currentPage() - 1)"
   >
     &#x25C0;
   </button>
   <button
-    class="pagination-next"
     arial-label="Next page"
+    class="pagination-next"
     [disabled]="currentPage() === totalPages()"
     (click)="setPage(currentPage() + 1)"
   >
@@ -19,8 +19,8 @@
     @for (page of pages(); track page) {
       <li aria-hidden="true" (click)="setPage(+page)" (keypress)="setPage(+page)">
         <namnguyen191-page-button
-          [page]="page"
           [currentPage]="currentPage.toString()"
+          [page]="page"
         ></namnguyen191-page-button>
       </li>
     }

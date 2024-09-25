@@ -7,6 +7,7 @@ import {
   InputSignal,
   InputSignalWithTransform,
   Signal,
+  signal,
   viewChildren,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -14,6 +15,7 @@ import {
   BackgroundImageDirective,
   CarbonCarouselElementType,
   CarbonCarouselSymbol,
+  ModalComponent,
 } from '@namnguyen191/dui-carbon-components/shared';
 import {
   BaseUIElementComponent,
@@ -39,7 +41,7 @@ type CarouselImage = {
 @Component({
   selector: 'namnguyen191-carbon-carousel',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconModule, BackgroundImageDirective],
+  imports: [CommonModule, RouterModule, IconModule, BackgroundImageDirective, ModalComponent],
   templateUrl: './carbon-carousel.component.html',
   styleUrl: './carbon-carousel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +92,12 @@ export class CarbonCarouselComponent
       read: ElementRef,
     }
   );
+
+  readonly currentPreviewImageSig = signal<string | null>(null);
+
+  setImageToPreview(imageUrl: string): void {
+    this.currentPreviewImageSig.set(imageUrl);
+  }
 
   changeToSlide(id: string): void {
     const slideElement = this._carouselSlides().find(

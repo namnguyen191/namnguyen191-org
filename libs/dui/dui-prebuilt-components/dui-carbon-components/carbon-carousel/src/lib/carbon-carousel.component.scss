@@ -22,7 +22,6 @@
     inset: 0;
     display: flex;
     overflow-x: scroll;
-    counter-reset: item;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
 
@@ -30,9 +29,9 @@
       position: relative;
       flex: 0 0 100%;
       width: 100%;
-      counter-increment: item;
       background-size: cover;
       background-position: center;
+      cursor: pointer;
 
       &__snapper {
         position: absolute;
@@ -86,5 +85,10 @@
     line-height: 4rem;
     text-align: center;
     pointer-events: none;
+  }
+
+  .preview-image {
+    max-width: 80vw;
+    max-height: 90vh;
   }
 }

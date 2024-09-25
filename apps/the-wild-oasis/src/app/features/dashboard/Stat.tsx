@@ -48,7 +48,6 @@ const Value = styled.p`
   font-weight: 500;
 `;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type StatProps = {
   icon: ReactElement;
   color: string;

@@ -48,7 +48,6 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-// eslint-disable-next-line
 export const BookingRow: FC<{
   booking: BookingRowType & {
     guests: Pick<GuestRow, 'full_name' | 'email'>;

@@ -1,26 +1,26 @@
 <form (ngSubmit)="handleSubmit()">
   <div class="field">
-    <label for="email" class="label"> Email </label>
+    <label class="label" for="email"> Email </label>
     <div class="control">
       <input
-        id="email"
         class="input"
-        type="email"
-        required
+        id="email"
         name="email"
+        required
+        type="email"
         [(ngModel)]="loginFormModel.email"
       />
     </div>
   </div>
   <div class="field">
-    <label for="password" class="label"> Password </label>
+    <label class="label" for="password"> Password </label>
     <div class="control">
       <input
-        id="password"
         class="input"
-        type="password"
-        required
+        id="password"
         name="password"
+        required
+        type="password"
         [(ngModel)]="loginFormModel.password"
       />
     </div>
@@ -33,7 +33,7 @@
 
   <div class="field">
     <div class="control">
-      <button type="submit" class="button is-link" [disabled]="isLoggingIn()">Login</button>
+      <button class="button is-link" type="submit" [disabled]="isLoggingIn()">Login</button>
     </div>
   </div>
 </form>

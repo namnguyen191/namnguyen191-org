@@ -2,8 +2,8 @@
   <!-- requiredComponentSymbols should be a class... -->
   <namnguyen191-ui-element-wrapper
     *ngIf="primaryButtonIdConfigOption() as primaryButtonId"
-    [uiElementTemplateId]="primaryButtonId"
     [requiredComponentSymbols]="[carbonButtonSymbol]"
+    [uiElementTemplateId]="primaryButtonId"
   ></namnguyen191-ui-element-wrapper>
   <cds-table-header>
     <h4 cdsTableHeaderTitle id="table-header">{{ titleConfigOption() }}</h4>
@@ -19,11 +19,11 @@
     <span>Something went wrong fetching data</span>
   } @else {
     <cds-table
-      [model]="tableModel()"
-      ariaLabelledby="table-header"
       ariaDescribedby="table-description"
-      [skeleton]="isLoadingConfigOption()"
+      ariaLabelledby="table-header"
+      [model]="tableModel()"
       [showSelectionColumn]="false"
+      [skeleton]="isLoadingConfigOption()"
     >
       <tbody *ngIf="!isLoadingConfigOption()">
         <tr>
@@ -37,10 +37,10 @@
     </cds-table>
     <cds-pagination
       *ngIf="shouldDisplayPagination()"
-      [model]="paginationModel()"
-      (selectPage)="selectPage($event)"
-      [pageInputDisabled]="paginationConfigOption().pageInputDisabled ?? false"
       [itemsPerPageOptions]="paginationConfigOption().pageSizes ?? DEFAULT_PAGINATION_PAGE_SIZES"
+      [model]="paginationModel()"
+      [pageInputDisabled]="paginationConfigOption().pageInputDisabled ?? false"
+      (selectPage)="selectPage($event)"
     ></cds-pagination>
   }
 </cds-table-container>

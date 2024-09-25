@@ -1,17 +1,16 @@
 <button
   class="button-container"
   [cdsButton]="typeConfigOption()"
-  [size]="'md'"
-  [isExpressive]="false"
-  [disabled]="false"
-  (click)="onClick()"
   [disabled]="isLoadingConfigOption()"
+  [isExpressive]="false"
+  [size]="'md'"
+  (click)="onClick()"
 >
   @if (isLoadingConfigOption()) {
     <cds-inline-loading
       class="loader-container"
-      [state]="'active'"
       [loadingText]="'Loading data...'"
+      [state]="'active'"
     >
     </cds-inline-loading>
   } @else if (!isErrorConfigOption()) {
