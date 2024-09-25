@@ -1,0 +1,157 @@
+{
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "remoteResourceIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stateSubscription": {
+      "$ref": "#/definitions/StateSubscriptionConfig"
+    },
+    "options": {
+      "$ref": "#/definitions/UIElementTemplateOptions<{rows:(string|number|bigint|boolean|symbol)[][];title:string;description:string;headers:(string|number|bigint|boolean|symbol)[];pagination:{pageSizes?:number[]|undefined;pageInputDisabled?:boolean|undefined;totalDataLength?:number|undefined;};primaryButtonId:string;}>"
+    },
+    "eventsHooks": {
+      "$ref": "#/definitions/EventsToHooksMap<\"paginationChanged\">"
+    }
+  },
+  "required": ["id", "options", "type"],
+  "definitions": {
+    "StateSubscriptionConfig": {
+      "type": "object",
+      "properties": {
+        "global": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "local": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "layout": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "propertyOrder": ["global", "local", "layout"]
+    },
+    "UIElementTemplateOptions<{rows:(string|number|bigint|boolean|symbol)[][];title:string;description:string;headers:(string|number|bigint|boolean|symbol)[];pagination:{pageSizes?:number[]|undefined;pageInputDisabled?:boolean|undefined;totalDataLength?:number|undefined;};primaryButtonId:string;}>": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "isLoading": {
+          "type": "boolean"
+        },
+        "isError": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                {
+                  "type": ["string", "number", "object", "boolean"]
+                }
+              ]
+            }
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "number",
+                "properties": {},
+                "additionalProperties": false
+              },
+              {
+                "type": ["string", "number", "object", "boolean"]
+              }
+            ]
+          }
+        },
+        "pagination": {
+          "$ref": "#/definitions/{pageSizes?:number[]|undefined;pageInputDisabled?:boolean|undefined;totalDataLength?:number|undefined;}"
+        },
+        "primaryButtonId": {
+          "type": "string"
+        }
+      }
+    },
+    "{pageSizes?:number[]|undefined;pageInputDisabled?:boolean|undefined;totalDataLength?:number|undefined;}": {
+      "type": "object",
+      "properties": {
+        "pageSizes": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "pageInputDisabled": {
+          "type": "boolean"
+        },
+        "totalDataLength": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false,
+      "propertyOrder": ["pageSizes", "pageInputDisabled", "totalDataLength"]
+    },
+    "EventsToHooksMap<\"paginationChanged\">": {
+      "type": "object",
+      "properties": {
+        "paginationChanged": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/{type:string;payload?:any;}"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "propertyOrder": ["paginationChanged"]
+    },
+    "{type:string;payload?:any;}": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "payload": {}
+      },
+      "additionalProperties": false,
+      "propertyOrder": ["type", "payload"],
+      "required": ["type"]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

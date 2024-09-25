@@ -1,0 +1,44 @@
+@let carouselImages = imageUrlsConfigOption();
+
+@if (isLoadingConfigOption()) {
+  <span>Loading...</span>
+} @else if (isErrorConfigOption()) {
+  <span>Something went wrong</span>
+} @else {
+  <ol class="slides-container">
+    @for (image of carouselImages; let idx = $index; track image) {
+      <li
+        #carouselSlide
+        class="slides-container__slide"
+        [attr.aria-hidden]="true"
+        [backgroundImage]="image.imageUrl"
+        [id]="image.imageId"
+        (click)="setImageToPreview(image.imageUrl)"
+        (keypress)="setImageToPreview(image.imageUrl)"
+      >
+        <div class="slides-container__slide__snapper"></div>
+      </li>
+    }
+  </ol>
+  <aside class="navigation-controls-container">
+    <ol class="navigation-controls-container__navigation-list">
+      @for (item of carouselImages; let idx = $index; track $index) {
+        <li
+          aria-hidden="true"
+          class="navigation-controls-container__navigation-list__item"
+          role="button"
+          (click)="changeToSlide(item.imageId)"
+          (keypress)="changeToSlide(item.imageId)"
+        ></li>
+      }
+    </ol>
+  </aside>
+}
+
+<lib-modal
+  *ngIf="currentPreviewImageSig() as currentPreviewImage"
+  [isOpen]="!!currentPreviewImage"
+  (closeDialog)="currentPreviewImageSig.set(null)"
+>
+  <img alt="Preview image" class="preview-image" [src]="currentPreviewImage" />
+</lib-modal>

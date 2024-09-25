@@ -1,0 +1,10 @@
+<dialog
+  #dialogEle
+  class="dialog-container"
+  [attr.aria-hidden]="true"
+  (click)="closeModalWithMouseClick($event)"
+  (close)="closeDialog.emit()"
+  (keypress)="closeModalWithKeyPress()"
+>
+  <ng-content></ng-content>
+</dialog>

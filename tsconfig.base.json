@@ -22,6 +22,26 @@
       "@dj-ui/core/js-interpolation-worker": [
         "libs/dj-ui/core/js-interpolation-worker/src/index.ts"
       ],
+      "@dj-ui/common": ["libs/dj-ui/common/src/index.ts"],
+      "@dj-ui/carbon-components": ["libs/dj-ui/prebuilt-components/carbon/src/index.ts"],
+      "@dj-ui/carbon-components/carbon-button": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-button/src/index.ts"
+      ],
+      "@dj-ui/carbon-components/carbon-carousel": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-carousel/src/index.ts"
+      ],
+      "@dj-ui/carbon-components/carbon-carousel-card": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-carousel-card/src/index.ts"
+      ],
+      "@dj-ui/carbon-components/carbon-table": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-table/src/index.ts"
+      ],
+      "@dj-ui/carbon-components/carbon-text-card": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-text-card/src/index.ts"
+      ],
+      "@dj-ui/carbon-components/shared": [
+        "libs/dj-ui/prebuilt-components/carbon/shared/src/index.ts"
+      ],
       "@namnguyen191/common-angular-helper": ["libs/shared/common-angular-helper/src/index.ts"],
       "@namnguyen191/common-js-helper": ["libs/shared/common-js-helper/src/index.ts"],
       "@namnguyen191/dui-carbon-components": [
