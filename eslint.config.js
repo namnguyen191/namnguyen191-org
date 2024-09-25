@@ -69,6 +69,15 @@ export default [
               ],
             },
             {
+              sourceTag: 'scope:dj-ui-extensions',
+              onlyDependOnLibsWithTags: [
+                'scope:dj-ui-core',
+                'scope:shared-lib',
+                'scope:shared-lib:angular',
+                'scope:dui-extensions',
+              ],
+            },
+            {
               sourceTag: 'scope:shared-lib:angular',
               onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
             },
