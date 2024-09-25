@@ -1,0 +1,15 @@
+@if (!isInfinite()) {
+  <ng-container *ngIf="uiElementTemplate() | async as uiElementTemplate">
+    @if (uiElementTemplate.status === 'loaded') {
+      <ng-container #uiElementVCR></ng-container>
+    } @else {
+      @if (uiElementLoadingComponent) {
+        <ng-container *ngComponentOutlet="uiElementLoadingComponent"></ng-container>
+      } @else {
+        <span>Loading UI component....</span>
+      }
+    }
+  </ng-container>
+} @else {
+  <span>Infinte loop in rendering element detected</span>
+}

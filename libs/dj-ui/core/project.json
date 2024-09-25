@@ -1,0 +1,58 @@
+{
+  "name": "core",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dj-ui/core/src",
+  "prefix": "dj-ui",
+  "projectType": "library",
+  "tags": ["scope:dj-ui-core"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/dj-ui/core/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/dj-ui/core/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/dj-ui/core/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/dj-ui/core/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.lib.json --noEmit"],
+        "cwd": "libs/dj-ui/core"
+      }
+    },
+    "stylelint": {
+      "executor": "nx-stylelint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/dj-ui/core/**/*.css", "libs/dj-ui/core/**/*.scss"]
+      }
+    },
+    "generate-json-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsx scripts/dj-ui-gen-json-schem.ts libs/dj-ui/core libs/dj-ui/core/tsconfig.lib.json"
+        ]
+      }
+    }
+  }
+}

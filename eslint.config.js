@@ -18,6 +18,7 @@ export default [
       '**/node_modules',
       '**/eslint*.js',
       '**/lint-staged.config.js',
+      '**/generated-json-schemas/**',
     ],
   },
   ...nx.configs['flat/base'],
@@ -52,6 +53,10 @@ export default [
             },
             {
               sourceTag: 'scope:dui-core',
+              onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
+            },
+            {
+              sourceTag: 'scope:dj-ui-core',
               onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
             },
             {

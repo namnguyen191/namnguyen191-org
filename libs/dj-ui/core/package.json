@@ -1,0 +1,18 @@
+{
+  "name": "@dj-ui/core",
+  "version": "0.0.0",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@angular/common": "18.X.X",
+    "@angular/core": "18.X.X",
+    "@namnguyen191/types-helper": "*",
+    "angular-gridster2": "18.X.X",
+    "rxjs": "~7.8.1",
+    "lodash-es": "^4.17.21",
+    "zod": "^3.22.4"
+  },
+  "sideEffects": false
+}

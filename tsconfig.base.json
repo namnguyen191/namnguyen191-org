@@ -61,7 +61,11 @@
       "@namnguyen191/shrimping-around/features/home": [
         "libs/shrimping-around/features/home/src/index.ts"
       ],
-      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
+      "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"],
+      "@dj-ui/core": ["libs/dj-ui/core/src/index.ts"],
+      "@dj-ui/core/js-interpolation-worker": [
+        "libs/dj-ui/core/js-interpolation-worker/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp", "**/eslint**.js"]
