@@ -1,5 +1,5 @@
 {
-  "name": "common",
+  "name": "dj-ui-common",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dj-ui/common/src",
   "prefix": "dj-ui",

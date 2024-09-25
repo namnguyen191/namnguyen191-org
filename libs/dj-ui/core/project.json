@@ -1,5 +1,5 @@
 {
-  "name": "core",
+  "name": "dj-ui-core",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dj-ui/core/src",
   "prefix": "dj-ui",
