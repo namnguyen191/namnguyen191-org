@@ -66,6 +66,8 @@ export default [
                 'scope:shared-lib',
                 'scope:shared-lib:angular',
                 'scope:dui-extensions',
+                'scope:dj-ui-core',
+                'scope:dj-ui-extensions',
               ],
             },
             {

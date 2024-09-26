@@ -12,8 +12,8 @@
     "zod": "^3.22.4",
     "@namnguyen191/types-helper": "*",
     "lodash-es": "^4.17.21",
-    "@namnguyen191/dui-core": "*",
-    "@namnguyen191/dui-common": "*"
+    "@dj-ui/core": "*",
+    "@dj-ui/common": "*"
   },
   "sideEffects": false
 }

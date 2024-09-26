@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
+import { BaseUIElementComponent, UIElementImplementation } from '@dj-ui/core';
 import { z } from 'zod';
 
 const ZodButtonColor = z.enum(['primary', 'accent', 'warn'], {

@@ -10,7 +10,7 @@ import {
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-import { BaseUIElementComponent, UIElementImplementation } from '@namnguyen191/dui-core';
+import { BaseUIElementComponent, UIElementImplementation } from '@dj-ui/core';
 import { parseZodWithDefault, ZodNonEmptyPrimitive } from '@namnguyen191/types-helper';
 import { isEmpty } from 'lodash-es';
 import { z } from 'zod';

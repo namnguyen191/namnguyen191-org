@@ -1,4 +1,4 @@
-import { ComponentLoadersMap } from '@namnguyen191/dui-common';
+import { ComponentLoadersMap } from '@dj-ui/common';
 
 export const DuiMuiComponentLoader: ComponentLoadersMap = {
   SIMPLE_BUTTON: () =>

@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import {
-  BaseUIElementComponent,
-  LayoutComponent,
-  UIElementImplementation,
-} from '@namnguyen191/dui-core';
+import { BaseUIElementComponent, LayoutComponent, UIElementImplementation } from '@dj-ui/core';
 import { z } from 'zod';
 
 const ZodTabConfigObject = z.object({
