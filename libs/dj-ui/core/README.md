@@ -2,20 +2,20 @@
 
 ## Quick setup instruction
 
-This guide will show you all the steps to get a simple version of DJ-UI up and running with dj-ui-carbon-component. In this example, our setup is a simple Angular app managed using [NX](https://nx.dev/)
+This guide will show you all the steps to get a simple version of @dj-ui up and running with @dj-ui/carbon-components. In this example, our setup is a simple Angular app managed using [NX](https://nx.dev/)
 
 ### 1. Installation
 
 - Install `core` and `common` lib:
 
 ```sh
-npm install @namnguyen191/dj-ui-core @namnguyen191/dj-ui-common
+npm install @dj-ui/core @dj-ui/common
 ```
 
-- Install the integrated component lib [@namnguyen191/dj-ui-carbon-components](https://www.npmjs.com/package/@namnguyen191/dj-ui-carbon-components) and follow their setup instruction.
+- Install the integrated component lib [@dj-ui/carbon-components](https://www.npmjs.com/package/@dj-ui/carbon-components) and follow their setup instruction.
 
 ```sh
-npm install @namnguyen191/dj-ui-carbon-components
+npm install @dj-ui/carbon-components
 ```
 
 ### 2. JS runner setup:
@@ -50,13 +50,13 @@ The way a web worker can be setup can be different between each projects. So fol
 
 - Create the web worker file `src/app/js-runner.worker.ts`:
 
-```js
+```ts
 /// <reference lib="webworker" />
 
-import { handleRunJsMessage } from '@namnguyen191/dj-ui-core/js-interpolation-worker';
+import { handleRunJsMessage } from '@dj-ui/core/js-interpolation-worker';
 
 addEventListener('message', (e) => {
-  const allowList = new Set() < string > ['console', 'JSON', 'Math'];
+  const allowList = new Set<string>(['console', 'JSON', 'Math']);
   handleRunJsMessage(e, allowList);
 });
 ```
@@ -67,7 +67,7 @@ addEventListener('message', (e) => {
 import {
   ApplicationConfig,
 } from '@angular/core';
-import { JS_RUNNER_WORKER } from '@namnguyen191/dj-ui-core';
+import { JS_RUNNER_WORKER } from '@dj-ui/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -179,7 +179,7 @@ import {
   LayoutTemplate,
   RemoteResourceTemplate,
   UIElementTemplate,
-} from '@namnguyen191/dj-ui-core';
+} from '@dj-ui/core';
 
 @Injectable({
   providedIn: 'root',
@@ -210,36 +210,26 @@ export class DJ-UITemplatesService {
 
 - Provide value for the injection token `DJ-UI_COMMON_SETUP_CONFIG`:
 
-```js
-import {
-  ApplicationConfig,
-  inject,
-} from '@angular/core';
-import { DJ-UI_COMMON_SETUP_CONFIG, DJ-UISetupConfigs } from '@namnguyen191/dj-ui-common';
-import {
-  CarbonButtonComponent,
-  CarbonTableComponent,
-} from '@namnguyen191/dj-ui-carbon-components';
-import { DJ-UITemplatesService } from './dj-ui-templates.service';
+```ts
+import { ApplicationConfig, inject } from '@angular/core';
+import { COMMON_SETUP_CONFIG, SetupConfigs } from '@dj-ui/common';
+import { CarbonComponentLoader } from '@dj-ui/carbon-components';
+import { DJUITemplatesService } from './dj-ui-templates.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     {
-      provide: DJ-UI_COMMON_SETUP_CONFIG,
-      useFactory: (): DJ-UISetupConfigs => {
-        const dj-uiTemplatesSerivce = inject(DJ-UITemplatesService);
+      provide: COMMON_SETUP_CONFIG,
+      useFactory: (): SetupConfigs => {
+        const templatesSerivce = inject(DJUITemplatesService);
 
         return {
           templatesHandlers: {
-            getLayoutTemplate: dj-uiTemplatesSerivce.getLayoutTemplate,
-            getUiElementTemplate: dj-uiTemplatesSerivce.getUiElementTemplate,
-            getRemoteResourceTemplate:
-              dj-uiTemplatesSerivce.getRemoteResourceTemplate,
+            getLayoutTemplate: templatesSerivce.getLayoutTemplate,
+            getUiElementTemplate: templatesSerivce.getUiElementTemplate,
+            getRemoteResourceTemplate: templatesSerivce.getRemoteResourceTemplate,
           },
-          componentsMap: {
-            [CarbonButtonComponent.ELEMENT_TYPE]: CarbonButtonComponent,
-            [CarbonTableComponent.ELEMENT_TYPE]: CarbonTableComponent,
-          },
+          componentLoadersMap: CarbonComponentLoader,
         };
       },
     },
@@ -251,19 +241,19 @@ export const appConfig: ApplicationConfig = {
 
 ```js
 import { Component } from '@angular/core';
-import { setupDefaultDJ-UI } from '@namnguyen191/dj-ui-common';
-import { DJUIComponent } from '@namnguyen191/dj-ui-core';
+import { setupDefault(); } from '@dj-ui/common';
+import { DjuiComponent } from '@namnguyen191/dj-ui-core';
 
 @Component({
   standalone: true,
-  imports: [DJUIComponent],
+  imports: [DjuiComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
   constructor() {
-    setupDefaultDJ-UI();
+    setupDefault();
   }
 }
 ```
@@ -271,5 +261,5 @@ export class AppComponent {
 - And now we can display the layout in `src/app/app.component.html`:
 
 ```html
-<namnguyen191-dj-ui layoutId="carbon_example_layout_template"></namnguyen191-dj-ui>
+<djui layoutId="carbon_example_layout_template"></djui>
 ```
