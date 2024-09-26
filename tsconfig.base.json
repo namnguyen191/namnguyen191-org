@@ -56,9 +56,6 @@
       "@namnguyen191/dui-mui-components/tabs": [
         "libs/dui/dui-prebuilt-components/dui-mui-components/tabs/src/index.ts"
       ],
-      "@namnguyen191/shrimping-around/features/home": [
-        "libs/shrimping-around/features/home/src/index.ts"
-      ],
       "@namnguyen191/types-helper": ["libs/shared/types-helper/src/index.ts"]
     }
   },
