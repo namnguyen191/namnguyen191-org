@@ -6,10 +6,10 @@ import {
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { CarbonComponentLoader } from '@dj-ui/carbon-components';
+import { COMMON_SETUP_CONFIG, SetupConfigs } from '@dj-ui/common';
+import { CORE_CONFIG, JS_RUNNER_WORKER } from '@dj-ui/core';
 import { globalDelayInterceptorFactory } from '@namnguyen191/common-angular-helper';
-import { DuiCarbonComponentLoader } from '@namnguyen191/dui-carbon-components';
-import { DUI_COMMON_SETUP_CONFIG, DUISetupConfigs } from '@namnguyen191/dui-common';
-import { DUI_CORE_CONFIG, JS_RUNNER_WORKER } from '@namnguyen191/dui-core';
 
 import { appRoutes } from './app.routes';
 import { DuiLayoutLoadingComponent } from './components/dui-layout-loading/dui-layout-loading.component';
@@ -41,15 +41,15 @@ export const appConfig: ApplicationConfig = {
       },
     },
     {
-      provide: DUI_CORE_CONFIG,
+      provide: CORE_CONFIG,
       useValue: {
         layoutLoadingComponent: DuiLayoutLoadingComponent,
         uiElementLoadingComponent: DuiUiElementLoadingComponent,
       },
     },
     {
-      provide: DUI_COMMON_SETUP_CONFIG,
-      useFactory: (): DUISetupConfigs => {
+      provide: COMMON_SETUP_CONFIG,
+      useFactory: (): SetupConfigs => {
         const layoutsServiceAPI = inject(LayoutsService);
         const uiElementTemplateService = inject(UIElementTemplateService);
         const remoteResourcesService = inject(RemoteResourcesService);
@@ -61,7 +61,7 @@ export const appConfig: ApplicationConfig = {
             getRemoteResourceTemplate: remoteResourcesService.getRemoteResourceById,
             updateElementsPositionsHandler: layoutsServiceAPI.updateLayoutElementPositionAndSize,
           },
-          componentLoadersMap: DuiCarbonComponentLoader,
+          componentLoadersMap: CarbonComponentLoader,
         };
       },
     },

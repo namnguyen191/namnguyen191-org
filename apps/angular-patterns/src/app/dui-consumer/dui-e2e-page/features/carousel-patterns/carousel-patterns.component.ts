@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
-import { DuiComponent } from '@namnguyen191/dui-core';
+import { DjuiComponent } from '@dj-ui/core';
 
 @Component({
   selector: 'namnguyen191-carousel-patterns',
   standalone: true,
-  imports: [DuiComponent],
+  imports: [DjuiComponent],
   templateUrl: './carousel-patterns.component.html',
   styleUrl: './carousel-patterns.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

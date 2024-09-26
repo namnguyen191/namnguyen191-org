@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { setupDefaultDUI } from '@namnguyen191/dui-common';
-import { ActionHookService } from '@namnguyen191/dui-core';
+import { setupDefault } from '@dj-ui/common';
+import { ActionHookService } from '@dj-ui/core';
 import { NotificationModule, ThemeModule, ToastContent } from 'carbon-components-angular';
 
 @Component({
@@ -27,7 +27,7 @@ export class DuiE2EPageComponent {
   };
 
   constructor() {
-    setupDefaultDUI();
+    setupDefault();
     this.#actionHookService.registerHook({
       hookId: 'showTestNotification',
       handler: () => this.#showNotification(),

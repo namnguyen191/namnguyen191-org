@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { LayoutTemplate, UIElementPositionAndSize } from '@namnguyen191/dui-core';
+import { LayoutTemplate, UIElementPositionAndSize } from '@dj-ui/core';
 import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 
 const BASE_LAYOUT_URL = 'http://localhost:8080/layouts';

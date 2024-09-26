@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
-import { DuiComponent } from '@namnguyen191/dui-core';
+import { DjuiComponent } from '@dj-ui/core';
 
 @Component({
   selector: 'namnguyen191-text-card-patterns',
   standalone: true,
-  imports: [DuiComponent],
+  imports: [DjuiComponent],
   templateUrl: './text-card-patterns.component.html',
   styleUrl: './text-card-patterns.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
