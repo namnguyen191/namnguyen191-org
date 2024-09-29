@@ -1,7 +1,6 @@
 @use 'carbon-components/scss/globals/scss/spacing';
 
-:host {
-  display: block;
+@mixin remove-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
   scrollbar-color: transparent transparent;
@@ -9,13 +8,12 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
 
-  .carousel {
-    position: relative;
-    padding-top: 75%;
-    filter: drop-shadow(0 0 10px #0003);
-    perspective: 100px;
-  }
+:host {
+  display: block;
+
+  @include remove-scrollbar;
 
   .slides-container {
     position: absolute;
@@ -29,9 +27,12 @@
       position: relative;
       flex: 0 0 100%;
       width: 100%;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
+
+      img {
+        object-fit: cover;
+        object-position: center;
+        cursor: zoom-in;
+      }
 
       &__snapper {
         position: absolute;
@@ -70,21 +71,6 @@
         }
       }
     }
-  }
-
-  .carousel::before,
-  .carousel::after {
-    content: '';
-    z-index: 1;
-    background-color: #333;
-    background-size: 1.5rem 1.5rem;
-    background-repeat: no-repeat;
-    background-position: center center;
-    color: #fff;
-    font-size: 2.5rem;
-    line-height: 4rem;
-    text-align: center;
-    pointer-events: none;
   }
 
   .preview-image {

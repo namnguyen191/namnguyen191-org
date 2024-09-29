@@ -11,18 +11,23 @@
         #carouselSlide
         class="slides-container__slide"
         [attr.aria-hidden]="true"
-        [backgroundImage]="image.imageUrl"
         [id]="image.imageId"
         (click)="setImageToPreview(image.imageUrl)"
         (keypress)="setImageToPreview(image.imageUrl)"
       >
-        <div class="slides-container__slide__snapper"></div>
+        <img
+          alt="Slide image"
+          class="slides-container__slide__snapper"
+          [fill]="true"
+          [ngSrc]="image.imageUrl"
+          [priority]="idx === 0"
+        />
       </li>
     }
   </ol>
   <aside class="navigation-controls-container">
     <ol class="navigation-controls-container__navigation-list">
-      @for (item of carouselImages; let idx = $index; track $index) {
+      @for (item of carouselImages; track $index) {
         <li
           aria-hidden="true"
           class="navigation-controls-container__navigation-list__item"

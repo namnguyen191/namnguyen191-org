@@ -1,5 +1,28 @@
+/* stylelint-disable scss/at-rule-no-unknown */
+$animation-duration: 0.5s;
+
 :host {
   display: contents;
+
+  /*   Open state of the dialog  */
+  dialog[open] {
+    opacity: 1;
+  }
+
+  /*   Closed state of the dialog   */
+  dialog {
+    opacity: 0;
+    transition: all $animation-duration allow-discrete;
+  }
+
+  // Before-open state
+  // Needs to be after the previous dialog[open] rule to take effect,
+  // as the specificity is the same
+  @starting-style {
+    dialog[open] {
+      opacity: 0;
+    }
+  }
 
   ::backdrop {
     background-color: var(--cds-background-active);

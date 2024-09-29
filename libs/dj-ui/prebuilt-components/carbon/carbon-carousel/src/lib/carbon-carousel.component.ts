@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +38,14 @@ type CarouselImage = {
 @Component({
   selector: 'dj-ui-carbon-carousel',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconModule, BackgroundImageDirective, ModalComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    IconModule,
+    BackgroundImageDirective,
+    ModalComponent,
+    NgOptimizedImage,
+  ],
   templateUrl: './carbon-carousel.component.html',
   styleUrl: './carbon-carousel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
