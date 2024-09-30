@@ -3,13 +3,15 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
 import {
   CarbonCarouselCardElementType,
   CarbonCarouselCardSymbol,
+  CarbonCarouselSymbol,
 } from '@dj-ui/carbon-components/shared';
 import { BaseUIElementComponent, UIElementImplementation } from '@dj-ui/core';
+import { UiElementWrapperComponent } from '@dj-ui/core';
 import { parseZodWithDefault } from '@namnguyen191/types-helper';
 
 import {
   CarouselCardConfigs,
-  ZCarouselImagesConfigOption,
+  ZCarouselIdConfigOption,
   ZDescriptionConfigOption,
   ZTitleConfigOption,
 } from './carbon-carousel-card.interface';
@@ -17,7 +19,7 @@ import {
 @Component({
   selector: 'dj-ui-carbon-carousel-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiElementWrapperComponent],
   templateUrl: './carbon-carousel-card.component.html',
   styleUrl: './carbon-carousel-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,8 +52,11 @@ export class CarbonCarouselCardComponent
       parseZodWithDefault(ZDescriptionConfigOption, val, this.#defaultDescription),
   });
 
-  carouselImagesConfigOption: InputSignal<string[]> = input([] as string[], {
-    alias: 'carouselImages',
-    transform: (val) => parseZodWithDefault(ZCarouselImagesConfigOption, val, []),
+  #defaultCarouselId = 'missingCarouselId';
+  carouselIdConfigOption: InputSignal<string> = input(this.#defaultCarouselId, {
+    alias: 'carouselId',
+    transform: (val) => parseZodWithDefault(ZCarouselIdConfigOption, val, this.#defaultCarouselId),
   });
+
+  carouselSymbol = CarbonCarouselSymbol;
 }

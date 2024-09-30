@@ -11,15 +11,17 @@ export const ZDescriptionConfigOption = z.string({
 });
 export type DescriptionConfigOption = z.infer<typeof ZDescriptionConfigOption>;
 
-export const ZCarouselImagesConfigOption = z.array(z.string(), {
-  errorMap: () => ({ message: 'Carousel images must be an array of string' }),
+export const ZCarouselIdConfigOption = z.string({
+  errorMap: () => ({
+    message: 'CarouselId must be a string',
+  }),
 });
-export type CarouselImagesConfigOption = z.infer<typeof ZCarouselImagesConfigOption>;
+export type CarouselIdConfigOption = z.infer<typeof ZCarouselIdConfigOption>;
 
 export const ZCarouselCardConfigs = z.object({
   title: ZTitleConfigOption,
   description: ZDescriptionConfigOption,
-  carouselImages: ZCarouselImagesConfigOption,
+  carouselId: ZCarouselIdConfigOption,
 });
 export type CarouselCardConfigs = z.infer<typeof ZCarouselCardConfigs>;
 

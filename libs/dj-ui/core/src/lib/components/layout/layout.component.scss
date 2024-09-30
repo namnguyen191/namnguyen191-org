@@ -17,5 +17,9 @@
 
   gridster {
     background: unset;
+
+    gridster-item {
+      overflow: visible;
+    }
   }
 }

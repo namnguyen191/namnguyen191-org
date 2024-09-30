@@ -3,7 +3,12 @@
 } @else if (isErrorConfigOption()) {
   <span>Something went wrong</span>
 } @else {
-  <section class="card-carousel"></section>
+  <section class="card-carousel">
+    <dj-ui-element-wrapper
+      [requiredComponentSymbols]="[carouselSymbol]"
+      [uiElementTemplateId]="carouselIdConfigOption()"
+    ></dj-ui-element-wrapper>
+  </section>
 
   <section class="card-body">
     <h4 class="card-body__text__title">{{ titleConfigOption() }}</h4>

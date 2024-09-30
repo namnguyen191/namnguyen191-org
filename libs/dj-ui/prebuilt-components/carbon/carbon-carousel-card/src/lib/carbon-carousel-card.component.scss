@@ -1,3 +1,23 @@
+@use 'carbon-components/scss/globals/scss/spacing';
+@use 'carbon-components/scss/globals/scss/typography';
+
 :host {
-  display: flex;
+  --card-box-shadow-color: color-mix(in srgb, currentcolor, transparent 80%);
+
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  text-align: center;
+  gap: spacing.$spacing-08;
+  box-shadow: var(--card-box-shadow-color) 0 7px 29px 0;
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: spacing.$spacing-04;
+
+    &__text__title {
+      @include typography.type-style('expressive-heading-04');
+    }
+  }
 }

@@ -25,5 +25,19 @@
     "**/.nx": true,
     "**/tmp": true,
     "**/_": true
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/*.LAYOUT_TEMPLATE.json"],
+      "url": "./libs/dj-ui/core/generated-json-schemas/LayoutTemplateSchema.json"
+    },
+    {
+      "fileMatch": ["**/*.REMOTE_RESOURCE_TEMPLATE.json"],
+      "url": "./libs/dj-ui/core/generated-json-schemas/RemoteResourceTemplateSchema.json"
+    },
+    {
+      "fileMatch": ["**/*.carousel-card.json"],
+      "url": "./libs/dj-ui/prebuilt-components/carbon/generated-json-schemas/CarbonCarouselCardSchema.json"
+    }
+  ]
 }

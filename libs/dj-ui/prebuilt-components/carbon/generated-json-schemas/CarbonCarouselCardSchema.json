@@ -18,7 +18,7 @@
       "$ref": "#/definitions/StateSubscriptionConfig"
     },
     "options": {
-      "$ref": "#/definitions/UIElementTemplateOptions<{title:string;description:string;carouselImages:string[];}>"
+      "$ref": "#/definitions/UIElementTemplateOptions<{title:string;description:string;carouselId:string;}>"
     }
   },
   "required": ["id", "options", "type"],
@@ -48,7 +48,7 @@
       "additionalProperties": false,
       "propertyOrder": ["global", "local", "layout"]
     },
-    "UIElementTemplateOptions<{title:string;description:string;carouselImages:string[];}>": {
+    "UIElementTemplateOptions<{title:string;description:string;carouselId:string;}>": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -64,11 +64,8 @@
         "description": {
           "type": "string"
         },
-        "carouselImages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "carouselId": {
+          "type": "string"
         }
       }
     }

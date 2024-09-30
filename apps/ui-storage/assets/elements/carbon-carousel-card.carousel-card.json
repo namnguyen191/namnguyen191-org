@@ -1,0 +1,9 @@
+{
+  "id": "carbon-carousel-card.carousel-card",
+  "type": "CARBON_CAROUSEL_CARD",
+  "options": {
+    "title": "Red cherry",
+    "description": "A red cherry shrimp is a shrimp that is red",
+    "carouselId": "carbon-carousel-test"
+  }
+}

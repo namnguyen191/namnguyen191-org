@@ -35,6 +35,13 @@ export const duiE2ERoutes: Route[] = [
             (m) => m.CarouselPatternsComponent
           ),
       },
+      {
+        path: 'carousel-card-patterns',
+        loadComponent: () =>
+          import('./features/carousel-card-patterns/carousel-card-patterns.component').then(
+            (m) => m.CarouselCardPatternsComponent
+          ),
+      },
       { path: '**', redirectTo: 'button-patterns', pathMatch: 'full' },
     ],
   },
