@@ -8,6 +8,7 @@ import {
   InjectionToken,
   input,
   InputSignal,
+  OnDestroy,
   Signal,
   signal,
   WritableSignal,
@@ -105,7 +106,7 @@ const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnDestroy {
   readonly #layoutService = inject(LayoutTemplateService);
   readonly #layoutsChain = inject(LAYOUTS_CHAIN_TOKEN);
 
@@ -116,7 +117,6 @@ export class LayoutComponent {
     const layoutId = this.layoutId();
     return this.#layoutService.getLayoutTemplate(layoutId);
   });
-  #prevLayoutId: string | null = null;
 
   gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
 
@@ -132,7 +132,12 @@ export class LayoutComponent {
   layoutLoadingComponent = inject(CORE_CONFIG, { optional: true })?.layoutLoadingComponent;
 
   constructor() {
+    this.#onLayoutIdChangedEffect();
     this.#onLayoutConfigStreamChangedEffect();
+  }
+
+  ngOnDestroy(): void {
+    this.#unsubscribeFromLayoutConfig.complete();
   }
 
   #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
@@ -167,15 +172,38 @@ export class LayoutComponent {
     }
   }
 
+  #onLayoutIdChangedEffect(): void {
+    effect(
+      (onCleanup) => {
+        const layoutId = this.layoutId();
+
+        onCleanup(() => {
+          this.#layoutsChain.delete(layoutId);
+        });
+
+        const isInfinite = this.#layoutsChain.has(layoutId);
+
+        if (isInfinite) {
+          console.error(`Layout with id ${layoutId} has already existed in parents`);
+        } else {
+          this.#layoutsChain.add(layoutId);
+        }
+
+        this.isInfinite.set(isInfinite);
+      },
+      {
+        allowSignalWrites: true,
+      }
+    );
+  }
+
   #onLayoutConfigStreamChangedEffect(): void {
     effect(
       (onCleanup) => {
         onCleanup(() => {
           this.#unsubscribeFromLayoutConfig.next();
-          this.#unsubscribeFromLayoutConfig.complete();
         });
         const layoutConfigStream = this.layoutConfig();
-        this.#unsubscribeFromLayoutConfig.next();
         layoutConfigStream
           .pipe(takeUntil(this.#unsubscribeFromLayoutConfig))
           .subscribe((layoutConfigVal) => {
@@ -186,21 +214,6 @@ export class LayoutComponent {
 
             const gridItems = this.#createGridItems(layoutConfigVal.config);
             this.gridItems.set(gridItems);
-
-            const currentLayoutId = layoutConfigVal.config.id;
-            if (this.#prevLayoutId) {
-              this.#layoutsChain.delete(this.#prevLayoutId);
-              this.#prevLayoutId = currentLayoutId;
-            }
-
-            const isInfinite = this.#layoutsChain.has(currentLayoutId);
-
-            if (isInfinite) {
-              console.error(`Layout with id ${currentLayoutId} has already existed in parents`);
-            }
-
-            this.#layoutsChain.add(currentLayoutId);
-            this.isInfinite.set(isInfinite);
           });
       },
       {
