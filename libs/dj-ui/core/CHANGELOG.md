@@ -1,3 +1,15 @@
+## 0.0.1-1 (2024-10-02)
+
+
+### 🚀 Features
+
+- **dj-ui-core:** layout chain bug due to missing clean up ([97b811d](https://github.com/namnguyen191/namnguyen191-org/commit/97b811d))
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-0 (2024-09-30)
 
 
