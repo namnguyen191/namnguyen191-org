@@ -1,3 +1,15 @@
+## 0.0.1-2 (2024-10-03)
+
+
+### 🚀 Features
+
+- **dj-ui-core:** simplified flow for layout and element wrapper ([89f85d6](https://github.com/namnguyen191/namnguyen191-org/commit/89f85d6))
+
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-1 (2024-10-02)
 
 
