@@ -1,5 +1,5 @@
 @if (!isInfinite()) {
-  <ng-container *ngIf="uiElementTemplate() | async as uiElementTemplate">
+  <ng-container *ngIf="uiElementTemplate() as uiElementTemplate">
     @if (uiElementTemplate.status === 'loaded') {
       <ng-container #uiElementVCR></ng-container>
     } @else {

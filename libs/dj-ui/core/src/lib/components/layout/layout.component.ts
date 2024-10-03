@@ -8,11 +8,11 @@ import {
   InjectionToken,
   input,
   InputSignal,
-  OnDestroy,
   Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
+import { computedFromObservable } from '@namnguyen191/common-angular-helper';
 import {
   DisplayGrid,
   GridsterComponent,
@@ -21,7 +21,6 @@ import {
   GridsterItemComponent,
   GridType,
 } from 'angular-gridster2';
-import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { CORE_CONFIG } from '../../global';
 import { EventsService } from '../../services/events-and-actions/events.service';
@@ -31,7 +30,6 @@ import {
   LayoutTemplateWithStatus,
   UIElementInstance,
 } from '../../services/templates/layout-template-interfaces';
-import { logSubscription } from '../../utils/logging';
 import { UiElementWrapperComponent } from './ui-element-wrapper/ui-element-wrapper.component';
 
 type LayoutGridItem = GridsterItem & {
@@ -106,19 +104,25 @@ const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LayoutComponent implements OnDestroy {
+export class LayoutComponent {
   readonly #layoutService = inject(LayoutTemplateService);
   readonly #layoutsChain = inject(LAYOUTS_CHAIN_TOKEN);
 
-  #unsubscribeFromLayoutConfig = new Subject<void>();
-
   layoutId: InputSignal<string> = input.required<string>();
-  layoutConfig: Signal<Observable<LayoutTemplateWithStatus>> = computed(() => {
+
+  layoutConfig: Signal<LayoutTemplateWithStatus | undefined> = computedFromObservable(() => {
     const layoutId = this.layoutId();
     return this.#layoutService.getLayoutTemplate(layoutId);
   });
 
-  gridItems: WritableSignal<LayoutGridItem[] | null> = signal<LayoutGridItem[] | null>(null);
+  gridItems: Signal<LayoutGridItem[] | null> = computed(() => {
+    const layoutConfig = this.layoutConfig();
+    if (!layoutConfig || !layoutConfig.config) {
+      return null;
+    }
+
+    return this.#createGridItems(layoutConfig.config);
+  });
 
   isInfinite: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -133,11 +137,6 @@ export class LayoutComponent implements OnDestroy {
 
   constructor() {
     this.#onLayoutIdChangedEffect();
-    this.#onLayoutConfigStreamChangedEffect();
-  }
-
-  ngOnDestroy(): void {
-    this.#unsubscribeFromLayoutConfig.complete();
   }
 
   #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
@@ -190,31 +189,6 @@ export class LayoutComponent implements OnDestroy {
         }
 
         this.isInfinite.set(isInfinite);
-      },
-      {
-        allowSignalWrites: true,
-      }
-    );
-  }
-
-  #onLayoutConfigStreamChangedEffect(): void {
-    effect(
-      (onCleanup) => {
-        onCleanup(() => {
-          this.#unsubscribeFromLayoutConfig.next();
-        });
-        const layoutConfigStream = this.layoutConfig();
-        layoutConfigStream
-          .pipe(takeUntil(this.#unsubscribeFromLayoutConfig))
-          .subscribe((layoutConfigVal) => {
-            logSubscription(`Layout config stream for ${layoutConfigVal.id}`);
-            if (!layoutConfigVal || layoutConfigVal.status !== 'loaded') {
-              return;
-            }
-
-            const gridItems = this.#createGridItems(layoutConfigVal.config);
-            this.gridItems.set(gridItems);
-          });
       },
       {
         allowSignalWrites: true,

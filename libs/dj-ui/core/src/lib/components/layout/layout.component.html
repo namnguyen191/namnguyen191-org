@@ -1,4 +1,4 @@
-<ng-container *ngIf="layoutConfig() | async as layoutConfig">
+<ng-container *ngIf="layoutConfig() as layoutConfig">
   @if (!isInfinite()) {
     @switch (layoutConfig.status) {
       @case ('missing') {

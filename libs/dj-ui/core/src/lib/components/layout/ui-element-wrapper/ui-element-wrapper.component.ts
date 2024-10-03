@@ -19,6 +19,7 @@ import {
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { computedFromObservable } from '@namnguyen191/common-angular-helper';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEqual } from 'lodash-es';
 import {
@@ -26,7 +27,6 @@ import {
   combineLatest,
   distinctUntilChanged,
   EMPTY,
-  filter,
   from,
   map,
   Observable,
@@ -49,14 +49,8 @@ import {
   getRemoteResourcesStatesAsContext,
   RemoteResourcesStates,
 } from '../../../services/remote-resource.service';
+import { getStatesSubscriptionAsContext, StateMap } from '../../../services/state-store.service';
 import {
-  getStatesSubscriptionAsContext,
-  StateMap,
-  StateSubscriptionConfig,
-} from '../../../services/state-store.service';
-import {
-  EventsToHooksMap,
-  UIElementTemplateOptions,
   UIElementTemplateService,
   UIElementTemplateWithStatus,
 } from '../../../services/templates/ui-element-template.service';
@@ -104,32 +98,87 @@ export class UiElementWrapperComponent {
   private readonly uiElementVCR: Signal<ViewContainerRef | undefined> = viewChild('uiElementVCR', {
     read: ViewContainerRef,
   });
-  #unsubscribeInputsSubject = new Subject<void>();
-  #unsubscribeUiElementTemplate = new Subject<void>();
 
-  readonly uiElementTemplate: Signal<Observable<UIElementTemplateWithStatus>> = computed(() => {
-    return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId());
-  });
+  readonly uiElementTemplate: Signal<UIElementTemplateWithStatus | undefined> =
+    computedFromObservable(() => {
+      return this.#uiElementTemplatesService.getUIElementTemplate(this.uiElementTemplateId());
+    });
 
-  readonly uiElementComponent = signal<Type<unknown> | null>(null);
+  readonly uiElementComponent: Signal<Type<BaseUIElementComponent> | undefined> =
+    computedFromObservable(() => {
+      const uiElementTemp = this.uiElementTemplate();
+      if (!uiElementTemp || !uiElementTemp.config) {
+        return of(undefined);
+      }
 
-  readonly isInfinite = signal<boolean>(false);
-  readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
+      return from(this.#uiElementFactoryService.getUIElement(uiElementTemp.config.type));
+    });
 
-  readonly uiElementLoadingComponent = inject(CORE_CONFIG, { optional: true })
-    ?.uiElementLoadingComponent;
+  readonly #uiElementComponentRef: Signal<ComponentRef<BaseUIElementComponent> | null> = computed(
+    () => {
+      const vcr = this.uiElementVCR();
+      const uiElementComp = this.uiElementComponent();
+      const uiElementTemplateId = this.uiElementTemplateId();
+      if (!vcr || !uiElementComp) {
+        return null;
+      }
+      vcr.clear();
 
-  constructor() {
-    this.#checkForInfiniteRenderEffect();
-    this.#constructComponentEffect();
-  }
+      const componentSymbol: symbol = (uiElementComp as unknown as typeof BaseUIElementComponent)
+        .ELEMENT_SYMBOL;
+      const requiredComponentSymbols = this.requiredComponentSymbols();
+      if (requiredComponentSymbols.length && !requiredComponentSymbols.includes(componentSymbol)) {
+        logWarning(
+          `${uiElementTemplateId}: Wrong element received: expect ${requiredComponentSymbols.map((sym) => String(sym)).join('or ')} but got ${String(componentSymbol)}`
+        );
+        return null;
+      }
 
-  #generateComponentInputs(params: {
-    interpolationContext: Observable<ElementInputsInterpolationContext>;
-    templateOptions: UIElementTemplateOptions<Record<string, unknown>>;
-    withRemoteResource: boolean;
-  }): InputsStreams {
-    const { templateOptions, withRemoteResource, interpolationContext } = params;
+      return vcr.createComponent(uiElementComp);
+    }
+  );
+
+  readonly #elementInterpolationContext: Signal<Observable<ElementInputsInterpolationContext> | null> =
+    computed(() => {
+      const uiElementTemplate = this.uiElementTemplate();
+
+      if (!uiElementTemplate || !(uiElementTemplate.status === 'loaded')) {
+        return null;
+      }
+
+      const { remoteResourceIds, stateSubscription = {} } = uiElementTemplate.config;
+
+      const state = runInInjectionContext(this.#environmentInjector, () =>
+        getStatesSubscriptionAsContext(stateSubscription)
+      );
+      const remoteResourcesStates = remoteResourceIds?.length
+        ? runInInjectionContext(this.#environmentInjector, () =>
+            getRemoteResourcesStatesAsContext(remoteResourceIds)
+          )
+        : of(null);
+
+      return combineLatest({
+        remoteResourcesStates,
+        state,
+      }).pipe(
+        shareReplay({
+          refCount: true,
+          bufferSize: 1,
+        })
+      );
+    });
+
+  readonly #componentInputsStream: Signal<InputsStreams | null> = computed(() => {
+    const uiElementTemplate = this.uiElementTemplate();
+    const elementInterpolationContext = this.#elementInterpolationContext();
+
+    if (uiElementTemplate?.status !== 'loaded' || !elementInterpolationContext) {
+      return null;
+    }
+
+    const {
+      config: { options: templateOptions, remoteResourceIds },
+    } = uiElementTemplate;
 
     const inputsObservableMap: Record<string, Observable<unknown>> = {};
     for (const [key, val] of Object.entries(templateOptions)) {
@@ -137,7 +186,7 @@ export class UiElementWrapperComponent {
 
       inputsObservableMap[key] = !requiredInterpolation
         ? of(val)
-        : interpolationContext.pipe(
+        : elementInterpolationContext.pipe(
             switchMap((context) => {
               {
                 return from(
@@ -156,16 +205,16 @@ export class UiElementWrapperComponent {
           );
     }
 
-    if (withRemoteResource) {
+    if (remoteResourceIds?.length) {
       // Only automatically set isLoading and isError if the user does not provide any override for them
       if (templateOptions.isLoading === undefined) {
-        inputsObservableMap['isLoading'] = interpolationContext.pipe(
+        inputsObservableMap['isLoading'] = elementInterpolationContext.pipe(
           map((context) => !!context.remoteResourcesStates?.isPartialLoading.length)
         );
       }
 
       if (templateOptions.isError === undefined) {
-        inputsObservableMap['isError'] = interpolationContext.pipe(
+        inputsObservableMap['isError'] = elementInterpolationContext.pipe(
           map((context) => !!context.remoteResourcesStates?.isPartialError.length)
         );
       }
@@ -182,6 +231,17 @@ export class UiElementWrapperComponent {
     );
 
     return debouncedAndDistinctInputs;
+  });
+
+  readonly isInfinite = signal<boolean>(false);
+  readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
+
+  readonly uiElementLoadingComponent = inject(CORE_CONFIG, { optional: true })
+    ?.uiElementLoadingComponent;
+
+  constructor() {
+    this.#checkForInfiniteRenderEffect();
+    this.#setupComponentEffect();
   }
 
   #checkForInfiniteRenderEffect(): void {
@@ -216,156 +276,74 @@ export class UiElementWrapperComponent {
     );
   }
 
-  #setupComponent(params: {
-    inputsStreams: InputsStreams;
-    componentRef: ComponentRef<BaseUIElementComponent>;
-    eventsHooks?: EventsToHooksMap;
-    interpolationContext: Observable<ElementInputsInterpolationContext>;
-  }): void {
-    const { inputsStreams, componentRef, eventsHooks, interpolationContext } = params;
-    this.#unsubscribeInputsSubject.next();
-
-    for (const [inputName, valStream] of Object.entries(inputsStreams)) {
-      if (this.#checkInputExistsForComponent(componentRef.componentType, inputName)) {
-        valStream.pipe(takeUntil(this.#unsubscribeInputsSubject)).subscribe((val) => {
-          logSubscription(`[${this.uiElementTemplateId()}] Input stream for ${inputName}`);
-          componentRef.setInput(inputName, val);
-        });
-      } else {
-        logWarning(
-          `Input ${inputName} does not exist for component ${componentRef.instance.getElementType()}`
-        );
-      }
-    }
-
-    if (eventsHooks) {
-      for (const [eventName, hooks] of Object.entries(eventsHooks)) {
-        const componentOutput = (componentRef.instance as unknown as ObjectType)[eventName] as
-          | undefined
-          | OutputEmitterRef<unknown>;
-
-        if (!componentOutput || !(componentOutput instanceof OutputEmitterRef)) {
-          logWarning(
-            `Element ${componentRef.instance.getElementType()} has no support for event "${eventName}"`
-          );
-        } else {
-          const latestContext = interpolationContext.pipe(take(1));
-
-          componentOutput.subscribe((outputVal) => {
-            latestContext
-              .pipe(
-                switchMap((latestContextVal) =>
-                  this.#interpolationService.interpolate({
-                    value: hooks,
-                    context: { ...latestContextVal, ...(outputVal ?? {}) },
-                  })
-                )
-              )
-              .subscribe((interpolatedHooks) => {
-                logSubscription(`Output stream for ${this.uiElementTemplateId()}`);
-                this.#actionHookService.triggerActionHooks(interpolatedHooks as ActionHook[]);
-              });
-          });
-        }
-      }
-    }
-  }
-
-  #constructComponentEffect(): void {
+  #setupComponentEffect(): void {
     effect((onCleanup) => {
-      onCleanup(() => {
-        this.#unsubscribeUiElementTemplate.next();
-        this.#unsubscribeUiElementTemplate.complete();
-        this.#unsubscribeInputsSubject.next();
-        this.#unsubscribeInputsSubject.complete();
-      });
+      const componentInputsStream = this.#componentInputsStream();
+      const componentRef = this.#uiElementComponentRef();
+      const uiElementTemplate = this.uiElementTemplate();
+      const elementInterpolationContext = this.#elementInterpolationContext();
 
-      const uiElementVCR = this.uiElementVCR();
-
-      if (!uiElementVCR) {
+      if (
+        !componentInputsStream ||
+        !componentRef ||
+        uiElementTemplate?.status !== 'loaded' ||
+        !elementInterpolationContext
+      ) {
         return;
       }
 
-      const uiElementTemplate$ = this.uiElementTemplate();
-      const requiredComponentSymbols = this.requiredComponentSymbols();
+      const unsubscribeInputsSubject = new Subject<void>();
+      onCleanup(() => {
+        unsubscribeInputsSubject.next();
+        unsubscribeInputsSubject.complete();
+      });
 
-      this.#unsubscribeUiElementTemplate.next();
-      uiElementTemplate$
-        .pipe(
-          filter((uiElementTemplate) => uiElementTemplate.status === 'loaded'),
-          switchMap((uiElementTemplate) =>
-            from(this.#uiElementFactoryService.getUIElement(uiElementTemplate.config.type)).pipe(
-              map((uiElementComponent) => ({ uiElementComponent, uiElementTemplate }))
-            )
-          ),
-          takeUntil(this.#unsubscribeUiElementTemplate)
-        )
-        .subscribe(({ uiElementTemplate, uiElementComponent }) => {
-          logSubscription(`UI element template stream for ${this.uiElementTemplateId()}`);
-          const {
-            config: { remoteResourceIds, eventsHooks, stateSubscription, options },
-          } = uiElementTemplate;
+      for (const [inputName, valStream] of Object.entries(componentInputsStream)) {
+        if (this.#checkInputExistsForComponent(componentRef.componentType, inputName)) {
+          valStream.pipe(takeUntil(unsubscribeInputsSubject)).subscribe((val) => {
+            logSubscription(`[${this.uiElementTemplateId()}] Input stream for ${inputName}`);
+            componentRef.setInput(inputName, val);
+          });
+        } else {
+          logWarning(
+            `Input ${inputName} does not exist for component ${componentRef.instance.getElementType()}`
+          );
+        }
+      }
 
-          uiElementVCR.clear();
-          const componentRef = uiElementVCR.createComponent(
-            uiElementComponent
-          ) as ComponentRef<BaseUIElementComponent>;
+      const { eventsHooks } = uiElementTemplate.config;
+      if (eventsHooks) {
+        for (const [eventName, hooks] of Object.entries(eventsHooks)) {
+          const componentOutput = (componentRef.instance as unknown as ObjectType)[eventName] as
+            | undefined
+            | OutputEmitterRef<unknown>;
 
-          if (
-            requiredComponentSymbols.length &&
-            !requiredComponentSymbols.includes(componentRef.instance.getSymbol())
-          ) {
-            uiElementVCR.clear();
+          if (!componentOutput || !(componentOutput instanceof OutputEmitterRef)) {
             logWarning(
-              `Wrong element received: expect ${requiredComponentSymbols.map((sym) => String(sym)).join('or ')} but got ${String(componentRef.instance.getSymbol())}`
+              `Element ${componentRef.instance.getElementType()} has no support for event "${eventName}"`
             );
-            return;
+          } else {
+            const latestContext = elementInterpolationContext.pipe(take(1));
+
+            componentOutput.subscribe((outputVal) => {
+              latestContext
+                .pipe(
+                  switchMap((latestContextVal) =>
+                    this.#interpolationService.interpolate({
+                      value: hooks,
+                      context: { ...latestContextVal, ...(outputVal ?? {}) },
+                    })
+                  )
+                )
+                .subscribe((interpolatedHooks) => {
+                  logSubscription(`Output stream for ${this.uiElementTemplateId()}`);
+                  this.#actionHookService.triggerActionHooks(interpolatedHooks as ActionHook[]);
+                });
+            });
           }
-
-          const interpolationContext: Observable<ElementInputsInterpolationContext> =
-            runInInjectionContext(this.#environmentInjector, () =>
-              this.#getElementInterpolationContext({
-                remoteResourceIds,
-                stateSubscription,
-              })
-            );
-
-          const inputsStreams = this.#generateComponentInputs({
-            templateOptions: options,
-            interpolationContext,
-            withRemoteResource: !!remoteResourceIds?.length,
-          });
-
-          this.#setupComponent({
-            componentRef,
-            inputsStreams,
-            eventsHooks,
-            interpolationContext,
-          });
-        });
+        }
+      }
     });
-  }
-
-  #getElementInterpolationContext(params: {
-    remoteResourceIds?: string[];
-    stateSubscription?: StateSubscriptionConfig;
-  }): Observable<ElementInputsInterpolationContext> {
-    const { remoteResourceIds, stateSubscription = {} } = params;
-
-    const state = getStatesSubscriptionAsContext(stateSubscription);
-    const remoteResourcesStates = remoteResourceIds?.length
-      ? getRemoteResourcesStatesAsContext(remoteResourceIds)
-      : of(null);
-
-    return combineLatest({
-      remoteResourcesStates,
-      state,
-    }).pipe(
-      shareReplay({
-        refCount: true,
-        bufferSize: 1,
-      })
-    );
   }
 
   #checkInputExistsForComponent(componentClass: Type<unknown>, inputName: string): boolean {
