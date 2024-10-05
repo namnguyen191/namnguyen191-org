@@ -16,8 +16,13 @@ export type UIElementInstance = {
   };
 };
 
+export type GridConfigs = {
+  gap?: number;
+};
+
 export type LayoutTemplate = {
   id: string;
+  gridConfigs?: GridConfigs;
   uiElementInstances: UIElementInstance[];
 };
 

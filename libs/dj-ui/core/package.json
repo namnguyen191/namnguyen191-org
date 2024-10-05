@@ -10,6 +10,7 @@
     "@angular/core": "18.X.X",
     "@namnguyen191/types-helper": "*",
     "@namnguyen191/common-angular-helper": "^0.0.0-2",
+    "@namnguyen191/common-js-helper": "^0.0.0-2",
     "angular-gridster2": "18.X.X",
     "rxjs": "~7.8.1",
     "lodash-es": "^4.17.21",

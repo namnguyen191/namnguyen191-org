@@ -16,7 +16,7 @@
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
           rel="stylesheet"
         />
-        <gridster [options]="layoutGridConfigs">
+        <gridster *ngIf="layoutGridConfigs() as gridConfigs" [options]="gridConfigs">
           @if (gridItems(); as gridItems) {
             @if (gridItems.length > 0) {
               @for (item of gridItems; track item.trackById) {

@@ -15,6 +15,7 @@
     display: flex;
     flex-direction: column;
     gap: spacing.$spacing-04;
+    padding: 0 spacing.$spacing-05;
 
     &__text__title {
       @include typography.type-style('expressive-heading-04');

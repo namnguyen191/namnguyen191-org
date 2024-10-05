@@ -15,7 +15,12 @@ type UIElementInstance struct {
 	PositionAndSize     *ElementInstancePositionAndSizeConfig `json:"positionAndSize,omitempty" bson:"positionAndSize,omitempty"`
 }
 
+type LayoutGridConfigs struct {
+	Gap *int `json:"gap,omitempty" bson:"gap,omitempty"`
+}
+
 type Layout struct {
 	Id                 *string              `json:"id,omitempty" bson:"id,omitempty"`
+	GridConfigs        *LayoutGridConfigs   `json:"gridConfigs,omitempty" bson:"gridConfigs,omitempty"`
 	UIElementInstances *[]UIElementInstance `json:"uiElementInstances,omitempty" bson:"uiElementInstances,omitempty"`
 }

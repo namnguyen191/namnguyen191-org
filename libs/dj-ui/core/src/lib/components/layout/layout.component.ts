@@ -3,16 +3,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
+  ElementRef,
   inject,
-  InjectionToken,
   input,
   InputSignal,
   Signal,
-  signal,
-  WritableSignal,
 } from '@angular/core';
 import { computedFromObservable } from '@namnguyen191/common-angular-helper';
+import { parentContains } from '@namnguyen191/common-js-helper';
 import {
   DisplayGrid,
   GridsterComponent,
@@ -40,6 +38,7 @@ type LayoutGridItem = GridsterItem & {
 
 const GRID_COLS = 16; // 16 columns layout
 const GRID_ROW_HEIGHT = 16; // 16px per row
+const DEFAULT_GRID_GAP = 5;
 const DEFAULT_UI_ELEMENT_COLSPAN = 4;
 const DEFAULT_UI_ELEMENT_ROWSPAN = 20;
 const DEFAULT_UI_ELEMENT_X = 0;
@@ -62,7 +61,7 @@ const UI_ELEMENT_MAX_ROWS = 400;
 
 const GRID_CONFIG: GridsterConfig = {
   setGridSize: true,
-  margin: 5,
+  margin: DEFAULT_GRID_GAP,
   displayGrid: DisplayGrid.None,
   gridType: GridType.VerticalFixed,
   fixedRowHeight: GRID_ROW_HEIGHT,
@@ -85,28 +84,20 @@ const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
   return typeof item['id'] === 'string' && item['elementInstance'];
 };
 
-const LAYOUTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('LAYOUTS_CHAIN_TOKEN');
-
 @Component({
   selector: 'dj-ui-layout',
   standalone: true,
   imports: [CommonModule, UiElementWrapperComponent, GridsterComponent, GridsterItemComponent],
-  providers: [
-    {
-      provide: LAYOUTS_CHAIN_TOKEN,
-      useFactory: (): Set<string> => {
-        const existingToken = inject(LAYOUTS_CHAIN_TOKEN, { optional: true, skipSelf: true });
-        return existingToken ? structuredClone(existingToken) : new Set();
-      },
-    },
-  ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.layoutId]': 'layoutId()',
+  },
 })
 export class LayoutComponent {
   readonly #layoutService = inject(LayoutTemplateService);
-  readonly #layoutsChain = inject(LAYOUTS_CHAIN_TOKEN);
+  readonly #elementRef = inject(ElementRef);
 
   layoutId: InputSignal<string> = input.required<string>();
 
@@ -124,20 +115,40 @@ export class LayoutComponent {
     return this.#createGridItems(layoutConfig.config);
   });
 
-  isInfinite: WritableSignal<boolean> = signal<boolean>(false);
+  isInfinite: Signal<boolean> = computed(() => {
+    const layoutId = this.layoutId();
+    const curEle = this.#elementRef.nativeElement as HTMLElement;
 
-  layoutGridConfigs: GridsterConfig = {
-    ...GRID_CONFIG,
-    itemChangeCallback: this.#handleGridItemChanged.bind(this),
-  };
+    const isInfinite = parentContains({
+      ele: curEle,
+      attrName: 'layoutId',
+      attrValue: layoutId,
+    });
+
+    if (isInfinite) {
+      console.error(`Layout with id ${layoutId} has already existed in parents`);
+    }
+
+    return isInfinite;
+  });
+
+  layoutGridConfigs: Signal<GridsterConfig | null> = computed(() => {
+    const layoutConfig = this.layoutConfig();
+    if (layoutConfig?.status !== 'loaded') {
+      return null;
+    }
+
+    const gridConfigs = layoutConfig.config.gridConfigs;
+    return {
+      ...GRID_CONFIG,
+      itemChangeCallback: this.#handleGridItemChanged.bind(this),
+      margin: gridConfigs?.gap ?? DEFAULT_GRID_GAP,
+    };
+  });
 
   #eventService: EventsService = inject(EventsService);
 
   layoutLoadingComponent = inject(CORE_CONFIG, { optional: true })?.layoutLoadingComponent;
-
-  constructor() {
-    this.#onLayoutIdChangedEffect();
-  }
 
   #createGridItems(layoutConfig: LayoutTemplate): LayoutGridItem[] {
     return layoutConfig.uiElementInstances.map((eI) => {
@@ -169,30 +180,5 @@ export class LayoutComponent {
         },
       });
     }
-  }
-
-  #onLayoutIdChangedEffect(): void {
-    effect(
-      (onCleanup) => {
-        const layoutId = this.layoutId();
-
-        onCleanup(() => {
-          this.#layoutsChain.delete(layoutId);
-        });
-
-        const isInfinite = this.#layoutsChain.has(layoutId);
-
-        if (isInfinite) {
-          console.error(`Layout with id ${layoutId} has already existed in parents`);
-        } else {
-          this.#layoutsChain.add(layoutId);
-        }
-
-        this.isInfinite.set(isInfinite);
-      },
-      {
-        allowSignalWrites: true,
-      }
-    );
   }
 }

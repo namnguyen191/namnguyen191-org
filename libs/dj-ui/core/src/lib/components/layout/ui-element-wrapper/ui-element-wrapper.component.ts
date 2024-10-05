@@ -5,21 +5,21 @@ import {
   ComponentRef,
   computed,
   effect,
+  ElementRef,
   EnvironmentInjector,
   inject,
-  InjectionToken,
   input,
   InputSignal,
   OutputEmitterRef,
   reflectComponentType,
   runInInjectionContext,
   Signal,
-  signal,
   Type,
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { computedFromObservable } from '@namnguyen191/common-angular-helper';
+import { parentContains } from '@namnguyen191/common-js-helper';
 import { ObjectType } from '@namnguyen191/types-helper';
 import { isEqual } from 'lodash-es';
 import {
@@ -63,8 +63,6 @@ type ElementInputsInterpolationContext = {
   state: StateMap;
 };
 
-const UI_ELEMENTS_CHAIN_TOKEN = new InjectionToken<Set<string>>('UI_ELEMENTS_CHAIN_TOKEN');
-
 type InputsStreams = {
   [inputName: string]: Observable<unknown>;
 };
@@ -74,16 +72,10 @@ type InputsStreams = {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './ui-element-wrapper.component.html',
-  providers: [
-    {
-      provide: UI_ELEMENTS_CHAIN_TOKEN,
-      useFactory: (): Set<string> => {
-        const existingToken = inject(UI_ELEMENTS_CHAIN_TOKEN, { optional: true, skipSelf: true });
-        return existingToken ? structuredClone(existingToken) : new Set();
-      },
-    },
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.elementTemplateId]': 'uiElementTemplateId()',
+  },
 })
 export class UiElementWrapperComponent {
   readonly #uiElementFactoryService = inject(UIElementFactoryService);
@@ -91,6 +83,7 @@ export class UiElementWrapperComponent {
   readonly #interpolationService = inject(InterpolationService);
   readonly #environmentInjector = inject(EnvironmentInjector);
   readonly #actionHookService = inject(ActionHookService);
+  readonly #elementRef = inject(ElementRef);
 
   uiElementTemplateId: InputSignal<string> = input.required();
   requiredComponentSymbols = input<symbol[]>([]);
@@ -233,47 +226,28 @@ export class UiElementWrapperComponent {
     return debouncedAndDistinctInputs;
   });
 
-  readonly isInfinite = signal<boolean>(false);
-  readonly #uiElementChain = inject(UI_ELEMENTS_CHAIN_TOKEN);
+  readonly isInfinite: Signal<boolean> = computed(() => {
+    const uiElementTemplateId = this.uiElementTemplateId();
+    const curEle = this.#elementRef.nativeElement as HTMLElement;
+
+    const isInfinite = parentContains({
+      ele: curEle,
+      attrName: 'elementTemplateId',
+      attrValue: uiElementTemplateId,
+    });
+
+    if (isInfinite) {
+      console.error(`UI element with id ${uiElementTemplateId} has already existed in parents`);
+    }
+
+    return isInfinite;
+  });
 
   readonly uiElementLoadingComponent = inject(CORE_CONFIG, { optional: true })
     ?.uiElementLoadingComponent;
 
   constructor() {
-    this.#checkForInfiniteRenderEffect();
     this.#setupComponentEffect();
-  }
-
-  #checkForInfiniteRenderEffect(): void {
-    effect(
-      (onCleanup) => {
-        const uiElementTemplateId = this.uiElementTemplateId();
-
-        onCleanup(() => {
-          this.#uiElementChain.delete(uiElementTemplateId);
-        });
-
-        const isInfinite = this.#uiElementChain.has(uiElementTemplateId);
-
-        if (isInfinite) {
-          let chains = '';
-          this.#uiElementChain.forEach((elementInChainId) => {
-            chains += chains ? `->${elementInChainId}` : elementInChainId;
-          });
-          chains += `->${uiElementTemplateId}`;
-          console.error(
-            `UI element with id ${uiElementTemplateId} has already existed in parents: ${chains}`
-          );
-        } else {
-          this.#uiElementChain.add(uiElementTemplateId);
-        }
-
-        this.isInfinite.set(isInfinite);
-      },
-      {
-        allowSignalWrites: true,
-      }
-    );
   }
 
   #setupComponentEffect(): void {
