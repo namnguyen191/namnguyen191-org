@@ -1,3 +1,6 @@
 go 1.22
 
-use ./apps/ui-storage
+use (
+	./apps/go-design-patterns
+	./apps/ui-storage
+)
