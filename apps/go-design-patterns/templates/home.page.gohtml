@@ -1,0 +1,37 @@
+{{template "base"}}
+
+{{define "css"}}
+<style>
+  .title-container {
+    width: 100vw;
+    height: 80vh;
+    background: url('/static/home-page/banner.webp');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .title {
+    font-size: 5rem;
+    background: rgba(0,0,0,50%);
+  }
+</style>
+{{end}}
+
+{{define "content"}}
+<div class="title-container">
+  <h1 class="title">
+    Everything shrimps!
+  </h1>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h3 class="mt-4">Hello world</h3>
+    </div>
+  </div>
+</div>
+{{end}}

@@ -39,5 +39,8 @@
       "fileMatch": ["**/*.carousel-card.json"],
       "url": "./libs/dj-ui/prebuilt-components/carbon/generated-json-schemas/CarbonCarouselCardSchema.json"
     }
-  ]
+  ],
+  "emmet.includeLanguages": {
+    "GoHTML": "html"
+  }
 }

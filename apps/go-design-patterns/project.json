@@ -8,13 +8,14 @@
     "build": {
       "executor": "@nx-go/nx-go:build",
       "options": {
-        "main": "{projectRoot}/cmd/web/main.go"
+        "main": "{projectRoot}/cmd/web/*"
       }
     },
     "serve": {
       "executor": "@nx-go/nx-go:serve",
       "options": {
-        "main": "{projectRoot}/cmd/web/main.go"
+        "main": "{projectRoot}/cmd/web/*",
+        "args": ["-cache=false"]
       }
     },
     "test": {
