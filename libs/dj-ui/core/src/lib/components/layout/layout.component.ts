@@ -36,7 +36,8 @@ type LayoutGridItem = GridsterItem & {
   elementInstance: UIElementInstance;
 };
 
-const GRID_COLS = 16; // 16 columns layout
+const GRID_COLS_MAX = 16; // 16 columns layout
+const GRID_COLS_MIN = 4; // 4 columns on mobile screen
 const GRID_ROW_HEIGHT = 16; // 16px per row
 const DEFAULT_GRID_GAP = 5;
 const DEFAULT_UI_ELEMENT_COLSPAN = 4;
@@ -65,9 +66,9 @@ const GRID_CONFIG: GridsterConfig = {
   displayGrid: DisplayGrid.None,
   gridType: GridType.VerticalFixed,
   fixedRowHeight: GRID_ROW_HEIGHT,
-  minCols: GRID_COLS,
-  maxCols: GRID_COLS,
-  maxItemCols: GRID_COLS,
+  minCols: GRID_COLS_MIN,
+  maxCols: GRID_COLS_MAX,
+  maxItemCols: GRID_COLS_MAX,
   maxItemRows: UI_ELEMENT_MAX_ROWS,
   resizable: {
     enabled: true,
@@ -78,6 +79,8 @@ const GRID_CONFIG: GridsterConfig = {
   defaultItemCols: DEFAULT_UI_ELEMENT_COLSPAN,
   pushItems: true,
   compactType: 'compactLeft&Up',
+  keepFixedHeightInMobile: true,
+  keepFixedWidthInMobile: true,
 };
 
 const isLayoutGridItem = (item: GridsterItem): item is LayoutGridItem => {
