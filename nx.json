@@ -138,5 +138,6 @@
       "standalone": true
     }
   },
-  "plugins": ["@nx-go/nx-go"]
+  "plugins": ["@nx-go/nx-go"],
+  "useLegacyCache": true
 }
