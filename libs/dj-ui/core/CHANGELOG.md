@@ -1,3 +1,15 @@
+## 0.0.1-4 (2024-10-22)
+
+### 🚀 Features
+
+- **djui-core:** enable fixed rows in mobile breakpoint ([1280a09](https://github.com/namnguyen191/namnguyen191-org/commit/1280a09))
+- simplify infinite logic for core, add grid gap config and adjust carousel card padding ([d912976](https://github.com/namnguyen191/namnguyen191-org/commit/d912976))
+- **dj-ui-core:** update dependency version for common-angular-helper ([d6bf546](https://github.com/namnguyen191/namnguyen191-org/commit/d6bf546))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-2 (2024-10-03)
 
 
