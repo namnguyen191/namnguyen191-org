@@ -1,0 +1,7 @@
+@if (isLoadingConfigOption()) {
+  <span>Loading...</span>
+} @else if (isErrorConfigOption()) {
+  <span>Something went wrong</span>
+} @else {
+  <span>{{ textConfigOption() }}</span>
+}

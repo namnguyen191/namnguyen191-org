@@ -1,0 +1,7 @@
+{
+  "id": "carbon_simple_text_test",
+  "type": "CARBON_SIMPLE_TEXT",
+  "options": {
+    "text": "Hello, this is a simple text component"
+  }
+}

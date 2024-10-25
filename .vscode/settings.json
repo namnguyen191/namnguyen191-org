@@ -38,6 +38,10 @@
     {
       "fileMatch": ["**/*.carousel-card.json"],
       "url": "./libs/dj-ui/prebuilt-components/carbon/generated-json-schemas/CarbonCarouselCardSchema.json"
+    },
+    {
+      "fileMatch": ["**/*.simple-text.json"],
+      "url": "./libs/dj-ui/prebuilt-components/carbon/generated-json-schemas/CarbonSimpleTextSchema.json"
     }
   ],
   "emmet.includeLanguages": {

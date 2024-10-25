@@ -28,6 +28,9 @@
       "@dj-ui/carbon-components/carbon-carousel-card": [
         "libs/dj-ui/prebuilt-components/carbon/carbon-carousel-card/src/index.ts"
       ],
+      "@dj-ui/carbon-components/carbon-simple-text": [
+        "libs/dj-ui/prebuilt-components/carbon/carbon-simple-text/src/index.ts"
+      ],
       "@dj-ui/carbon-components/carbon-table": [
         "libs/dj-ui/prebuilt-components/carbon/carbon-table/src/index.ts"
       ],

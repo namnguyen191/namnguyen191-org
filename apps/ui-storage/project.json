@@ -16,7 +16,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/ui-storage",
-        "command": "air -c .air.toml"
+        "command": "lsof -ti:8080 | xargs kill && air -c .air.toml"
       }
     },
     "test": {

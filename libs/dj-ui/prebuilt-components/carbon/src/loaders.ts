@@ -2,6 +2,7 @@ import {
   CarbonButtonElementType,
   CarbonCarouselCardElementType,
   CarbonCarouselElementType,
+  CarbonSimpleTextElementType,
   CarbonTableElementType,
   CarbonTextCardElementType,
 } from '@dj-ui/carbon-components/shared';
@@ -20,4 +21,6 @@ export const CarbonComponentLoader: ComponentLoadersMap = {
     import('@dj-ui/carbon-components/carbon-carousel-card').then(
       (m) => m.CarbonCarouselCardComponent
     ),
+  [CarbonSimpleTextElementType]: () =>
+    import('@dj-ui/carbon-components/carbon-simple-text').then((m) => m.CarbonSimpleTextComponent),
 };

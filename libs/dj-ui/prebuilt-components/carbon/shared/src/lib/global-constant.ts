@@ -12,3 +12,6 @@ export const CarbonCarouselSymbol = Symbol('CarbonCarousel');
 
 export const CarbonCarouselCardElementType = 'CARBON_CAROUSEL_CARD';
 export const CarbonCarouselCardSymbol = Symbol('CarbonCarouselCard');
+
+export const CarbonSimpleTextElementType = 'CARBON_SIMPLE_TEXT';
+export const CarbonSimpleTextSymbol = Symbol('CarbonSimpleText');
