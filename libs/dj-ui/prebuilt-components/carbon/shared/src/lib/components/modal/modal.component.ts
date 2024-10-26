@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'lib-modal',
+  selector: 'dj-ui-carbon-modal',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './modal.component.html',
