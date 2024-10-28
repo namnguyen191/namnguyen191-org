@@ -1,5 +1,5 @@
 import {
-  Component,
+  Directive,
   input,
   InputSignal,
   InputSignalWithTransform,
@@ -50,9 +50,7 @@ export type UIElementImplementation<
 
 const defaultElementSymbol = Symbol('Default element');
 
-@Component({
-  template: '',
-})
+@Directive()
 export abstract class BaseUIElementComponent
   implements UIElementImplementation<UIElementRequiredConfigs>
 {
