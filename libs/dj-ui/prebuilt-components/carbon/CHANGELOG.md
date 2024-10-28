@@ -1,3 +1,16 @@
+## 0.0.1-3 (2024-10-28)
+
+### 🚀 Features
+
+- enhance carbon simple text, fix bug in core layout ([adf84b7](https://github.com/namnguyen191/namnguyen191-org/commit/adf84b7))
+- enforce component tag name in eslint for dj-ui-carbon-component ([26a91b0](https://github.com/namnguyen191/namnguyen191-org/commit/26a91b0))
+- add carbon simple text ([551efc1](https://github.com/namnguyen191/namnguyen191-org/commit/551efc1))
+- simplify infinite logic for core, add grid gap config and adjust carousel card padding ([d912976](https://github.com/namnguyen191/namnguyen191-org/commit/d912976))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-1 (2024-10-02)
 
 This was a version bump only for dj-ui-carbon-components to align it with other projects, there were no code changes.

@@ -1,3 +1,13 @@
+## 0.0.1-5 (2024-10-28)
+
+### 🚀 Features
+
+- enhance carbon simple text, fix bug in core layout ([adf84b7](https://github.com/namnguyen191/namnguyen191-org/commit/adf84b7))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-4 (2024-10-22)
 
 ### 🚀 Features
