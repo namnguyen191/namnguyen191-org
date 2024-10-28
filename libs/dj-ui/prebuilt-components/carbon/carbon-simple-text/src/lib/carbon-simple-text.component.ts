@@ -9,8 +9,8 @@ import { parseZodWithDefault } from '@namnguyen191/types-helper';
 
 import {
   SimpleTextConfigs,
-  TextConfigOption,
-  ZTextConfigOption,
+  TextBlocksConfigOption,
+  ZTextBlocksConfigOption,
 } from './carbon-simple-text.interface';
 
 @Component({
@@ -36,10 +36,12 @@ export class CarbonSimpleTextComponent
     return CarbonSimpleTextComponent.ELEMENT_SYMBOL;
   }
 
-  readonly #defaulText = 'Default text';
-  textConfigOption: InputSignal<TextConfigOption> = input(this.#defaulText, {
-    alias: 'text',
-    transform: (val) =>
-      parseZodWithDefault<TextConfigOption>(ZTextConfigOption, val, this.#defaulText),
-  });
+  textBlocksConfigOption: InputSignal<TextBlocksConfigOption> = input(
+    [] as TextBlocksConfigOption,
+    {
+      alias: 'textBlocks',
+      transform: (val) =>
+        parseZodWithDefault<TextBlocksConfigOption>(ZTextBlocksConfigOption, val, []),
+    }
+  );
 }

@@ -3,7 +3,6 @@ import { ZodError, ZodType } from 'zod';
 export const parseZodWithDefault = <T>(zodType: ZodType, val: unknown, defaultVal: T): T => {
   try {
     const result = zodType.parse(val) as T;
-
     return result;
   } catch (error) {
     if (error instanceof ZodError) {

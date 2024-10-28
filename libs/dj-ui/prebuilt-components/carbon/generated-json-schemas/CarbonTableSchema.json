@@ -24,7 +24,11 @@
       "$ref": "#/definitions/EventsToHooksMap<\"paginationChanged\">"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -49,7 +53,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
     "UIElementTemplateOptions<{rows:(string|number|bigint|boolean|symbol)[][];title:string;description:string;headers:(string|number|bigint|boolean|symbol)[];pagination:{pageSizes?:number[]|undefined;pageInputDisabled?:boolean|undefined;totalDataLength?:number|undefined;};primaryButtonId:string;}>": {
       "additionalProperties": false,
@@ -73,7 +81,12 @@
                   "additionalProperties": false
                 },
                 {
-                  "type": ["string", "number", "object", "boolean"]
+                  "type": [
+                    "string",
+                    "number",
+                    "object",
+                    "boolean"
+                  ]
                 }
               ]
             }
@@ -95,7 +108,12 @@
                 "additionalProperties": false
               },
               {
-                "type": ["string", "number", "object", "boolean"]
+                "type": [
+                  "string",
+                  "number",
+                  "object",
+                  "boolean"
+                ]
               }
             ]
           }
@@ -125,7 +143,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["pageSizes", "pageInputDisabled", "totalDataLength"]
+      "propertyOrder": [
+        "pageSizes",
+        "pageInputDisabled",
+        "totalDataLength"
+      ]
     },
     "EventsToHooksMap<\"paginationChanged\">": {
       "type": "object",
@@ -138,7 +160,9 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["paginationChanged"]
+      "propertyOrder": [
+        "paginationChanged"
+      ]
     },
     "{type:string;payload?:any;}": {
       "type": "object",
@@ -149,8 +173,13 @@
         "payload": {}
       },
       "additionalProperties": false,
-      "propertyOrder": ["type", "payload"],
-      "required": ["type"]
+      "propertyOrder": [
+        "type",
+        "payload"
+      ],
+      "required": [
+        "type"
+      ]
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

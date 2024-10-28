@@ -12,6 +12,7 @@ $vertical-content-padding: spacing.$spacing-03;
   border-radius: 1rem;
   background: var(--cds-background);
   color: var(--cds-text-primary);
+  overflow: hidden;
 
   &.clickable {
     cursor: pointer;

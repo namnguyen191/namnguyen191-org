@@ -1,14 +1,18 @@
 import { NoEvent, UIElementTemplate } from '@dj-ui/core';
 import { z } from 'zod';
 
-export const ZTextConfigOption = z.string({
-  errorMap: () => ({ message: 'Text must be a string' }),
+export const ZTextBlockConfigOption = z.strictObject({
+  text: z.string(),
+  type: z.enum(['title', 'paragraph']).optional().default('paragraph'),
 });
-export type TextConfigOption = z.infer<typeof ZTextConfigOption>;
+export type TextBlockConfigOption = z.input<typeof ZTextBlockConfigOption>;
 
-export const ZSimpleTextConfigs = z.object({
-  text: ZTextConfigOption,
+export const ZTextBlocksConfigOption = z.array(ZTextBlockConfigOption);
+export type TextBlocksConfigOption = z.input<typeof ZTextBlocksConfigOption>;
+
+export const ZSimpleTextConfigs = z.strictObject({
+  textBlocks: ZTextBlocksConfigOption,
 });
-export type SimpleTextConfigs = z.infer<typeof ZSimpleTextConfigs>;
+export type SimpleTextConfigs = z.input<typeof ZSimpleTextConfigs>;
 
 export type CarbonSimpleTextTypeForJsonSchema = UIElementTemplate<SimpleTextConfigs, NoEvent>;

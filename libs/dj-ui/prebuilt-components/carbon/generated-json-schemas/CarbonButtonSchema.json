@@ -24,7 +24,11 @@
       "$ref": "#/definitions/EventsToHooksMap<\"buttonClicked\">"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -49,7 +53,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
     "UIElementTemplateOptions<{type:\"primary\"|\"secondary\"|\"tertiary\"|\"ghost\"|\"danger\"|\"danger--primary\"|\"danger--tertiary\"|\"danger--ghost\";text:string;}>": {
       "additionalProperties": false,
@@ -90,7 +98,9 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["buttonClicked"]
+      "propertyOrder": [
+        "buttonClicked"
+      ]
     },
     "{type:string;payload?:any;}": {
       "type": "object",
@@ -101,8 +111,13 @@
         "payload": {}
       },
       "additionalProperties": false,
-      "propertyOrder": ["type", "payload"],
-      "required": ["type"]
+      "propertyOrder": [
+        "type",
+        "payload"
+      ],
+      "required": [
+        "type"
+      ]
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

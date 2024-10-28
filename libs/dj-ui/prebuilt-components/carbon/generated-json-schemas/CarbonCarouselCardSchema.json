@@ -21,7 +21,11 @@
       "$ref": "#/definitions/UIElementTemplateOptions<{title:string;description:string;carouselId:string;}>"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -46,7 +50,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
     "UIElementTemplateOptions<{title:string;description:string;carouselId:string;}>": {
       "additionalProperties": false,

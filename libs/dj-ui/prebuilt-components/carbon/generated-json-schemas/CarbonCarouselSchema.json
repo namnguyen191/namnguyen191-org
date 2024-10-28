@@ -21,7 +21,11 @@
       "$ref": "#/definitions/UIElementTemplateOptions<{imageUrls:string[];ariaLabel:string;}>"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -46,7 +50,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
     "UIElementTemplateOptions<{imageUrls:string[];ariaLabel:string;}>": {
       "additionalProperties": false,

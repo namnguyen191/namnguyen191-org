@@ -59,7 +59,7 @@ export const appConfig: ApplicationConfig = {
             getLayoutTemplate: layoutsServiceAPI.getLayoutById,
             getUiElementTemplate: uiElementTemplateService.getUIElementTemplateById,
             getRemoteResourceTemplate: remoteResourcesService.getRemoteResourceById,
-            updateElementsPositionsHandler: layoutsServiceAPI.updateLayoutElementPositionAndSize,
+            // updateElementsPositionsHandler: layoutsServiceAPI.updateLayoutElementPositionAndSize,
           },
           componentLoadersMap: CarbonComponentLoader,
         };

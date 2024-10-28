@@ -1,3 +1,17 @@
+@use 'carbon-components/scss/globals/scss/typography';
+
 :host {
-  display: contents;
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  white-space: pre-wrap;
+
+  .title {
+    @include typography.type-style('expressive-heading-05');
+  }
+
+  .paragraph {
+    @include typography.type-style('body-long-02');
+  }
 }

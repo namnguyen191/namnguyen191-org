@@ -5,8 +5,8 @@ type ElementInstancePositionAndSizeConfig struct {
 	Y             *int  `json:"y,omitempty" bson:"y,omitempty"`
 	Cols          *int  `json:"cols,omitempty" bson:"cols,omitempty"`
 	Rows          *int  `json:"rows,omitempty" bson:"rows,omitempty"`
-	ResizeEnabled *bool `json:"resize_enabled,omitempty" bson:"resizeEnabled,omitempty"`
-	DragEnabled   *bool `json:"drag_enabled,omitempty" bson:"dragEnabled,omitempty"`
+	ResizeEnabled *bool `json:"resizeEnabled,omitempty" bson:"resizeEnabled,omitempty"`
+	DragEnabled   *bool `json:"dragEnabled,omitempty" bson:"dragEnabled,omitempty"`
 }
 
 type UIElementInstance struct {

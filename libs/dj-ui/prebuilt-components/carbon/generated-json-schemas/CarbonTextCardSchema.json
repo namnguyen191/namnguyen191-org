@@ -24,7 +24,11 @@
       "$ref": "#/definitions/EventsToHooksMap<\"onCardClicked\">"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -49,7 +53,11 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
     "UIElementTemplateOptions<{title:string;body:string;subTitle:string;avatarUrl:string;imageUrl:string;clickable:boolean;}>": {
       "additionalProperties": false,
@@ -92,7 +100,9 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["onCardClicked"]
+      "propertyOrder": [
+        "onCardClicked"
+      ]
     },
     "{type:string;payload?:any;}": {
       "type": "object",
@@ -103,8 +113,13 @@
         "payload": {}
       },
       "additionalProperties": false,
-      "propertyOrder": ["type", "payload"],
-      "required": ["type"]
+      "propertyOrder": [
+        "type",
+        "payload"
+      ],
+      "required": [
+        "type"
+      ]
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

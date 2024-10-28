@@ -3,5 +3,14 @@
 } @else if (isErrorConfigOption()) {
   <span>Something went wrong</span>
 } @else {
-  <span>{{ textConfigOption() }}</span>
+  @for (textBlock of textBlocksConfigOption(); track $index) {
+    @switch (textBlock.type) {
+      @case ('title') {
+        <h2 class="title">{{ textBlock.text }}</h2>
+      }
+      @case ('paragraph') {
+        <p class="paragraph">{{ textBlock.text }}</p>
+      }
+    }
+  }
 }

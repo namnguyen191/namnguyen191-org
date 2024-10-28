@@ -18,10 +18,14 @@
       "$ref": "#/definitions/StateSubscriptionConfig"
     },
     "options": {
-      "$ref": "#/definitions/UIElementTemplateOptions<{text:string;}>"
+      "$ref": "#/definitions/UIElementTemplateOptions<{textBlocks:{text:string;type?:\"title\"|\"paragraph\"|undefined;}[];}>"
     }
   },
-  "required": ["id", "options", "type"],
+  "required": [
+    "id",
+    "options",
+    "type"
+  ],
   "definitions": {
     "StateSubscriptionConfig": {
       "type": "object",
@@ -46,9 +50,13 @@
         }
       },
       "additionalProperties": false,
-      "propertyOrder": ["global", "local", "layout"]
+      "propertyOrder": [
+        "global",
+        "local",
+        "layout"
+      ]
     },
-    "UIElementTemplateOptions<{text:string;}>": {
+    "UIElementTemplateOptions<{textBlocks:{text:string;type?:\"title\"|\"paragraph\"|undefined;}[];}>": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -58,10 +66,36 @@
         "isError": {
           "type": "boolean"
         },
-        "text": {
-          "type": "string"
+        "textBlocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/{text:string;type?:\"title\"|\"paragraph\"|undefined;}"
+          }
         }
       }
+    },
+    "{text:string;type?:\"title\"|\"paragraph\"|undefined;}": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "paragraph",
+            "title"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "propertyOrder": [
+        "text",
+        "type"
+      ],
+      "required": [
+        "text"
+      ]
     }
   },
   "$schema": "http://json-schema.org/draft-07/schema#"

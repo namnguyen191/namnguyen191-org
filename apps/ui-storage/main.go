@@ -4,7 +4,7 @@ func main() {
 	initApp()
 	defer cleanUpApp()
 
-	App.LayoutsRepo.InsertMockLayouts()
+	// App.LayoutsRepo.InsertMockLayouts()
 	App.UIElementTemplatesRepo.InsertMockUIElementTemplates()
 	// App.RemoteResourcesRepo.InsertMockRemoteResources()
 

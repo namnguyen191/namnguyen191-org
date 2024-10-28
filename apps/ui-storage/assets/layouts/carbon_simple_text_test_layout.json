@@ -3,7 +3,15 @@
   "uiElementInstances": [
     {
       "id": "instance-1",
-      "uiElementTemplateId": "carbon_simple_text_test"
+      "uiElementTemplateId": "carbon_simple_text_test",
+      "positionAndSize": {
+        "x": 0,
+        "y": 0,
+        "rows": 20,
+        "cols": 8,
+        "resizeEnabled": false,
+        "dragEnabled": false
+      }
     }
   ]
 }
