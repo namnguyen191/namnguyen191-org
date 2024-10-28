@@ -1,3 +1,13 @@
+## 0.0.1-6 (2024-10-28)
+
+### 🚀 Features
+
+- use directive instead of component for base ui element ([0f678bd](https://github.com/namnguyen191/namnguyen191-org/commit/0f678bd))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-5 (2024-10-28)
 
 ### 🚀 Features
