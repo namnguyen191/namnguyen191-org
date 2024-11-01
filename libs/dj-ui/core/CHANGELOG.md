@@ -1,3 +1,13 @@
+## 0.0.1-7 (2024-11-01)
+
+### 🚀 Features
+
+- improve dj-ui core by adding variables feature ([1c6bd09](https://github.com/namnguyen191/namnguyen191-org/commit/1c6bd09))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-6 (2024-10-28)
 
 ### 🚀 Features
