@@ -3,7 +3,9 @@
   "type": "CARBON_TABLE",
   "remoteResourceIds": ["pokemon-server-pagination"],
   "stateSubscription": {
-    "global": ["usPopPage"]
+    "watchedScopes": {
+      "global": ["usPopPage"]
+    }
   },
   "options": {
     "title": "Server side pagination table",

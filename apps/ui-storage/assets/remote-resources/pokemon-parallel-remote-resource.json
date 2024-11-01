@@ -1,7 +1,9 @@
 {
   "id": "pokemon_parallel_rr",
   "stateSubscription": {
-    "global": ["page"]
+    "watchedScopes": {
+      "global": ["page"]
+    }
   },
   "options": {
     "parallel": true,

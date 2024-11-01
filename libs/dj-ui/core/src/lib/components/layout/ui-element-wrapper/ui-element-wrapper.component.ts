@@ -60,7 +60,7 @@ import { BaseUIElementComponent } from '../../base-ui-element.component';
 
 type ElementInputsInterpolationContext = {
   remoteResourcesStates: null | RemoteResourcesStates;
-  state: StateMap;
+  state: StateMap | null;
 };
 
 type InputsStreams = {
@@ -139,11 +139,13 @@ export class UiElementWrapperComponent {
         return null;
       }
 
-      const { remoteResourceIds, stateSubscription = {} } = uiElementTemplate.config;
+      const { remoteResourceIds, stateSubscription } = uiElementTemplate.config;
 
-      const state = runInInjectionContext(this.#environmentInjector, () =>
-        getStatesSubscriptionAsContext(stateSubscription)
-      );
+      const state = stateSubscription
+        ? runInInjectionContext(this.#environmentInjector, () =>
+            getStatesSubscriptionAsContext(stateSubscription)
+          )
+        : of(null);
       const remoteResourcesStates = remoteResourceIds?.length
         ? runInInjectionContext(this.#environmentInjector, () =>
             getRemoteResourcesStatesAsContext(remoteResourceIds)

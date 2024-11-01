@@ -1,7 +1,9 @@
 {
   "id": "123",
   "stateSubscription": {
-    "global": ["page"]
+    "watchedScopes": {
+      "global": ["page"]
+    }
   },
   "options": {
     "requests": [

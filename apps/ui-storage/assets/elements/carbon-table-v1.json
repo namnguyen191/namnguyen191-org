@@ -3,7 +3,9 @@
   "type": "CARBON_TABLE",
   "remoteResourceIds": ["us-pop-1"],
   "stateSubscription": {
-    "global": ["usPopulation", "page"]
+    "watchedScopes": {
+      "global": ["usPopulation", "page"]
+    }
   },
   "options": {
     "primaryButtonId": "carbon-button-test",

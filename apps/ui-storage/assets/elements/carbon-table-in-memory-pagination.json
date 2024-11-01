@@ -3,7 +3,9 @@
   "type": "CARBON_TABLE",
   "remoteResourceIds": ["us-pop-no-refresh"],
   "stateSubscription": {
-    "global": ["usPopPage"]
+    "watchedScopes": {
+      "global": ["usPopPage"]
+    }
   },
   "options": {
     "title": "In memory pagination table",

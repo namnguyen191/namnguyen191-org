@@ -1,7 +1,9 @@
 {
   "id": "us-pop-1",
   "stateSubscription": {
-    "global": ["page"]
+    "watchedScopes": {
+      "global": ["page"]
+    }
   },
   "options": {
     "requests": [

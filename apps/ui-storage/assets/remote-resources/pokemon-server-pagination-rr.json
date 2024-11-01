@@ -1,14 +1,20 @@
 {
   "id": "pokemon-server-pagination",
   "stateSubscription": {
-    "global": ["pokemonPage"]
+    "watchedScopes": {
+      "global": ["pokemonPage"]
+    },
+    "variables": {
+      "currentPage": "<${ return this.state?.global?.pokemonPage?.selectedPage ?? 0 }$>",
+      "currentItemPerPage": "<${ return this.state?.global?.pokemonPage?.pageLength ?? 10 }$>"
+    }
   },
   "options": {
     "requests": [
       {
         "fetcherId": "httpFetcher",
         "configs": {
-          "endpoint": "<${ return `https://pokeapi.co/api/v2/pokemon?offset=${(this.state?.global?.pokemonPage?.selectedPage ?? 0) * (this.state?.global?.pokemonPage?.pageLength ?? 10)}&limit=${this.state?.global?.pokemonPage?.pageLength ?? 10}` }$>",
+          "endpoint": "<${ return `https://pokeapi.co/api/v2/pokemon?offset=${(this.state.variables.currentPage) * (this.state.variables.currentItemPerPage)}&limit=${this.state.variables.currentItemPerPage}` }$>",
           "method": "GET"
         },
         "interpolation": "<${ return { pokemons: this.$current.results, totalCount: this.$current.count } }$>"

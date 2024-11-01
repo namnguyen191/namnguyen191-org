@@ -3,7 +3,9 @@
   "type": "SIMPLE_TABLE",
   "remoteResourceIds": ["123"],
   "stateSubscription": {
-    "global": ["activities1", "activities", "activities1"]
+    "watchedScopes": {
+      "global": ["activities1", "activities", "activities1"]
+    }
   },
   "options": {
     "title": "This is a different table",

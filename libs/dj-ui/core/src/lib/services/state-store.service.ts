@@ -5,23 +5,34 @@ import {
   BehaviorSubject,
   combineLatest,
   distinctUntilChanged,
+  from,
   map,
   Observable,
   of,
   pipe,
+  switchMap,
+  tap,
   UnaryFunction,
 } from 'rxjs';
 import { z } from 'zod';
+
+import { InterpolationService } from './interpolation.service';
 
 export const ZodAvailableStateScope = z.enum(['global', 'local', 'layout']);
 export type AvailableStateScope = z.infer<typeof ZodAvailableStateScope>;
 
 export type StateMap = {
   [K in AvailableStateScope]: ObjectType;
+} & {
+  variables?: ObjectType;
 };
 
+export type WatchedPath = string;
 export type StateSubscriptionConfig = {
-  [K in AvailableStateScope]?: string[];
+  watchedScopes: {
+    [K in AvailableStateScope]?: WatchedPath[];
+  };
+  variables?: Record<string, unknown>;
 };
 
 export const getStatesAsContext = (): Observable<StateMap> => {
@@ -43,12 +54,16 @@ export const getStatesAsContext = (): Observable<StateMap> => {
 export const getStatesSubscriptionAsContext = (
   stateSubscription: StateSubscriptionConfig
 ): Observable<StateMap> => {
+  const { watchedScopes, variables } = stateSubscription;
+
   const {
     local: localSubscription,
     layout: layoutSubscription,
     global: globalSubscription,
-  } = stateSubscription;
+  } = watchedScopes;
+
   const stateStoreService = inject(StateStoreService);
+  const interpolationService = inject(InterpolationService);
 
   const local: Observable<ObjectType> = localSubscription
     ? stateStoreService.getLocalStateByPaths(localSubscription)
@@ -66,7 +81,23 @@ export const getStatesSubscriptionAsContext = (
     global,
     local,
     layout,
-  });
+  }).pipe(
+    switchMap((state) => {
+      if (!variables) {
+        return of({ ...state });
+      }
+
+      return from(
+        interpolationService.interpolate({
+          value: variables,
+          context: {
+            state,
+          },
+        })
+      ).pipe(map((interpolatedVariables) => ({ ...state, variables: interpolatedVariables })));
+    }),
+    tap((val) => console.log('Nam data is: result', val))
+  );
 };
 
 @Injectable({

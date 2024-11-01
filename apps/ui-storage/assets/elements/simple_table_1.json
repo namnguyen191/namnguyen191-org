@@ -3,7 +3,9 @@
   "type": "SIMPLE_TABLE",
   "remoteResourceIds": ["us-pop-1"],
   "stateSubscription": {
-    "global": ["usPopulation"]
+    "watchedScopes": {
+      "global": ["usPopulation"]
+    }
   },
   "options": {
     "title": "Welcome to my custom table",
