@@ -1,3 +1,13 @@
+## 0.0.1-8 (2024-11-06)
+
+### 🚀 Features
+
+- remove hascontext from interpolation ([07868c4](https://github.com/namnguyen191/namnguyen191-org/commit/07868c4))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-7 (2024-11-01)
 
 ### 🚀 Features
