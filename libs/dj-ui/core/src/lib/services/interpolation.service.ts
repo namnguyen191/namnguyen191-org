@@ -7,7 +7,7 @@ import {
   WorkerResponse,
 } from '@dj-ui/core/js-interpolation-worker';
 import { ObjectType } from '@namnguyen191/types-helper';
-import { has, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import { BehaviorSubject, filter, firstValueFrom, map } from 'rxjs';
 import { z } from 'zod';
 
@@ -129,10 +129,6 @@ export class InterpolationService {
     const trimmedStringContent = stringContent.trim();
     const rawJs = this.#extractRawJs(trimmedStringContent);
     if (rawJs) {
-      if (this._isMissingContext(rawJs, context)) {
-        return Promise.resolve(stringContent);
-      }
-
       return await this.#interpolateRawJs({
         rawJs: rawJs as RawJsString,
         context: context,
@@ -192,18 +188,5 @@ export class InterpolationService {
     }
 
     return result;
-  }
-
-  private _isMissingContext(rawJs: string, context: ObjectType): boolean {
-    const contextRegex = /this.(\$(\S*)Context)/g;
-    let match = contextRegex.exec(rawJs);
-    while (match && match[1]) {
-      if (!has(context, match[1])) {
-        return true;
-      }
-      match = contextRegex.exec(rawJs);
-    }
-
-    return false;
   }
 }

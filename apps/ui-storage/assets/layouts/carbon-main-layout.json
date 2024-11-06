@@ -8,9 +8,7 @@
         "x": 0,
         "y": 0,
         "rows": 20,
-        "cols": 8,
-        "resizeEnabled": false,
-        "dragEnabled": false
+        "cols": 8
       }
     },
     {
@@ -28,9 +26,7 @@
         "x": 0,
         "y": 20,
         "rows": 20,
-        "cols": 8,
-        "resizeEnabled": false,
-        "dragEnabled": false
+        "cols": 8
       }
     },
     {
@@ -40,9 +36,7 @@
         "x": 9,
         "y": 20,
         "rows": 20,
-        "cols": 8,
-        "resizeEnabled": false,
-        "dragEnabled": false
+        "cols": 8
       }
     }
   ]
