@@ -1,3 +1,13 @@
+## 0.0.1-9 (2024-11-10)
+
+### 🚀 Features
+
+- add builder pattern view all ui ele page ([9ed0da1](https://github.com/namnguyen191/namnguyen191-org/commit/9ed0da1))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-8 (2024-11-06)
 
 ### 🚀 Features
