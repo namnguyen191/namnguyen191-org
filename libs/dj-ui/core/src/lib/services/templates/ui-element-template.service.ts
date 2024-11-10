@@ -66,7 +66,10 @@ export class UIElementTemplateService {
     existingUIElementTemplateSubject.next(registeringUIElementTemplate);
   }
 
-  registerUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
+  registerUIElementTemplate<
+    TConfigs extends ObjectType = EmptyObject,
+    TEvents extends string = UnknownEvent,
+  >(uiElementTemplate: UIElementTemplate<TConfigs, TEvents>): void {
     const uiElementId = uiElementTemplate.id;
     const existingUIElementTemplateSubject = this.#uiElementTemplateSubjectMap[uiElementId];
     const registeredUIElementTemplate: UIElementTemplateWithStatus = {

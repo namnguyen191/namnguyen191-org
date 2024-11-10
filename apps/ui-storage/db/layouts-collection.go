@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"namnguyen191/uistorage/models"
 	"namnguyen191/uistorage/utils"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,6 +24,7 @@ func NewLayoutRepo(conn *mongo.Database) LayoutsRepo {
 }
 
 func (r *LayoutsRepo) InserLayout(layout *models.Layout) error {
+	layout.CreatedAt = time.Now().UTC().String()
 	_, err := r.coll.InsertOne(context.TODO(), layout)
 
 	return err
@@ -30,6 +32,7 @@ func (r *LayoutsRepo) InserLayout(layout *models.Layout) error {
 
 func (r *LayoutsRepo) UpdateLayout(updatedLayout *models.Layout) error {
 	filter := bson.M{"id": updatedLayout.Id}
+	updatedLayout.UpdatedAt = time.Now().UTC().String()
 	singleResult := r.coll.FindOneAndReplace(context.TODO(), filter, updatedLayout)
 
 	return singleResult.Err()

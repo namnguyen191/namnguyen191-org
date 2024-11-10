@@ -20,6 +20,7 @@ type LayoutGridConfigs struct {
 }
 
 type Layout struct {
+	TimeStamps
 	Id                 *string              `json:"id,omitempty" bson:"id,omitempty"`
 	GridConfigs        *LayoutGridConfigs   `json:"gridConfigs,omitempty" bson:"gridConfigs,omitempty"`
 	UIElementInstances *[]UIElementInstance `json:"uiElementInstances,omitempty" bson:"uiElementInstances,omitempty"`

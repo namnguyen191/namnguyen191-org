@@ -1,12 +1,18 @@
 <div cdsTheme="g100">
-  <div class="links-container">
-    <a [routerLink]="['./table-patterns']"> Go to table patterns e2e </a>
-    <a [routerLink]="['./button-pattenrs']"> Go to button patterns e2e </a>
-    <a [routerLink]="['./text-card-patterns']"> Go to text card patterns e2e </a>
-    <a [routerLink]="['./carousel-patterns']"> Go to carousel patterns e2e </a>
-    <a [routerLink]="['./carousel-card-patterns']"> Go to carousel card patterns e2e </a>
-    <a [routerLink]="['./simple-text-patterns']"> Go to simple text patterns e2e </a>
-  </div>
+  <cds-header brand="DJUI" name="[Carbon Components]">
+    <cds-header-navigation>
+      <cds-header-item [routerLink]="['./builder-patterns']">Builder</cds-header-item>
+      <cds-header-menu title="E2E patterns">
+        <cds-header-item [routerLink]="['./table-patterns']">Table</cds-header-item>
+        <cds-header-item [routerLink]="['./button-pattenrs']">Button</cds-header-item>
+        <cds-header-item [routerLink]="['./text-card-patterns']">Text card</cds-header-item>
+        <cds-header-item [routerLink]="['./carousel-patterns']">Carousel</cds-header-item>
+        <cds-header-item [routerLink]="['./carousel-card-patterns']">Carousel card</cds-header-item>
+        <cds-header-item [routerLink]="['./simple-text-patterns']">Simple text</cds-header-item>
+      </cds-header-menu>
+    </cds-header-navigation>
+  </cds-header>
+
   <router-outlet></router-outlet>
 
   <cds-toast

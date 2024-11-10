@@ -1,0 +1,14 @@
+@let loading = loadingSig();
+
+<cds-table-container>
+  <cds-table-header>
+    <h4 cdsTableHeaderTitle>All available UI Elements</h4>
+  </cds-table-header>
+
+  <cds-table
+    [model]="loading ? tableSkeletonModel : tableModel"
+    [showSelectionColumn]="false"
+    [skeleton]="loading"
+    [sortable]="false"
+  ></cds-table>
+</cds-table-container>

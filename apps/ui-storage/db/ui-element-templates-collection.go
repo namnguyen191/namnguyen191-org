@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"namnguyen191/uistorage/models"
 	"namnguyen191/uistorage/utils"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,6 +24,7 @@ func NewUIElementsRepo(conn *mongo.Database) UIElementTemplatesRepo {
 }
 
 func (r *UIElementTemplatesRepo) InserUIElementTemplate(uiElementTemplate *models.UIElementTemplate) error {
+	uiElementTemplate.CreatedAt = time.Now().UTC().String()
 	_, err := r.coll.InsertOne(context.TODO(), uiElementTemplate)
 
 	return err

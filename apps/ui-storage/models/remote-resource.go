@@ -14,6 +14,7 @@ type Request struct {
 }
 
 type RemoteResource struct {
+	TimeStamps
 	Id                *string                  `json:"id,omitempty" bson:"id,omitempty"`
 	StateSubscription *StateSubscriptionConfig `json:"stateSubscription,omitempty" bson:"stateSubscription,omitempty"`
 	Options           *ObjectType              `json:"options,omitempty" bson:"options,omitempty"`

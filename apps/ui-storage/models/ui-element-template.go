@@ -1,6 +1,7 @@
 package models
 
 type UIElementTemplate struct {
+	TimeStamps
 	Id                *string                  `json:"id,omitempty" bson:"id,omitempty"`
 	Type              *string                  `json:"type,omitempty" bson:"type,omitempty"`
 	RemoteResourceIds *[]string                `json:"remoteResourceIds,omitempty" bson:"remoteResourceIds,omitempty"`

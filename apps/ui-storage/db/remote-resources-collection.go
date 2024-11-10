@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"namnguyen191/uistorage/models"
 	"namnguyen191/uistorage/utils"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,6 +24,7 @@ func NewRemoteResourceRepo(conn *mongo.Database) RemoteResourcesRepo {
 }
 
 func (r *RemoteResourcesRepo) InserRemoteResource(remoteResource *models.RemoteResource) error {
+	remoteResource.CreatedAt = time.Now().UTC().String()
 	_, err := r.coll.InsertOne(context.TODO(), remoteResource)
 
 	return err
