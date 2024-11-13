@@ -1,0 +1,33 @@
+@use 'carbon-components/scss/globals/scss/spacing';
+
+$nav-block-size: 3rem;
+
+:host {
+  height: calc(100vh - $nav-block-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .new-ui-element-form {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: spacing.$spacing-09;
+    padding: 0 10rem;
+
+    &__description-text-area {
+      grid-column: span 2;
+
+      textarea {
+        flex-grow: 1;
+      }
+    }
+
+    &__btn-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: spacing.$spacing-05;
+      align-items: end;
+    }
+  }
+}

@@ -23,11 +23,15 @@ func NewUIElementsRepo(conn *mongo.Database) UIElementTemplatesRepo {
 	}
 }
 
-func (r *UIElementTemplatesRepo) InserUIElementTemplate(uiElementTemplate *models.UIElementTemplate) error {
+func (r *UIElementTemplatesRepo) InserUIElementTemplate(uiElementTemplate *models.UIElementTemplate) (*models.UIElementTemplate, error) {
 	uiElementTemplate.CreatedAt = time.Now().UTC().String()
 	_, err := r.coll.InsertOne(context.TODO(), uiElementTemplate)
 
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	return uiElementTemplate, nil
 }
 
 func (r *UIElementTemplatesRepo) RemoveUIElementTemplate(id string) error {
@@ -108,7 +112,7 @@ func (r *UIElementTemplatesRepo) InsertMockUIElementTemplates() {
 			return
 		}
 
-		err = r.InserUIElementTemplate(&uiElementTemplate)
+		_, err = r.InserUIElementTemplate(&uiElementTemplate)
 		if err != nil {
 			fmt.Println(err)
 			return

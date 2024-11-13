@@ -8,11 +8,12 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { setAllEntities, withEntities } from '@ngrx/signals/entities';
+import { setAllEntities, setEntity, withEntities } from '@ngrx/signals/entities';
 import { firstValueFrom } from 'rxjs';
 
 import {
   AppUIElementTemplate,
+  CreateAppUIElementTemplatePayload,
   UIElementTemplateService,
 } from '../../../../services/ui-element-templates.service';
 
@@ -67,6 +68,21 @@ export const UIElementTemplatesStore = signalStore(
         patchState(store, setAllEntities(allUIElementTempalates), setFulfilled());
       } catch (_error) {
         setError('Something went wrong fetching books');
+      }
+    },
+    addOne: async (
+      newUIElementTemplatePayload: CreateAppUIElementTemplatePayload
+    ): Promise<void> => {
+      patchState(store, setPending());
+      try {
+        const createdUIElementTemplate = await firstValueFrom(
+          uiElementTemplateService.createUIElementTemplate(newUIElementTemplatePayload)
+        );
+        patchState(store, setEntity(createdUIElementTemplate));
+      } catch (_error) {
+        setError('Something went wrong fetching books');
+      } finally {
+        patchState(store, setFulfilled());
       }
     },
   })),

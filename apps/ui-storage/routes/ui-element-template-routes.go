@@ -30,18 +30,20 @@ func (route *UIElementTemplateRoutes) RegisterUIElementTemplateRoutes(r *gin.Eng
 func (route *UIElementTemplateRoutes) createUIElementTemplate(c *gin.Context) {
 	var newUIElementTemplate models.UIElementTemplate
 
-	err := c.ShouldBindJSON(newUIElementTemplate)
+	err := c.BindJSON(&newUIElementTemplate)
 
 	if err != nil {
 		utils.BadRequest(c, "Invalid ui element template")
 		return
 	}
 
-	err = route.uiElementTemplatesRepo.InserUIElementTemplate(&newUIElementTemplate)
+	insertedUIElementTemplate, err := route.uiElementTemplatesRepo.InserUIElementTemplate(&newUIElementTemplate)
 	if err != nil {
 		utils.ServerError(c)
 		return
 	}
+
+	c.JSON(http.StatusOK, insertedUIElementTemplate)
 }
 
 func (route *UIElementTemplateRoutes) getAllUIElementTemplates(c *gin.Context) {

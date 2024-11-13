@@ -9,6 +9,13 @@ export const builderRoutes: Route[] = [
       ),
   },
   {
+    path: 'new',
+    loadComponent: () =>
+      import('./newUIElementPage/newUIElementPage.component').then(
+        (m) => m.NewUIElementPageComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',
