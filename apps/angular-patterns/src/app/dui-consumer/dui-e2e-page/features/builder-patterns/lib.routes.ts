@@ -4,14 +4,14 @@ export const builderRoutes: Route[] = [
   {
     path: '',
     loadComponent: () =>
-      import('./uiElementsListPage/uiElementsListPage.component').then(
+      import('./pages/ui-elements-list-page/ui-elements-list-page.component').then(
         (m) => m.UiElementsListPageComponent
       ),
   },
   {
     path: 'new',
     loadComponent: () =>
-      import('./newUIElementPage/newUIElementPage.component').then(
+      import('./pages/new-ui-element-page/new-ui-element-page.component').then(
         (m) => m.NewUIElementPageComponent
       ),
   },

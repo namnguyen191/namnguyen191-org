@@ -32,8 +32,8 @@ import { catchError, map, Observable, of, switchMap, timer } from 'rxjs';
 import {
   CreateAppUIElementTemplatePayload,
   UIElementTemplateService,
-} from '../../../../services/ui-element-templates.service';
-import { UIElementTemplatesStore } from '../state-store/uiElementTemplate.store';
+} from '../../../../../services/ui-element-templates.service';
+import { UIElementTemplatesStore } from '../../state-store/uiElementTemplate.store';
 
 const UIElementTypeMap = {
   [CarbonButtonElementType]: 'Button',
@@ -72,7 +72,7 @@ const isUIElementIdUnique = (): AsyncValidatorFn => {
 };
 
 @Component({
-  selector: 'namnguyen191-new-uielement-page',
+  selector: 'namnguyen191-new-ui-element-page',
   standalone: true,
   imports: [
     CommonModule,
@@ -83,8 +83,8 @@ const isUIElementIdUnique = (): AsyncValidatorFn => {
     DropdownModule,
     InlineLoadingModule,
   ],
-  templateUrl: './newUIElementPage.component.html',
-  styleUrl: './newUIElementPage.component.scss',
+  templateUrl: './new-ui-element-page.component.html',
+  styleUrl: './new-ui-element-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewUIElementPageComponent {

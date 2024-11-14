@@ -8,14 +8,17 @@ import {
   TableModule,
 } from 'carbon-components-angular';
 
-import { TemplateMetaData, UIElementTemplatesStore } from '../state-store/uiElementTemplate.store';
+import {
+  TemplateMetaData,
+  UIElementTemplatesStore,
+} from '../../state-store/uiElementTemplate.store';
 
 @Component({
   selector: 'namnguyen191-ui-elements-list-page',
   standalone: true,
   imports: [CommonModule, TableModule],
-  templateUrl: './uiElementsListPage.component.html',
-  styleUrl: './uiElementsListPage.component.scss',
+  templateUrl: './ui-elements-list-page.component.html',
+  styleUrl: './ui-elements-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiElementsListPageComponent {
