@@ -1,3 +1,13 @@
+## 0.0.1-10 (2024-11-19)
+
+### 🚀 Features
+
+- enhace core and add edit ui element page ([a0273a5](https://github.com/namnguyen191/namnguyen191-org/commit/a0273a5))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-9 (2024-11-10)
 
 ### 🚀 Features
