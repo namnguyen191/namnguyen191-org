@@ -1,9 +1,8 @@
 @use 'carbon-components/scss/globals/scss/spacing';
-
-$nav-block-size: 3rem;
+@use '../../../../base';
 
 :host {
-  height: calc(100vh - $nav-block-size);
+  height: calc(100vh - base.$nav-block-size);
   display: flex;
   align-items: center;
   justify-content: center;

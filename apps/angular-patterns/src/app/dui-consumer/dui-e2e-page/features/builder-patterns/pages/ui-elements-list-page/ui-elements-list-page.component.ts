@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  ButtonModule,
   Table,
   TableHeaderItem,
   TableItem,
@@ -16,13 +24,16 @@ import {
 @Component({
   selector: 'namnguyen191-ui-elements-list-page',
   standalone: true,
-  imports: [CommonModule, TableModule],
+  imports: [CommonModule, TableModule, ButtonModule, RouterModule],
   templateUrl: './ui-elements-list-page.component.html',
   styleUrl: './ui-elements-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiElementsListPageComponent {
-  #uiElementTemplatesStore = inject(UIElementTemplatesStore);
+  readonly #uiElementTemplatesStore = inject(UIElementTemplatesStore);
+  readonly #cdr = inject(ChangeDetectorRef);
+  readonly #router = inject(Router);
+  readonly #activatedRoute = inject(ActivatedRoute);
 
   loadingSig = this.#uiElementTemplatesStore.isPending;
   allTemplatesMetaDataSig = this.#uiElementTemplatesStore.allUIElementTemplateMetaData;
@@ -35,6 +46,14 @@ export class UiElementsListPageComponent {
     effect(() => {
       const allTemplatesMetaData = this.allTemplatesMetaDataSig();
       this.tableModel.data = this.#constructTableRows(allTemplatesMetaData);
+      this.#cdr.detectChanges();
+    });
+  }
+
+  onRowClick(e: number): void {
+    const currentId = this.tableModel.data[e]?.[0]?.data as string;
+    this.#router.navigate(['edit', currentId], {
+      relativeTo: this.#activatedRoute,
     });
   }
 

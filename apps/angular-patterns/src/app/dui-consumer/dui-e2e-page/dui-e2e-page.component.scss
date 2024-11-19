@@ -1,8 +1,8 @@
-$nav-block-size: 3rem;
+@use 'base';
 
 :host {
   display: block;
-  padding-top: $nav-block-size;
+  padding-top: base.$nav-block-size;
 
   .toast-container {
     position: fixed;

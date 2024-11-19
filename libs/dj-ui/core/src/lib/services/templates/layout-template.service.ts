@@ -83,8 +83,9 @@ export class LayoutTemplateService {
   updateLayoutTemplate(updatedLayoutTemplate: LayoutTemplate): void {
     const updatedLayoutTemplateId = updatedLayoutTemplate.id;
     const existingLayoutTemplateSubject = this.#layoutObsMap[updatedLayoutTemplateId];
+    const existingLayoutTemplateStatus = existingLayoutTemplateSubject?.getValue().status;
 
-    if (!existingLayoutTemplateSubject) {
+    if (!existingLayoutTemplateSubject || !(existingLayoutTemplateStatus === 'loaded')) {
       logError(
         `LayoutTemplate with id of "${updatedLayoutTemplateId}" has not been register. Please register it instead`
       );

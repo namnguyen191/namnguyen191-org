@@ -11,7 +11,7 @@
   </cds-dropdown>
   <cds-button-set class="new-ui-element-form__btn-container">
     <button cdsButton type="submit" [disabled]="!newUIElementForm.valid">Create</button>
-    <button cdsButton="secondary">Cancel</button>
+    <button cdsButton="secondary" [routerLink]="['..']">Cancel</button>
   </cds-button-set>
   <cds-text-label [helperText]="idValidationLoading" [invalid]="!!idError">
     Id

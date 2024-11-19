@@ -1,0 +1,14 @@
+@use '../../../../base';
+
+:host {
+  height: base.$max-full-height;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+
+  /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+  ::ng-deep {
+    gridster-item {
+      background-color: rgba($color: #0000, $alpha: 20%);
+    }
+  }
+}

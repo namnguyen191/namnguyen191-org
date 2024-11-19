@@ -16,6 +16,13 @@ export const builderRoutes: Route[] = [
       ),
   },
   {
+    path: 'edit/:id',
+    loadComponent: () =>
+      import('./pages/edit-ui-element-template-page/edit-ui-element-template-page.component').then(
+        (m) => m.EditUIElementTemplatePageComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',

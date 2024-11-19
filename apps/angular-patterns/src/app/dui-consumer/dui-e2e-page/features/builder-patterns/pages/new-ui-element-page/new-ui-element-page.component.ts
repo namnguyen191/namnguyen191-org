@@ -10,6 +10,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import {
   CarbonButtonElementType,
   CarbonCarouselCardElementType,
@@ -82,6 +83,7 @@ const isUIElementIdUnique = (): AsyncValidatorFn => {
     LoadingModule,
     DropdownModule,
     InlineLoadingModule,
+    RouterModule,
   ],
   templateUrl: './new-ui-element-page.component.html',
   styleUrl: './new-ui-element-page.component.scss',

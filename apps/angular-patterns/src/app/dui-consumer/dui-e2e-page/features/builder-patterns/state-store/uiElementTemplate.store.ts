@@ -49,13 +49,34 @@ const withRequestStatus = () => {
 
 export type TemplateMetaData = Pick<AppUIElementTemplate, 'id' | 'createdAt' | 'updatedAt'>;
 
+type UIElementTemplatesStoreState = {
+  query: {
+    id?: string;
+  };
+};
+const uiElementTemplateStoreInitialState: UIElementTemplatesStoreState = {
+  query: {},
+};
+
 export const UIElementTemplatesStore = signalStore(
   { providedIn: 'root' },
+  withState(uiElementTemplateStoreInitialState),
   withEntities<AppUIElementTemplate>(),
   withRequestStatus(),
-  withComputed(({ entities }) => ({
+  withComputed(({ entities, query }) => ({
     allUIElementTemplateMetaData: computed<TemplateMetaData[]>(() => {
       return entities().map(({ id, createdAt, updatedAt }) => ({ id, createdAt, updatedAt }));
+    }),
+    filteredUIElementTemplates: computed<AppUIElementTemplate[]>(() => {
+      const { id } = query();
+
+      return entities().filter((uiEleTemp) => {
+        if (id) {
+          return uiEleTemp.id === id;
+        }
+
+        return false;
+      });
     }),
   })),
   withMethods((store, uiElementTemplateService = inject(UIElementTemplateService)) => ({
@@ -84,6 +105,9 @@ export const UIElementTemplatesStore = signalStore(
       } finally {
         patchState(store, setFulfilled());
       }
+    },
+    updateQuery: (query: UIElementTemplatesStoreState['query']): void => {
+      patchState(store, { query });
     },
   })),
   withHooks({

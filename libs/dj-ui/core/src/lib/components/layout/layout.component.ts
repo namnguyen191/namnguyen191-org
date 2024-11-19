@@ -140,12 +140,12 @@ export class LayoutComponent {
     if (layoutConfig?.status !== 'loaded') {
       return null;
     }
-
     const gridConfigs = layoutConfig.config.gridConfigs;
     return {
       ...GRID_CONFIG,
       itemChangeCallback: this.#handleGridItemChanged.bind(this),
       margin: gridConfigs?.gap ?? DEFAULT_GRID_GAP,
+      compactType: gridConfigs?.compactType ?? GRID_CONFIG.compactType,
     };
   });
 

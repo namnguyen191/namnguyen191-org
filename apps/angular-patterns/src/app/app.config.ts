@@ -10,6 +10,7 @@ import { CarbonComponentLoader } from '@dj-ui/carbon-components';
 import { COMMON_SETUP_CONFIG, SetupConfigs } from '@dj-ui/common';
 import { CORE_CONFIG, JS_RUNNER_WORKER } from '@dj-ui/core';
 import { globalDelayInterceptorFactory } from '@namnguyen191/common-angular-helper';
+import { provideMonacoEditor } from 'ngx-monaco-editor-v2';
 
 import { appRoutes } from './app.routes';
 import { DuiLayoutLoadingComponent } from './components/dui-layout-loading/dui-layout-loading.component';
@@ -20,6 +21,7 @@ import { UIElementTemplateService } from './dui-consumer/services/ui-element-tem
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideMonacoEditor(),
     provideExperimentalZonelessChangeDetection(),
     provideRouter(
       appRoutes,

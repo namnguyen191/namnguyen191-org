@@ -54,7 +54,7 @@ export const duiE2ERoutes: Route[] = [
         loadChildren: () =>
           import('./features/builder-patterns/lib.routes').then((m) => m.builderRoutes),
       },
-      { path: '**', redirectTo: 'button-patterns', pathMatch: 'full' },
+      { path: '**', redirectTo: 'builder-patterns', pathMatch: 'full' },
     ],
   },
   { path: '**', redirectTo: '', pathMatch: 'full' },

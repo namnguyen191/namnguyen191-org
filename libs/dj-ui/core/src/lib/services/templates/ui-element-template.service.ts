@@ -120,8 +120,9 @@ export class UIElementTemplateService {
     const updatedUIElementTemplateId = updatedUIElementTemplate.id;
     const existingUIElementTemplateSubject =
       this.#uiElementTemplateSubjectMap[updatedUIElementTemplateId];
+    const existingUIElementTemplateStatus = existingUIElementTemplateSubject?.getValue().status;
 
-    if (!existingUIElementTemplateSubject) {
+    if (!existingUIElementTemplateSubject || existingUIElementTemplateStatus !== 'loaded') {
       logError(
         `UIElementTemplate with id of "${updatedUIElementTemplateId}" has not been register. Please register it instead`
       );
