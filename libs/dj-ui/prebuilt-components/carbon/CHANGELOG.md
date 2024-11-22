@@ -1,3 +1,13 @@
+## 0.0.1-4 (2024-11-22)
+
+### 🚀 Features
+
+- simplify edit page effect and use untracked for table pagination event ([411201e](https://github.com/namnguyen191/namnguyen191-org/commit/411201e))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-3 (2024-10-28)
 
 ### 🚀 Features
