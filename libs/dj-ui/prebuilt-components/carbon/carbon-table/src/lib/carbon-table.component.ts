@@ -7,6 +7,7 @@ import {
   InputSignal,
   output,
   Signal,
+  untracked,
 } from '@angular/core';
 import {
   CarbonButtonSymbol,
@@ -159,9 +160,10 @@ export class CarbonTableComponent
   carbonButtonSymbol = CarbonButtonSymbol;
 
   selectPage(selectedPage: number): void {
-    this.paginationModel().currentPage = selectedPage;
+    const paginationModel = untracked(this.paginationModel);
+    paginationModel.currentPage = selectedPage;
 
-    const pageLength = this.paginationModel().pageLength ?? 0;
+    const pageLength = paginationModel.pageLength ?? 0;
 
     this.paginationChanged.emit({ $paginationContext: { pageLength, selectedPage } });
   }

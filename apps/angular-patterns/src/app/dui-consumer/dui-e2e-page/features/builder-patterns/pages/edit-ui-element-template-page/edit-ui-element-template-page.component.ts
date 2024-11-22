@@ -70,10 +70,9 @@ export class EditUIElementTemplatePageComponent {
           return;
         }
 
-        const currentTemplate = this.#uiElementTemplatesStore.filteredUIElementTemplates()[0];
         const currentPreviewLayout = this.previewLayout();
 
-        if (!currentTemplate || !(currentPreviewLayout?.status === 'loaded')) {
+        if (!(currentPreviewLayout?.status === 'loaded')) {
           return;
         }
         // this.#uiElementTemplateService.registerUIElementTemplate(currentTemplate);
@@ -82,7 +81,7 @@ export class EditUIElementTemplatePageComponent {
           uiElementInstances: [
             {
               id: 'instance-1',
-              uiElementTemplateId: currentTemplate.id,
+              uiElementTemplateId: this.#currentUIElementTemplateId,
             },
           ],
         });
