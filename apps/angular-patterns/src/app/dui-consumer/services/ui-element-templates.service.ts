@@ -18,6 +18,8 @@ export type CreateAppUIElementTemplatePayload = Omit<
   'createdAt' | 'updatedAt'
 >;
 
+export type UpdateAppUIElementTemplatePayload = CreateAppUIElementTemplatePayload;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -44,6 +46,12 @@ export class UIElementTemplateService {
     payload: CreateAppUIElementTemplatePayload
   ): Observable<AppUIElementTemplate> => {
     return this.#httpClient.post<AppUIElementTemplate>(BASE_UI_ELEMENT_TEMPLATE_URL, payload);
+  };
+
+  updateUIElementTemplate = (
+    payload: UpdateAppUIElementTemplatePayload
+  ): Observable<AppUIElementTemplate> => {
+    return this.#httpClient.put<AppUIElementTemplate>(BASE_UI_ELEMENT_TEMPLATE_URL, payload);
   };
 
   #fetchUIElementTemplateById(id: string): Observable<AppUIElementTemplate> {

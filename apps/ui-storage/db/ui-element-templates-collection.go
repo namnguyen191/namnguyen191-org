@@ -76,6 +76,14 @@ func (r *UIElementTemplatesRepo) GetUIElementTemplateById(id string) (*models.UI
 	return &foundUIElementTemplate, nil
 }
 
+func (r *UIElementTemplatesRepo) UpdateUIElementTemplate(updatedUIElementTemplate *models.UIElementTemplate) error {
+	filter := bson.M{"id": updatedUIElementTemplate.Id}
+	updatedUIElementTemplate.UpdatedAt = time.Now().UTC().String()
+	singleResult := r.coll.FindOneAndReplace(context.TODO(), filter, updatedUIElementTemplate)
+
+	return singleResult.Err()
+}
+
 func (r *UIElementTemplatesRepo) ClearMockUIElementTemplates() {
 	deleteUIElementTemplateFile := func(fileByteValue []byte) {
 		var uiElementTemplate models.UIElementTemplate

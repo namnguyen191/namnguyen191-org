@@ -73,6 +73,9 @@ importers:
       '@apollo/server':
         specifier: ^4.10.1
         version: 4.11.0(encoding@0.1.13)(graphql@16.9.0)
+      '@carbon/icons':
+        specifier: ^11.53.0
+        version: 11.53.0
       '@carbon/styles':
         specifier: ^1.58.0
         version: 1.67.0(sass@1.80.3)
@@ -149,14 +152,14 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       monaco-editor:
-        specifier: ^0.52.0
-        version: 0.52.0
+        specifier: ^0.50.0
+        version: 0.50.0
       nanoid:
         specifier: ^5.0.6
         version: 5.0.7
       ngx-monaco-editor-v2:
         specifier: ^18.1.0
-        version: 18.1.0(@angular/common@18.2.2(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(monaco-editor@0.52.0)
+        version: 18.1.0(@angular/common@18.2.2(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(monaco-editor@0.50.0)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1659,6 +1662,9 @@ packages:
 
   '@carbon/icons@11.14.0':
     resolution: {integrity: sha512-6XaySbscz1ubJ/3GtyXB8qJpcAL8kcIzBA6JZpFCcha43tuB1Kps87ADj/v3yx0sLPxyIzRWgkw2n1bnkAcsNA==}
+
+  '@carbon/icons@11.53.0':
+    resolution: {integrity: sha512-hX9jt/bTz0Hkfh0eKQ2AiXZ/rRu8o8ZGAQyeWnQcWtmKJ/X90+JQX71Nho88Alwjoi1IKdEdSRnzN+9sTvmuQA==}
 
   '@carbon/layout@11.27.0':
     resolution: {integrity: sha512-o2++xUe2Wfg1nzneLl8ucbep9ObUE6vEgwlifVdOpvCti6zlsRjti5ojtYpx3v0yW2Qh7TJH8OYN7CyZDLeZUw==}
@@ -8733,8 +8739,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  monaco-editor@0.52.0:
-    resolution: {integrity: sha512-OeWhNpABLCeTqubfqLMXGsqf6OmPU6pHM85kF3dhy6kq5hnhuVS1p3VrEW/XhWHc71P2tHyS5JFySD8mgs1crw==}
+  monaco-editor@0.50.0:
+    resolution: {integrity: sha512-8CclLCmrRRh+sul7C08BmPBP3P8wVWfBHomsTcndxg5NRCEPfu/mc2AGU8k37ajjDVXcXFc12ORAMUkmk+lkFA==}
 
   mrmime@2.0.0:
     resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
@@ -14041,6 +14047,10 @@ snapshots:
   '@carbon/icon-helpers@10.37.0': {}
 
   '@carbon/icons@11.14.0': {}
+
+  '@carbon/icons@11.53.0':
+    dependencies:
+      '@ibm/telemetry-js': 1.6.1
 
   '@carbon/layout@11.27.0':
     dependencies:
@@ -22907,7 +22917,7 @@ snapshots:
       requirejs: 2.3.7
       requirejs-config-file: 4.0.0
 
-  monaco-editor@0.52.0: {}
+  monaco-editor@0.50.0: {}
 
   mrmime@2.0.0: {}
 
@@ -23007,11 +23017,11 @@ snapshots:
       rollup: 4.24.0
       tailwindcss: 3.4.3(ts-node@10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.11))(@types/node@20.11.28)(typescript@5.5.3))
 
-  ngx-monaco-editor-v2@18.1.0(@angular/common@18.2.2(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(monaco-editor@0.52.0):
+  ngx-monaco-editor-v2@18.1.0(@angular/common@18.2.2(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(monaco-editor@0.50.0):
     dependencies:
       '@angular/common': 18.2.2(@angular/core@18.2.2(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1)
       '@angular/core': 18.2.2(rxjs@7.8.1)(zone.js@0.14.10)
-      monaco-editor: 0.52.0
+      monaco-editor: 0.50.0
       tslib: 2.8.0
 
   nice-napi@1.0.2:

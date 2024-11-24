@@ -1,7 +1,13 @@
 <djui [layoutId]="PREVIEW_LAYOUT_ID"></djui>
-<ngx-monaco-editor
-  style="height: 100%"
-  [options]="editorOptions"
-  [(ngModel)]="code"
-  (ngModelChange)="codeChangeSubject.next($event)"
-></ngx-monaco-editor>
+
+<div class="edit-controls-container">
+  <button cdsButton="primary" (click)="toggleModal(true)">
+    Open template editor
+    <svg cdsIcon="edit" class="cds--btn__icon" size="16"></svg>
+  </button>
+</div>
+
+<namnguyen191-raw-template-editor-modal
+  [open]="isRawTemplateEditorModalOpenSig()"
+  (close)="toggleModal(false)"
+></namnguyen191-raw-template-editor-modal>

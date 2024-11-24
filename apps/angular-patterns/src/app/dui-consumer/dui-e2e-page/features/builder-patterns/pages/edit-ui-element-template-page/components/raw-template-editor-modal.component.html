@@ -1,0 +1,21 @@
+<cds-modal size="lg" [open]="open" (overlaySelected)="closeModal()">
+  <cds-modal-header [showCloseButton]="true" (closeSelect)="closeModal()">
+    <h2 cdsModalHeaderLabel>Editor</h2>
+    <h3 cdsModalHeaderHeading>Edit your template in JSON</h3>
+  </cds-modal-header>
+  <section cdsModalContent class="modal-body">
+    @if (loadingSig() || !code) {
+      <cds-loading [isActive]="true"></cds-loading>
+    } @else {
+      <ngx-monaco-editor
+        class="editor-container"
+        [options]="editorOptions"
+        [(ngModel)]="code"
+        (ngModelChange)="codeChangeSubject.next($event)"
+      ></ngx-monaco-editor>
+    }
+  </section>
+  <cds-modal-footer>
+    <button cdsButton="primary" (click)="updateUIElementTemplate()">Save your changes</button>
+  </cds-modal-footer>
+</cds-modal>

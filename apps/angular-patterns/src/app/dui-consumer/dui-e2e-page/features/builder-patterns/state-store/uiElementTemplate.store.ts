@@ -15,6 +15,7 @@ import {
   AppUIElementTemplate,
   CreateAppUIElementTemplatePayload,
   UIElementTemplateService,
+  UpdateAppUIElementTemplatePayload,
 } from '../../../../services/ui-element-templates.service';
 
 type RequestStatus = 'idle' | 'pending' | 'fulfilled' | { error: string };
@@ -88,7 +89,7 @@ export const UIElementTemplatesStore = signalStore(
         );
         patchState(store, setAllEntities(allUIElementTempalates), setFulfilled());
       } catch (_error) {
-        setError('Something went wrong fetching books');
+        setError('Something went wrong fetching UI element templates');
       }
     },
     addOne: async (
@@ -101,7 +102,22 @@ export const UIElementTemplatesStore = signalStore(
         );
         patchState(store, setEntity(createdUIElementTemplate));
       } catch (_error) {
-        setError('Something went wrong fetching books');
+        setError('Something went wrong creating UI element template');
+      } finally {
+        patchState(store, setFulfilled());
+      }
+    },
+    updateOne: async (
+      updateUIElementTemplatePayload: UpdateAppUIElementTemplatePayload
+    ): Promise<void> => {
+      patchState(store, setPending());
+      try {
+        const updatedUIElementTemplate = await firstValueFrom(
+          uiElementTemplateService.updateUIElementTemplate(updateUIElementTemplatePayload)
+        );
+        patchState(store, setEntity(updatedUIElementTemplate));
+      } catch (_error) {
+        setError('Something went wrong updating UI element template');
       } finally {
         patchState(store, setFulfilled());
       }

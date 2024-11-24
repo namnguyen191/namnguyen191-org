@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"namnguyen191/uistorage/db"
 	"namnguyen191/uistorage/models"
 	"namnguyen191/uistorage/utils"
@@ -25,6 +26,7 @@ func (route *UIElementTemplateRoutes) RegisterUIElementTemplateRoutes(r *gin.Eng
 	r.GET(BASE_UI_ELEMENT_TEMPLATE_ROUTE, route.getAllUIElementTemplates)
 	r.GET(BASE_UI_ELEMENT_TEMPLATE_ROUTE+"/:id", route.getUIElementTemplateById)
 	r.POST(BASE_UI_ELEMENT_TEMPLATE_ROUTE, route.createUIElementTemplate)
+	r.PUT(BASE_UI_ELEMENT_TEMPLATE_ROUTE, route.updateUIElementTemplate)
 }
 
 func (route *UIElementTemplateRoutes) createUIElementTemplate(c *gin.Context) {
@@ -73,4 +75,36 @@ func (route *UIElementTemplateRoutes) getUIElementTemplateById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, uiElementTemplate)
+}
+
+func (route *UIElementTemplateRoutes) updateUIElementTemplate(c *gin.Context) {
+	var updatedUIElementTemplate models.UIElementTemplate
+	err := c.ShouldBindJSON(&updatedUIElementTemplate)
+
+	if err != nil {
+		utils.BadRequest(c, "Invalid UI element template")
+		return
+	}
+
+	existingUIElementTemplate, err := route.uiElementTemplatesRepo.GetUIElementTemplateById(*updatedUIElementTemplate.Id)
+	if err != nil {
+		utils.ServerError(c)
+		return
+	}
+
+	if existingUIElementTemplate == nil {
+		utils.NotFound(c, "the UI element template you are trying to update cannot be found")
+		return
+	}
+
+	updatedUIElementTemplate.CreatedAt = existingUIElementTemplate.CreatedAt
+
+	err = route.uiElementTemplatesRepo.UpdateUIElementTemplate(&updatedUIElementTemplate)
+	if err != nil {
+		fmt.Println(err)
+		utils.ServerError(c)
+		return
+	}
+
+	c.JSON(http.StatusCreated, updatedUIElementTemplate)
 }

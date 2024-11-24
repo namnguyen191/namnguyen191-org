@@ -3,7 +3,16 @@
 :host {
   height: base.$max-full-height;
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 1fr base.$btx-max-width;
+
+  .edit-controls-container {
+    display: flex;
+    align-items: baseline;
+
+    & > * {
+      flex-grow: 1;
+    }
+  }
 
   /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
   ::ng-deep {
