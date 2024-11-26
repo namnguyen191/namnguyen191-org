@@ -1,31 +1,55 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { LayoutTemplateService, UIElementTemplateService } from '@dj-ui/core';
-import { BaseModal, ButtonModule, LoadingModule, ModalModule } from 'carbon-components-angular';
+import {
+  BaseModal,
+  ButtonModule,
+  InlineLoadingModule,
+  LoadingModule,
+  ModalModule,
+} from 'carbon-components-angular';
+import { editor } from 'monaco-editor';
 import { EditorComponent } from 'ngx-monaco-editor-v2';
 import * as parserBabel from 'prettier/plugins/babel';
 import * as parserEstree from 'prettier/plugins/estree';
 import * as prettier from 'prettier/standalone';
-import { debounceTime, skip, Subject } from 'rxjs';
+import { debounceTime, Subject, tap } from 'rxjs';
 
 import { defaultPreviewLayoutConfig } from '../../../../../../services/layouts.service';
 import { AppUIElementTemplate } from '../../../../../../services/ui-element-templates.service';
 import { UIElementTemplatesStore } from '../../../state-store/uiElementTemplate.store';
 
+export type IStandaloneEditorConstructionOptions = NonNullable<Parameters<typeof editor.create>[1]>;
+
 @Component({
   selector: 'namnguyen191-raw-template-editor-modal',
   standalone: true,
-  imports: [CommonModule, ModalModule, EditorComponent, FormsModule, LoadingModule, ButtonModule],
+  imports: [
+    CommonModule,
+    ModalModule,
+    EditorComponent,
+    FormsModule,
+    LoadingModule,
+    ButtonModule,
+    InlineLoadingModule,
+  ],
   templateUrl: './raw-template-editor-modal.component.html',
   styleUrl: './raw-template-editor-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RawTemplateEditorModalComponent extends BaseModal {
   readonly #layoutTemplateService = inject(LayoutTemplateService);
-  readonly #uiElementTemplatesStore = inject(UIElementTemplatesStore);
   readonly #uiElementTemplateService = inject(UIElementTemplateService);
+  readonly #uiElementTemplatesStore = inject(UIElementTemplatesStore);
 
   readonly loadingSig = this.#uiElementTemplatesStore.isPending;
 
@@ -33,16 +57,36 @@ export class RawTemplateEditorModalComponent extends BaseModal {
   readonly previewLayout = toSignal(
     this.#layoutTemplateService.getLayoutTemplate(defaultPreviewLayoutConfig.id)
   );
-  readonly codeChangeSubject = new Subject<string>();
 
-  readonly editorOptions = { theme: 'vs-dark', language: 'json' };
+  readonly codeChangeSubject = new Subject<string>();
+  readonly editorOptions: IStandaloneEditorConstructionOptions = {
+    theme: 'vs-dark',
+    language: 'json',
+    wordWrap: 'on',
+  };
   code: string = '';
+  readonly errorStateSig = signal<'noError' | 'isError' | 'isPending'>('noError');
 
   constructor() {
     super();
-    this.codeChangeSubject.pipe(skip(1), debounceTime(500), takeUntilDestroyed()).subscribe({
-      next: (newCode) => this.#onCodeChange(newCode),
-    });
+    this.codeChangeSubject
+      .pipe(
+        tap({
+          next: () => this.errorStateSig.set('isPending'),
+        }),
+        debounceTime(500),
+        tap({
+          next: (code) => {
+            if (this.#isValidCode(code)) {
+              this.errorStateSig.set('noError');
+            } else {
+              this.errorStateSig.set('isError');
+            }
+          },
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
 
     this.#watchCodeChange();
   }
@@ -52,7 +96,10 @@ export class RawTemplateEditorModalComponent extends BaseModal {
     const { updatedAt, createdAt, ...updatePayload } = templateFromCode;
 
     await this.#uiElementTemplatesStore.updateOne(updatePayload);
-    this.closeModal();
+    if (!untracked(this.#uiElementTemplatesStore.error)) {
+      this.#uiElementTemplateService.updateUIElementTemplate(updatePayload);
+      this.closeModal();
+    }
   }
 
   #watchCodeChange(): void {
@@ -76,12 +123,13 @@ export class RawTemplateEditorModalComponent extends BaseModal {
     return formatted;
   }
 
-  #onCodeChange(code: string): void {
+  #isValidCode(code: string): boolean {
     try {
-      const parsedTemplate = JSON.parse(code);
-      this.#uiElementTemplateService.updateUIElementTemplate(parsedTemplate);
+      JSON.parse(code);
+      return true;
     } catch (err) {
       console.log('Something went wrong:', err);
+      return false;
     }
   }
 }

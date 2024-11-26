@@ -1,3 +1,5 @@
+@let errorState = errorStateSig();
+
 <cds-modal size="lg" [open]="open" (overlaySelected)="closeModal()">
   <cds-modal-header [showCloseButton]="true" (closeSelect)="closeModal()">
     <h2 cdsModalHeaderLabel>Editor</h2>
@@ -16,6 +18,17 @@
     }
   </section>
   <cds-modal-footer>
-    <button cdsButton="primary" (click)="updateUIElementTemplate()">Save your changes</button>
+    <button
+      cdsButton="primary"
+      [disabled]="errorState === 'isError' || errorState === 'isPending'"
+      (click)="updateUIElementTemplate()"
+    >
+      @if (errorState === 'isError') {
+        Error in JSON
+      } @else {
+        Save your changes
+      }
+      <cds-loading *ngIf="errorState === 'isPending'" size="sm"></cds-loading>
+    </button>
   </cds-modal-footer>
 </cds-modal>
