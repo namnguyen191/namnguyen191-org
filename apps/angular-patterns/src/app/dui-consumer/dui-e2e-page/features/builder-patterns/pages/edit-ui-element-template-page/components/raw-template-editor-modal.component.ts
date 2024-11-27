@@ -25,7 +25,10 @@ import * as prettier from 'prettier/standalone';
 import { debounceTime, Subject, tap } from 'rxjs';
 
 import { defaultPreviewLayoutConfig } from '../../../../../../services/layouts.service';
-import { AppUIElementTemplate } from '../../../../../../services/ui-element-templates.service';
+import {
+  AppUIElementTemplateEditableFields,
+  AppUIElementTemplateUnEditableFields,
+} from '../../../../../../services/ui-element-templates.service';
 import { UIElementTemplatesStore } from '../../../state-store/uiElementTemplate.store';
 
 export type IStandaloneEditorConstructionOptions = NonNullable<Parameters<typeof editor.create>[1]>;
@@ -65,6 +68,7 @@ export class RawTemplateEditorModalComponent extends BaseModal {
     wordWrap: 'on',
   };
   code: string = '';
+  #uneditableTemplateMetaData: AppUIElementTemplateUnEditableFields | null = null;
   readonly errorStateSig = signal<'noError' | 'isError' | 'isPending'>('noError');
 
   constructor() {
@@ -92,12 +96,22 @@ export class RawTemplateEditorModalComponent extends BaseModal {
   }
 
   async updateUIElementTemplate(): Promise<void> {
-    const templateFromCode = JSON.parse(this.code) as AppUIElementTemplate;
-    const { updatedAt, createdAt, ...updatePayload } = templateFromCode;
+    const templateFromCode = JSON.parse(this.code) as AppUIElementTemplateEditableFields;
 
-    await this.#uiElementTemplatesStore.updateOne(updatePayload);
+    if (!this.#uneditableTemplateMetaData) {
+      console.error('Meta data is missing');
+      return;
+    }
+
+    await this.#uiElementTemplatesStore.updateOne({
+      ...this.#uneditableTemplateMetaData,
+      ...templateFromCode,
+    });
     if (!untracked(this.#uiElementTemplatesStore.error)) {
-      this.#uiElementTemplateService.updateUIElementTemplate(updatePayload);
+      this.#uiElementTemplateService.updateUIElementTemplate({
+        id: this.#uneditableTemplateMetaData.id,
+        ...templateFromCode,
+      });
       this.closeModal();
     }
   }
@@ -108,7 +122,13 @@ export class RawTemplateEditorModalComponent extends BaseModal {
       if (!currentTemplate) {
         return;
       }
-      const rawJSON = JSON.stringify(currentTemplate);
+      const { createdAt, updatedAt, id, ...templateWithoutTimeStamps } = currentTemplate;
+      this.#uneditableTemplateMetaData = {
+        id,
+        createdAt,
+        updatedAt,
+      };
+      const rawJSON = JSON.stringify(templateWithoutTimeStamps);
       const prettifyJSON = await this.#formatJSON(rawJSON);
       this.code = prettifyJSON;
     });

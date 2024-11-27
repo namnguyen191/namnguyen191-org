@@ -6,17 +6,28 @@ import { Observable, shareReplay } from 'rxjs';
 
 const BASE_UI_ELEMENT_TEMPLATE_URL = 'http://localhost:8080/ui-element-templates';
 
-export type AppUIElementTemplate<T extends ObjectType = object> = UIElementTemplate<T> & {
-  name: string;
-  description: string;
+export type TimeStamp = {
   createdAt: string;
   updatedAt?: string;
 };
 
-export type CreateAppUIElementTemplatePayload = Omit<
+export type MetaData = {
+  name: string;
+  description: string;
+};
+
+export type AppUIElementTemplate<T extends ObjectType = object> = UIElementTemplate<T> &
+  TimeStamp &
+  MetaData;
+
+export type AppUIElementTemplateUnEditableFields = TimeStamp & Pick<AppUIElementTemplate, 'id'>;
+
+export type AppUIElementTemplateEditableFields = Omit<
   AppUIElementTemplate,
-  'createdAt' | 'updatedAt'
+  keyof AppUIElementTemplateUnEditableFields
 >;
+
+export type CreateAppUIElementTemplatePayload = Omit<AppUIElementTemplate, keyof TimeStamp>;
 
 export type UpdateAppUIElementTemplatePayload = CreateAppUIElementTemplatePayload;
 
