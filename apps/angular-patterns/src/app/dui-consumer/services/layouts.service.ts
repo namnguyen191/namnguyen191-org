@@ -5,23 +5,13 @@ import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 
 const BASE_LAYOUT_URL = 'http://localhost:8080/layouts';
 
-export const defaultPreviewLayoutConfig: LayoutTemplate = {
-  id: 'preview-layout',
-  gridConfigs: {
-    compactType: 'none',
-  },
-  uiElementInstances: [],
-};
-
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutsService {
   readonly #httpClient = inject(HttpClient);
 
-  readonly #layoutsCache: Record<string, Observable<LayoutTemplate>> = {
-    [defaultPreviewLayoutConfig.id]: of(defaultPreviewLayoutConfig),
-  };
+  readonly #layoutsCache: Record<string, Observable<LayoutTemplate>> = {};
 
   getLayoutById = (id: string): Observable<LayoutTemplate> => {
     let layout$ = this.#layoutsCache[id];

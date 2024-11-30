@@ -66,6 +66,7 @@
     "lodash-es": "^4.17.21",
     "monaco-editor": "^0.50.0",
     "nanoid": "^5.0.6",
+    "ngrx-immer": "^3.0.0",
     "ngx-monaco-editor-v2": "^18.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -192,7 +193,7 @@
     "vite": "^5.1.6",
     "vitest": "1.4.0"
   },
-  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228",
+  "packageManager": "pnpm@9.14.4",
   "pnpm": {
     "overrides": {
       "lodash@<4.17.12": ">=4.17.12",

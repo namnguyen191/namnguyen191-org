@@ -13,10 +13,11 @@ type LayoutTemplateId = string;
 export class LayoutTemplateService {
   readonly #eventsService = inject(EventsService);
 
-  #layoutObsMap: Record<LayoutTemplateId, BehaviorSubject<LayoutTemplateWithStatus>> = {};
+  #layoutTemplateSubjectMap: Record<LayoutTemplateId, BehaviorSubject<LayoutTemplateWithStatus>> =
+    {};
 
   startRegisteringLayoutTemplate(id: string): void {
-    const existingLayoutTemplateSubject = this.#layoutObsMap[id];
+    const existingLayoutTemplateSubject = this.#layoutTemplateSubjectMap[id];
     const registeringLayoutTemplate: LayoutTemplateWithStatus = {
       id,
       status: 'loading',
@@ -26,7 +27,7 @@ export class LayoutTemplateService {
       const newLayoutTemplateSubject = new BehaviorSubject<LayoutTemplateWithStatus>(
         registeringLayoutTemplate
       );
-      this.#layoutObsMap[id] = newLayoutTemplateSubject;
+      this.#layoutTemplateSubjectMap[id] = newLayoutTemplateSubject;
       return;
     }
 
@@ -35,7 +36,7 @@ export class LayoutTemplateService {
 
   registerLayoutTemplate(layout: LayoutTemplate): void {
     const layoutId = layout.id;
-    const existingLayoutTemplateSubject = this.#layoutObsMap[layoutId];
+    const existingLayoutTemplateSubject = this.#layoutTemplateSubjectMap[layoutId];
     const registeredLayoutTemplate: LayoutTemplateWithStatus = {
       id: layoutId,
       status: 'loaded',
@@ -57,11 +58,11 @@ export class LayoutTemplateService {
       registeredLayoutTemplate
     );
 
-    this.#layoutObsMap[layoutId] = newLayoutTemplateSubject;
+    this.#layoutTemplateSubjectMap[layoutId] = newLayoutTemplateSubject;
   }
 
   getLayoutTemplate<T extends string>(id: T): Observable<LayoutTemplateWithStatus> {
-    const existingLayoutTemplateSubject = this.#layoutObsMap[id];
+    const existingLayoutTemplateSubject = this.#layoutTemplateSubjectMap[id];
     if (!existingLayoutTemplateSubject) {
       this.#eventsService.emitEvent({
         type: 'MISSING_LAYOUT_TEMPLATE',
@@ -74,7 +75,7 @@ export class LayoutTemplateService {
         status: 'missing',
         config: null,
       });
-      this.#layoutObsMap[id] = newLayoutTemplateSubject;
+      this.#layoutTemplateSubjectMap[id] = newLayoutTemplateSubject;
       return newLayoutTemplateSubject.asObservable();
     }
     return existingLayoutTemplateSubject.asObservable();
@@ -82,7 +83,7 @@ export class LayoutTemplateService {
 
   updateLayoutTemplate(updatedLayoutTemplate: LayoutTemplate): void {
     const updatedLayoutTemplateId = updatedLayoutTemplate.id;
-    const existingLayoutTemplateSubject = this.#layoutObsMap[updatedLayoutTemplateId];
+    const existingLayoutTemplateSubject = this.#layoutTemplateSubjectMap[updatedLayoutTemplateId];
     const existingLayoutTemplateStatus = existingLayoutTemplateSubject?.getValue().status;
 
     if (!existingLayoutTemplateSubject || !(existingLayoutTemplateStatus === 'loaded')) {
@@ -97,5 +98,13 @@ export class LayoutTemplateService {
       status: 'loaded',
       config: updatedLayoutTemplate,
     });
+  }
+
+  updateOrRegisterLayoutTemplate(layoutTemplate: LayoutTemplate): void {
+    if (this.#layoutTemplateSubjectMap[layoutTemplate.id]) {
+      this.updateLayoutTemplate(layoutTemplate);
+    } else {
+      this.registerLayoutTemplate(layoutTemplate);
+    }
   }
 }

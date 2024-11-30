@@ -3,12 +3,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Edit16 from '@carbon/icons/es/edit/16';
-import { DjuiComponent, LayoutTemplateService } from '@dj-ui/core';
+import { DjuiComponent } from '@dj-ui/core';
 import { ButtonModule, IconModule, IconService } from 'carbon-components-angular';
 import { map } from 'rxjs';
 
-import { defaultPreviewLayoutConfig } from '../../../../../services/layouts.service';
 import { UIElementTemplatesStore } from '../../state-store/uiElementTemplate.store';
+import {
+  PREVIEW_LAYOUT_BASE_CONFIG,
+  UIElementTemplateEditorStore,
+} from '../../state-store/uiElementTemplateEditor.store';
 import { RawTemplateEditorModalComponent } from './components/raw-template-editor-modal.component';
 
 @Component({
@@ -23,7 +26,7 @@ export class EditUIElementTemplatePageComponent {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #uiElementTemplatesStore = inject(UIElementTemplatesStore);
-  readonly #layoutTemplateService = inject(LayoutTemplateService);
+  readonly #uiElementTemplateEditorStore = inject(UIElementTemplateEditorStore);
   readonly #iconService = inject(IconService);
 
   readonly #currentUIElementTemplateId: string = this.#activatedRoute.snapshot.params['id'];
@@ -37,10 +40,7 @@ export class EditUIElementTemplatePageComponent {
     }
   );
 
-  readonly PREVIEW_LAYOUT_ID = defaultPreviewLayoutConfig.id;
-  readonly previewLayout = toSignal(
-    this.#layoutTemplateService.getLayoutTemplate(defaultPreviewLayoutConfig.id)
-  );
+  readonly PREVIEW_LAYOUT_ID = PREVIEW_LAYOUT_BASE_CONFIG.id;
 
   constructor() {
     this.#iconService.registerAll([Edit16]);
@@ -60,29 +60,14 @@ export class EditUIElementTemplatePageComponent {
   }
 
   #loadTemplateInPreview(): void {
-    let isLoaded = false;
     effect(
       () => {
-        if (isLoaded) {
+        const uiElementTemplate = this.#uiElementTemplatesStore.filteredUIElementTemplates()[0];
+        if (!uiElementTemplate) {
           return;
         }
 
-        const currentPreviewLayout = this.previewLayout();
-
-        if (!(currentPreviewLayout?.status === 'loaded')) {
-          return;
-        }
-        // this.#uiElementTemplateService.registerUIElementTemplate(currentTemplate);
-        this.#layoutTemplateService.updateLayoutTemplate({
-          ...defaultPreviewLayoutConfig,
-          uiElementInstances: [
-            {
-              id: 'instance-1',
-              uiElementTemplateId: this.#currentUIElementTemplateId,
-            },
-          ],
-        });
-        isLoaded = true;
+        this.#uiElementTemplateEditorStore.setCurrentEditingTemplate(uiElementTemplate);
       },
       {
         allowSignalWrites: true,

@@ -135,4 +135,12 @@ export class UIElementTemplateService {
       config: updatedUIElementTemplate,
     });
   }
+
+  updateOrRegisterUIElementTemplate(uiElementTemplate: UIElementTemplate): void {
+    if (this.#uiElementTemplateSubjectMap[uiElementTemplate.id]) {
+      this.updateUIElementTemplate(uiElementTemplate);
+    } else {
+      this.registerUIElementTemplate(uiElementTemplate);
+    }
+  }
 }

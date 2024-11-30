@@ -7,9 +7,8 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { LayoutTemplateService, UIElementTemplateService } from '@dj-ui/core';
 import {
   BaseModal,
   ButtonModule,
@@ -24,12 +23,9 @@ import * as parserEstree from 'prettier/plugins/estree';
 import * as prettier from 'prettier/standalone';
 import { debounceTime, Subject, tap } from 'rxjs';
 
-import { defaultPreviewLayoutConfig } from '../../../../../../services/layouts.service';
-import {
-  AppUIElementTemplateEditableFields,
-  AppUIElementTemplateUnEditableFields,
-} from '../../../../../../services/ui-element-templates.service';
+import { AppUIElementTemplateEditableFields } from '../../../../../../services/ui-element-templates.service';
 import { UIElementTemplatesStore } from '../../../state-store/uiElementTemplate.store';
+import { UIElementTemplateEditorStore } from '../../../state-store/uiElementTemplateEditor.store';
 
 export type IStandaloneEditorConstructionOptions = NonNullable<Parameters<typeof editor.create>[1]>;
 
@@ -50,16 +46,10 @@ export type IStandaloneEditorConstructionOptions = NonNullable<Parameters<typeof
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RawTemplateEditorModalComponent extends BaseModal {
-  readonly #layoutTemplateService = inject(LayoutTemplateService);
-  readonly #uiElementTemplateService = inject(UIElementTemplateService);
   readonly #uiElementTemplatesStore = inject(UIElementTemplatesStore);
+  readonly #uiElementTemplateEditorStore = inject(UIElementTemplateEditorStore);
 
   readonly loadingSig = this.#uiElementTemplatesStore.isPending;
-
-  readonly PREVIEW_LAYOUT_ID = defaultPreviewLayoutConfig.id;
-  readonly previewLayout = toSignal(
-    this.#layoutTemplateService.getLayoutTemplate(defaultPreviewLayoutConfig.id)
-  );
 
   readonly codeChangeSubject = new Subject<string>();
   readonly editorOptions: IStandaloneEditorConstructionOptions = {
@@ -68,8 +58,8 @@ export class RawTemplateEditorModalComponent extends BaseModal {
     wordWrap: 'on',
   };
   code: string = '';
-  #uneditableTemplateMetaData: AppUIElementTemplateUnEditableFields | null = null;
   readonly errorStateSig = signal<'noError' | 'isError' | 'isPending'>('noError');
+  #originalCode = '';
 
   constructor() {
     super();
@@ -92,45 +82,38 @@ export class RawTemplateEditorModalComponent extends BaseModal {
       )
       .subscribe();
 
-    this.#watchCodeChange();
+    this.#loadTemplateIntoCode();
   }
 
   async updateUIElementTemplate(): Promise<void> {
     const templateFromCode = JSON.parse(this.code) as AppUIElementTemplateEditableFields;
 
-    if (!this.#uneditableTemplateMetaData) {
-      console.error('Meta data is missing');
+    this.#uiElementTemplateEditorStore.updateCurrentEditingTemplate(templateFromCode);
+    const latestEditedTemplated = untracked(
+      this.#uiElementTemplateEditorStore.currentEditingTemplate
+    );
+
+    if (!latestEditedTemplated) {
+      console.error('Edited template is missing from store');
       return;
     }
 
-    await this.#uiElementTemplatesStore.updateOne({
-      ...this.#uneditableTemplateMetaData,
-      ...templateFromCode,
-    });
+    await this.#uiElementTemplatesStore.updateOne(latestEditedTemplated);
     if (!untracked(this.#uiElementTemplatesStore.error)) {
-      this.#uiElementTemplateService.updateUIElementTemplate({
-        id: this.#uneditableTemplateMetaData.id,
-        ...templateFromCode,
-      });
       this.closeModal();
     }
   }
 
-  #watchCodeChange(): void {
+  #loadTemplateIntoCode(): void {
     effect(async () => {
-      const currentTemplate = this.#uiElementTemplatesStore.filteredUIElementTemplates()[0];
-      if (!currentTemplate) {
+      const currentEditableTemplate = this.#uiElementTemplateEditorStore.currentEditableFields();
+      if (!currentEditableTemplate) {
         return;
       }
-      const { createdAt, updatedAt, id, ...templateWithoutTimeStamps } = currentTemplate;
-      this.#uneditableTemplateMetaData = {
-        id,
-        createdAt,
-        updatedAt,
-      };
-      const rawJSON = JSON.stringify(templateWithoutTimeStamps);
+
+      const rawJSON = JSON.stringify(currentEditableTemplate);
       const prettifyJSON = await this.#formatJSON(rawJSON);
-      this.code = prettifyJSON;
+      this.code = this.#originalCode = prettifyJSON;
     });
   }
 
@@ -151,5 +134,10 @@ export class RawTemplateEditorModalComponent extends BaseModal {
       console.log('Something went wrong:', err);
       return false;
     }
+  }
+
+  override closeModal(): void {
+    this.code = this.#originalCode;
+    super.closeModal();
   }
 }

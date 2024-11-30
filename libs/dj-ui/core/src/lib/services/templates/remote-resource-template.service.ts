@@ -125,4 +125,12 @@ export class RemoteResourceTemplateService {
       config: updatedRemoteResourceTemplate,
     });
   }
+
+  updateOrRegisterRemoteResourceTemplate(remoteResourceTemplate: RemoteResourceTemplate): void {
+    if (this.#remoteResourceTemplateSubjectMap[remoteResourceTemplate.id]) {
+      this.updateRemoteResourceTemplate(remoteResourceTemplate);
+    } else {
+      this.registerRemoteResourceTemplate(remoteResourceTemplate);
+    }
+  }
 }
