@@ -1,3 +1,13 @@
+## 0.0.1-11 (2024-11-30)
+
+### 🚀 Features
+
+- introduce method to upsert template, use store design for editor mode ([3b40695](https://github.com/namnguyen191/namnguyen191-org/commit/3b40695))
+
+### ❤️  Thank You
+
+- Nam Nguyen
+
 ## 0.0.1-10 (2024-11-19)
 
 ### 🚀 Features
