@@ -1,9 +1,0 @@
-{
-  "id": "LAYOUT_CARBON_TEST_SIMPLE_CAROUSEL",
-  "uiElementInstances": [
-    {
-      "id": "instance-1",
-      "uiElementTemplateId": "carbon-carousel-test"
-    }
-  ]
-}

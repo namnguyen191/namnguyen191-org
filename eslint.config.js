@@ -52,40 +52,8 @@ export default [
               onlyDependOnLibsWithTags: ['*'],
             },
             {
-              sourceTag: 'scope:dui-core',
-              onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
-            },
-            {
-              sourceTag: 'scope:dj-ui-core',
-              onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
-            },
-            {
-              sourceTag: 'scope:dui-extensions',
-              onlyDependOnLibsWithTags: [
-                'scope:dui-core',
-                'scope:shared-lib',
-                'scope:shared-lib:angular',
-                'scope:dui-extensions',
-                'scope:dj-ui-core',
-                'scope:dj-ui-extensions',
-              ],
-            },
-            {
-              sourceTag: 'scope:dj-ui-extensions',
-              onlyDependOnLibsWithTags: [
-                'scope:dj-ui-core',
-                'scope:shared-lib',
-                'scope:shared-lib:angular',
-                'scope:dj-ui-extensions',
-              ],
-            },
-            {
               sourceTag: 'scope:shared-lib:angular',
               onlyDependOnLibsWithTags: ['scope:shared-lib', 'scope:shared-lib:angular'],
-            },
-            {
-              sourceTag: 'scope:shrimping-around:main',
-              onlyDependOnLibsWithTags: ['/^scope:shrimping-around:feature:.*/'],
             },
             {
               sourceTag: 'scope:shared-lib',
