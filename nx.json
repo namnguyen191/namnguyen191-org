@@ -1,13 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "release": {
-    "changelog": {
-      "projectChangelogs": true
-    },
-    "version": {
-      "preVersionCommand": "pnpm dlx nx run-many -t build"
-    }
-  },
   "neverConnectToCloud": true,
   "targetDefaults": {
     "build": {
