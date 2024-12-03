@@ -1,15 +1,15 @@
 {
   "name": "@namnguyen191/common-angular-helper",
-  "version": "0.0.0-2",
+  "version": "0.0.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "peerDependencies": {
-    "@angular/core": "^18.1.0",
-    "@namnguyen191/types-helper": "*",
-    "@angular/common": "*",
-    "rxjs": "*"
+    "@angular/core": "18.2.2",
+    "@angular/common": "18.2.2",
+    "@namnguyen191/types-helper": "0.0.0",
+    "rxjs": "~7.8.1"
   },
   "sideEffects": false
 }
